@@ -1,0 +1,27 @@
+REPUTATION INCREMENTS
+
+10 - being involved in a winning host in a comp.
+3 - posting an argument.
+5 - posting a debate.
+10 - joining a group.
+1 - commenting.
+3 - for each new friend. 
+5 - a full profile. 
+2 - voting.
+5 - receiving an agree on a post.
+3 - receiving a like on a debate you publish.
+2 - a profile view.
+
+BADGE REASONS
+
+ - "Being a member on BuzzZap".
+ - "First Post".
+ - "xth post".
+ - "actual involvement in victorious competition".
+ - "receiving more than x likes on a debate you posted".
+ - "Being in a group".
+ - "Being a group leader".
+ - "Posting in all debating topics!"
+ - "Logging in xth amount times"
+ - "Regularly judging comps"
+ - "xth rep"

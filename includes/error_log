@@ -1,0 +1,4 @@
+[17-Aug-2013 09:21:54 America/Chicago] PHP Fatal error:  Call to undefined function loggedin() in /home/sdconsul/public_html/buzzzap/includes/loggedin_home.php on line 2
+[24-Oct-2013 13:23:21 Europe/London] PHP Fatal error:  Call to undefined function loggedin() in /home/buzzzapc/public_html/includes/loggedin_home.php on line 2
+[24-Oct-2013 13:23:29 Europe/London] PHP Fatal error:  Call to undefined function loggedin() in /home/buzzzapc/public_html/includes/loggedout_home.php on line 2
+[24-Oct-2013 13:24:29 Europe/London] PHP Fatal error:  Call to undefined function loggedin() in /home/buzzzapc/public_html/includes/loggedout_home.php on line 2
