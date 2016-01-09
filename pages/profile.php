@@ -86,7 +86,7 @@ if(loggedin()){
 					}else{
 						$friend_opt = "<a class = 'add-friend-link' href = 'index.php?page=profile&user=".$view_user_id."&acc_friend=true'>Accept friend request</a>";
 					}
-					echo $friend_opt;
+					echo $friend_opt."<br>";
 				}
 			
 			?>
@@ -228,10 +228,16 @@ if(loggedin()){
 						if(!empty($get_about_user)&&substr($get_about_user, 0, 29)!="Where are you from? What do y"){
 							$textarea_content = $get_about_user;
 						}
-					?>
 					
+						if($view_user_id != $user_id){	
+							echo "<br><br>";
+							$a_m_text_height = "200px";
+						}else{
+							$a_m_text_height = "260px";
+						}
+						?>
 							<div id = "profile-about-me">
-								<textarea id = "about-me-textarea"><?php echo $textarea_content; ?></textarea>
+								<textarea id = "about-me-textarea" style = 'height:<?php echo $a_m_text_height; ?>;'><?php echo $textarea_content; ?></textarea>
 							</div>
 					<br>
 					

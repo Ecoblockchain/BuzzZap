@@ -1,4 +1,13 @@
-<?php ob_start(); error_reporting(0);?>
+<?php ob_start(); 
+//error_reporting(0);
+if(substr($_SERVER['PHP_SELF'], 0,3)=="/pr"){
+	//DEV 
+	$ajax_script_loc = "/projects/buzzzap/ajax_script.php";
+}else{
+	//PROD
+	$ajax_script_loc = "../ajax_script.php";
+}
+?>
 <DOCTYPE html>
 	<html>
 		<head>

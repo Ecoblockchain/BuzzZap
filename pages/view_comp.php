@@ -58,7 +58,7 @@ if(loggedin()){
 					
 					var arg_id = info.substring(3);
 					var comp_id = "<?php echo $comp_id; ?>";
-					$.post("../ajax_script.php", {vote:vote, table:table, arg_id:arg_id, comp_id:comp_id, ctype:"<?php echo $type; ?>"}, function(result){
+					$.post("<?php echo $ajax_script_loc; ?>", {vote:vote, table:table, arg_id:arg_id, comp_id:comp_id, ctype:"<?php echo $type; ?>", judges:"<?php echo $judges; ?>"}, function(result){
 						$("."+c_prefix+"cid"+arg_id).fadeOut(100);
 						setTimeout(function(){
 							$("."+c_prefix+"success-msg"+arg_id).html(result);
@@ -347,7 +347,7 @@ if(loggedin()){
 								<span style = 'color:#ffffff;'>By <a style = 'color:grey;' href = 'index.php?page=profile&user=".$row['user_id']."'>".get_user_field($row['user_id'], "user_username")."</a></span>";
 							if($rel_to_sec!=3){	
 								echo "<span style = 'float:right;color:grey;text-decoration:underline;cursor:pointer;' arg_id = '".$row['arg_id']."' class = 'add-comment-arg-opt' cand_id = '".$cand_id."'>Add Comment</span>";
-							}else if((user_already_voted_comp_arg("comp_arguments", $_SESSION['user_id'], $row['arg_id'])==false)&&((judges=="norm")||($judges!="norm"&&in_array($_SESSION['user_id'], $judges)))){
+							}else if((user_already_voted_comp_arg("comp_arguments", $_SESSION['user_id'], $row['arg_id'])==false)&&(($judges=="norm")||($judges!="norm"&&in_array($_SESSION['user_id'], $judges)))){
 								echo "<span style = 'float:right;color:grey;text-decoration:underline;cursor:pointer;' arg_id = '1b-".$row['arg_id']."' class = 'vote-opt bcid".$row['arg_id']." bsuccess-msg".$row['arg_id']."'> Vote Up</span>
 							
 								<span style = 'float:right;color:grey;text-decoration:underline;cursor:pointer;' arg_id = '0b-".$row['arg_id']."' class = 'vote-opt bcid".$row['arg_id']."'>Vote Down &middot; </span>";

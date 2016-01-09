@@ -1437,7 +1437,6 @@ li:hover a {
 	height:450px;
 	width:47%;
 	background-color:lightgrey;
-	border-radius:5px;
 	padding:10px;
 	float:left;
 	outline:10px;
@@ -1458,14 +1457,12 @@ li:hover a {
 
 #cvcb-sec2{
 	height: 30px;
-	border-bottom: 1px solid grey;
 	color: #48545a;
 }
 
 #cvcb-sec3{
 	height: 360px;
 	overflow: auto;
-	border-bottom: 1px solid grey;
 	color: #48545a;
 	background-color: #ddebee;
 	padding: 5px;
@@ -1514,7 +1511,6 @@ li:hover a {
 	font-size: 70%;
 	padding: 5px;
 	margin-top: 5px;
-	border-radius: 5px;
 }	
 
 #page-disabled{

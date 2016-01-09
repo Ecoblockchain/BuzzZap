@@ -1076,6 +1076,10 @@ function start_comp($type, $opps_array, $end_time, $judges, $topic, $starter_id)
 	}
 	$comp_com_id = ($type=="0")? get_user_field($_SESSION['user_id'], "user_com"): "0";
 
+	if($judges != "norm"){
+		$judges = implode(",",$judges);
+	}
+
 	$debate_title = get_rand_debate($topic);
 	$opps = implode(",",$opps_array);
 	$insert = $db->prepare("INSERT INTO competitions VALUES('', :title, :type, :starter, :opps, UNIX_TIMESTAMP(), :end, :judges, :com, :acceptance)");
@@ -1085,7 +1089,7 @@ function start_comp($type, $opps_array, $end_time, $judges, $topic, $starter_id)
 			"starter"=>$starter_id,
 			"opps"=>$opps,
 			"end"=>$end_time,
-			"judges"=>implode(",",$judges),
+			"judges"=>$judges,
 			"com"=>$comp_com_id,
 			"acceptance"=>$acceptance_str
 			
@@ -1258,20 +1262,24 @@ function get_judge_list($comp_id){
 function get_judge_acceptance($comp_id){
 	global $db;
 	$judges_str = $db->query("SELECT judges FROM competitions WHERE comp_id =".$db->quote($comp_id))->fetchColumn();
-	$acceptance = array();
-	$judges_array = explode(",", $judges_str);
-	if(!empty($judges_str)){
-		foreach($judges_array as $id){
-			if(substr($id,0,1)=="-"){
-				$acceptance[substr($id,1)]="1";
-			}else{
-				$acceptance[$id]="0";
+	if($judges_str!="norm"){
+		$acceptance = array();
+		$judges_array = explode(",", $judges_str);
+		if(!empty($judges_str)){
+			foreach($judges_array as $id){
+				if(substr($id,0,1)=="-"){
+					$acceptance[substr($id,1)]="1";
+				}else{
+					$acceptance[$id]="0";
+				}
 			}
+		
+			return $acceptance;
+		}else{
+			return array("empty");
 		}
-	
-		return $acceptance;
 	}else{
-		return array("empty");
+		return "norm";
 	}
 }
 
@@ -1291,7 +1299,7 @@ function check_comp_ready($comp_id, $type){
 		}else{
 			// start comp.
 			$jacceptance=get_judge_acceptance($comp_id);
-			if(!in_array("1",$jacceptance)||$jacceptance==array("empty")){
+			if((!in_array("1",$jacceptance)||$jacceptance==array("empty"))&&($jacceptance!="norm")){
 				$db->query("UPDATE competitions SET judges = 'norm' WHERE comp_id = ".$db->quote($comp_id));
 				add_note(get_comp_user_starter_id($comp_id, $type), "All the judges you requested to judge your newly started competition either declined or have not responded to the invite in time. This means anyone who is not participating can judge the competiton.","");
 			}else{

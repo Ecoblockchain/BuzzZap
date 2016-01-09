@@ -70,7 +70,7 @@ if(loggedin()){
 					$("#des_opponents").keyup(function(){
 				 
 						var des_opp = $(this).val();
-						$.post("../ajax_script.php", {des_opponents:des_opp, ctype:"<?php echo $type; ?>"}, function(result){
+						$.post("<?php echo $ajax_script_loc; ?>", {des_opponents:des_opp, ctype:"<?php echo $type; ?>"}, function(result){
 						
 							var pred= result.toString().split(",");
 							var count = 0;
@@ -140,9 +140,7 @@ if(loggedin()){
 							<br>
 						
 								<span style = 'font-size:80%;'>Desired Opponents: </span><br>
-								<input type = "text" id = "des_opponents" class = "loggedout-form-fields"
-								 placeholder = "<?php echo $des_opp_placeholder; ?>"
-								 style = "height:30px;outline-width:0px;font-size:60%;box-shadow:none;" name = "des_opponents">
+								<input type = "text" id = "des_opponents" class = "loggedout-form-fields" placeholder = "<?php echo $des_opp_placeholder; ?>" style = "height:30px;outline-width:0px;font-size:60%;box-shadow:none;" name = "des_opponents">
 							 
 								 <div id = "pred_results"></div>
 							 
@@ -210,13 +208,14 @@ if(loggedin()){
 									$errors[] = "You must choose a way your competition is going to be judged.";
 								}
 								
+								$jtype_spec_valid = false;
+
 								if(($jtype=="jspec")&&(isset($_POST['jspec_users']))&&(!empty($_POST['jspec_users']))){
 									$judges = htmlentities($_POST['jspec_users']);
 									$judges = strlist_to_array($judges, true);
 									if(end($judges)=="ERROR"){
 										unset($judges[count($judges)-1]);
 										$errors[] = "The following desired judges were invalid users: ".trim_commas(implode(",", $judges));
-										$jtype_spec_valid = false;
 									}else{
 										foreach($judges as &$judge){
 											$judge = $db->query("SELECT user_id FROM users WHERE user_username = ".$db->quote($judge))->fetchColumn();
@@ -226,6 +225,7 @@ if(loggedin()){
 								}else if($jtype=="jnorm"){
 									$judges = "norm";
 								}else{
+
 									$errors[]= "You must supply valid judges.";
 								}
 								
