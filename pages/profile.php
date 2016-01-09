@@ -99,7 +99,7 @@ if(loggedin()){
 						</form>
 						<span id = "back-info2" style = "font-size:80%;cursor:pointer;"><< back</span>
 				</div>
-				<div id = "profile-info-container2" style = "margin-top:30px;">
+				<div id = "profile-info-container2" style = "margin-top:10px;">
 					<span id = "sub-profile-title">General</span><span id = "sub-profile-title" style = "position:absolute;margin-left:400px;">About Me</span><br><br>
 					<?php
 						
@@ -344,7 +344,7 @@ if(loggedin()){
 			?>
 		
 		<br>
-			<div class = "profile-info-container" style = "width: 46%;height: 300px;overflow: auto;">
+			<div class = "profile-info-container" id = "badge-container">
 				<div id = "sub-profile-title">Badge Collection</div>
 				<div id = "profile-info-container3" style = "width: 500px;height: 10px;position:absolute;">
 					<?php
@@ -358,7 +358,7 @@ if(loggedin()){
 					?>
 				
 			</div>
-			<div class = "profile-info-container" style = "width: 46%;margin-left:50%;height: 300px;margin-top: -322px;">
+			<div class = "profile-info-container" id = "friends-container">
 				<div id = "sub-profile-title">Friends</div>
 				
 				<?php

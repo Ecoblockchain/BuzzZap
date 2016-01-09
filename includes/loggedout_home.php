@@ -9,7 +9,7 @@ if(!loggedin()){
 			$("#r5").rotate(190);
 			$("#r3").rotate(240);
 			$("#r4").rotate(120);
-			$("#r7").rotate(130);
+			$("#r7").rotate(230);
 			var dot_pos = [];
 			function check_dot_pos(){
 				if($( window ).width()<=1250){
@@ -204,7 +204,7 @@ if(!loggedin()){
 		<center>
 			<div class = "loggedout-main-container"  style = "display: none;">
 			
-				<div class  = 'loggedout-form-container' id  = 'loggedout-form-container' style = "position:absolute;">
+				<div class  = 'loggedout-form-container' id  = 'loggedout-form-container'>
 					<br><br>
 					<span class = "close-loggedout-form-container" id = "close-loggedout-form-container">Close</span><br>
 					<div id = "forloggedout-paragraph-container1" style = "display:none;">
@@ -503,24 +503,24 @@ if(!loggedin()){
 			<div id = "c1" style = "display:none;position:absolute;background-color:red;height:300px;width:300px;border-radius:300px;opacity:0.2;margin-top:-100px;margin-left:10px;"></div>
 			<div class = "loggedout-paragraph-container" id = "loggedout-paragraph-container1">
 				<span style = "color:#8E388E;" id = 'lpc-title1'>Login</span><br>
-				<span class = "loggedout-paragraph">
-					If you are already <br>
-					part of	a community, login<br>
-					and access all the <br>
-					discussions and get debating! <br>
-				</span>
+				<div class = "loggedout-paragraph">
+					If you are already 
+					part of	a community, login
+					and access all the 
+					discussions and get debating! 
+				</div>
 			</div>
 
 			<div id = "r1" class = "rotate"></div>
 			<div id = "c2" style = "display:none;position:absolute;background-color:blue;height:300px;width:300px;border-radius:300px;opacity:0.2;margin-top:-20px;margin-left:430px;"></div>
 			<div class = "loggedout-paragraph-container" id = "loggedout-paragraph-container2">
 				<span style = "color:#79CDCD;" id = 'lpc-title2'>Contact Us</span><br>
-				<span class = "loggedout-paragraph">
-					If you have any questions<br>
-					about anything, or something you <br>
-					think we should know, please <br>
+				<div class = "loggedout-paragraph">
+					If you have any questions
+					about anything, or something you 
+					think we should know, please 
 					get in touch.
-				</span>
+				</div>
 			</div>
 				
 			<div id = "r2" class = "rotate"></div>
@@ -528,11 +528,12 @@ if(!loggedin()){
 			<div id = "c3" style = "display:none;position:absolute;background-color:pink;height:300px;width:300px;border-radius:300px;opacity:0.2;margin-top:-50px;margin-left:835px;padding:20px;"></div>
 			<div class = "loggedout-paragraph-container" id = "loggedout-paragraph-container3">
 				<span style = "color:#71C671;" id = 'lpc-title3'>Join A Community</span><br>
-				<span class = "loggedout-paragraph">
-					If you have been invited to a community,<br>
-					simply enter some details and the <br>
-					community passcode you were given. <br>
-				</span>
+				<div class = "loggedout-paragraph">
+					If you have been invited to
+					a community, enter some
+					details and the  
+					passcode you were given. 
+				</div>
 			</div>
 			<div class = "rotate" id = "r3"></div>
 			<div class = "rotate" id = "r4"></div>
@@ -547,38 +548,29 @@ if(!loggedin()){
 			<div id = "c4" style = "display:none;position:absolute;background-color:orange;height:300px;width:300px;border-radius:300px;opacity:0.2;margin-top:-50px;margin-left:690px;"></div>
 			<div class = "loggedout-paragraph-container" id = "loggedout-paragraph-container4">
 				<span style = "color:#FF82AB;" id = 'lpc-title4'>Start A Community</span><br>
-				<span class = "loggedout-paragraph">
-					Want to get your real life community<br>
-					involved in debating? <br>
-					Get started here! <br>
-				</span>
+				<div class = "loggedout-paragraph">
+					Want to get your real life community
+					involved in debating? 
+					Get started here! 
+				</div>
 			</div>
 			<div id = "c5" style = "display:none;position:absolute;background-color:pink;height:300px;width:300px;border-radius:300px;opacity:0.2;margin-top:100px;margin-left:260px;"></div>
 			<div class = "loggedout-paragraph-container" id = "loggedout-paragraph-container5">
 				<span style = "color:#F4A460;" id = 'lpc-title5'>Happening</span><br>
-				<span class = "loggedout-paragraph">
-					Have a look at the latest BuzzZap<br>
+				<div class = "loggedout-paragraph">
+					Have a look at the latest BuzzZap
 					news, and the latest site updates.
-				</span>
-			</div>
-				<div id = "c6" style = "display:none;position:absolute;background-color:green;height:300px;width:300px;border-radius:300px;opacity:0.2;margin-top:-170px;margin-left:0px;padding:15px;"></div>
-			<div class = "loggedout-paragraph-container" id = "loggedout-paragraph-container6">
-				<span style = "color:#FFC1C1;" id = 'lpc-title6'>Legal Agreements</span><br>
-				<span class = "loggedout-paragraph">
-					Before becoming a member,<br>
-					make sure you understand and<br>
-					agree to the Terms &amp; Conditions.<br>
-				</span>
+				</div>
 			</div>
 
-				<div id = "c7" style = "display:none;position:absolute;background-color:yellow;height:300px;width:300px;border-radius:300px;opacity:0.2;margin-top:150px;margin-left:890px;"></div>
+			<div id = "c7" style = "display:none;position:absolute;background-color:yellow;height:300px;width:300px;border-radius:300px;opacity:0.2;margin-top:150px;margin-left:890px;"></div>
 			<div class = "loggedout-paragraph-container" id = "loggedout-paragraph-container7">
 				<span style = "color:#63B8FF;" id = 'lpc-title7'>Learn More</span><br>
-				<span class = "loggedout-paragraph">
-					If you want to know more about what<br>
-					BuzzZap is for, and how it all works, <br>
-					read here. <br>
-				</span>
+				<div class = "loggedout-paragraph">
+					If you want to know more about what
+					BuzzZap is for, and how it all works, 
+					read here. 
+				</div>
 			</div>
 			
 		</div>	
