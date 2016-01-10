@@ -3,7 +3,10 @@ if($check_valid!="true"){
 	header("Location: index.php?page=home");
 	exit();
 }
-if(loggedin()){
+if(isset($_GET['out_judge_key'])){
+	$out_judge_key = "out:".htmlentities($_GET['out_judge_key']);
+}
+if(loggedin()||!empty($out_judge_key)){
 	if(isset($_GET['comp'])){
 		$comp_id = substr(htmlentities($_GET['comp']), 1);
 		$type = substr(htmlentities($_GET['comp']), 0,1);
@@ -13,10 +16,17 @@ if(loggedin()){
 		$judges = $comp_info['judges'];
 		$judges = ($judges=="norm")? "norm": get_judge_list($comp_id);
 		$valid_to_view = false;
-		$com_id = ($type=="0")? get_user_community($_SESSION['user_id'], "com_id"): "0";
-		if($com_id==$comp_com_id){
-			$valid_to_view = true;
-		}else if(in_array($_SESSION['user_id'], $judges)){
+		$user_id = (isset($_SESSION['user_id']))? $_SESSION['user_id']: $out_judge_key;
+
+		
+			
+		if(empty($out_judge_key)){
+			$com_id = ($type=="0")? get_user_community($_SESSION['user_id'], "com_id"): "0";
+			if($com_id==$comp_com_id){
+				$valid_to_view = true;
+			}
+		}	
+		if(in_array($user_id, $judges)){
 			$valid_to_view = true;
 		}
 		if((!empty($comp_info["comp_title"]))&&($valid_to_view==true)&&(in_array($type, array("0","1"))&&(!empty($type_match_comp)))){
@@ -58,7 +68,8 @@ if(loggedin()){
 					
 					var arg_id = info.substring(3);
 					var comp_id = "<?php echo $comp_id; ?>";
-					$.post("<?php echo $ajax_script_loc; ?>", {vote:vote, table:table, arg_id:arg_id, comp_id:comp_id, ctype:"<?php echo $type; ?>", judges:"<?php echo $judges; ?>"}, function(result){
+					var parse_judges = "<?php echo ($judges=='norm')? $norm : implode(',',$judges); ?>";
+					$.post("<?php echo $ajax_script_loc; ?>", {vote:vote, table:table, arg_id:arg_id, comp_id:comp_id, ctype:"<?php echo $type; ?>", judges:parse_judges, user_id:"<?php echo $user_id; ?>"}, function(result,err){
 						$("."+c_prefix+"cid"+arg_id).fadeOut(100);
 						setTimeout(function(){
 							$("."+c_prefix+"success-msg"+arg_id).html(result);
@@ -95,7 +106,7 @@ if(loggedin()){
 			</script>
 			<?php
 				$perm_to_delete = false;
-				if(($type=="0")&&(get_user_community($_SESSION['user_id'], "com_id")==$comp_info["comp_com_id"])&&(user_rank($_SESSION['user_id'], "3"))){
+				if(($type=="0")&&(get_user_community($user_id, "com_id")==$comp_info["comp_com_id"])&&(user_rank($user_id, "3")&&empty($out_judge_key))){
 					$perm_to_delete = true;
 					echo "<a style = 'font-size: 100%;color:salmon;' href = 'index.php?page=view_comp&delc=true&comp=".$type.$comp_id."'>Delete Competition</a><br>";
 				}
@@ -131,9 +142,15 @@ if(loggedin()){
 				echo get_comp_starter_by_type($comp_id, $type); 
 				$judges_by_name = array();
 				if($judges!="norm"){
-					foreach($judges as $judgeid){
-						$judges_by_name[] = get_user_field($judgeid,"user_username");
-					}
+					
+						
+						foreach($judges as $judgeid){
+							if(substr($judgeid, 0,4)!="out:"){
+								$judges_by_name[] = get_user_field($judgeid,"user_username");
+							}else{
+								$judges_by_name[] = get_special_judge_disname($judgeid);
+							}
+						}
 				}
 				$judge_dis = ($judges=="norm")? "Anyone not participating":implode(",",$judges_by_name);
 				echo "<br>Judges: ".$judge_dis;
@@ -143,7 +160,7 @@ if(loggedin()){
 				<?php
 				if(comp_started($comp_id)){
 					if($judges!="norm"){
-						if(in_array($_SESSION['user_id'], $judges)){
+						if(in_array($user_id, $judges)){
 							echo "As a judge, you must read through the different arguments and comments, and simply vote up or down to which comments you are or aren't persuaded by. It is important you vote as many comments as possible.";
 						}
 					}else{
@@ -157,10 +174,10 @@ if(loggedin()){
 			<hr size = "1">
 			<?php
 					$jacceptance = get_judge_acceptance($comp_id);
-					if(($judges!="norm")&&(in_array($_SESSION['user_id'], $judges))&&($jacceptance[$_SESSION['user_id']]!="1")){
+					if(($judges!="norm")&&(in_array($user_id, $judges))&&($jacceptance[$user_id]!="1")){
 						echo "<div style = 'z-index:1000000;margin:0 auto;padding:10px;background-color:lightgrey;color:grey;letter-spacing:2px;box-shadow: 0px 0px 30px grey;width:200px;'>Do you 
-						<a href = 'index.php?page=view_comp&comp=".$_GET['comp']."&res_j_in=1".$_SESSION['user_id']."' style = 'color:#66CDAA;'>accept</a>
-						  or <a href = 'index.php?page=view_comp&comp=".$_GET['comp']."&res_j_in=0".$_SESSION['user_id']."' style = 'color:salmon;'>decline</a>
+						<a href = 'index.php?page=view_comp&comp=".$_GET['comp']."&res_j_in=1".$user_id."' style = 'color:#66CDAA;'>accept</a>
+						  or <a href = 'index.php?page=view_comp&comp=".$_GET['comp']."&res_j_in=0".$user_id."' style = 'color:salmon;'>decline</a>
 						  your invitation to judge this competition?
 						  </div>";
 						  
@@ -242,7 +259,7 @@ if(loggedin()){
 				foreach($cand_ids as $cand_id){
 					$name = ($type=="0")? $db->query("SELECT group_name FROM private_groups WHERE group_id = ".$db->quote($cand_id))->fetchColumn():$db->query("SELECT com_name FROM communities WHERE com_id = ".$db->quote($cand_id))->fetchColumn();
 					if($name!=""){
-						$users_host_id = ($type=="0")? get_user_group($_SESSION['user_id'], "group_id"):get_user_community($_SESSION['user_id'], "com_id");
+						$users_host_id = ($type=="0")? get_user_group($user_id, "group_id"):get_user_community($user_id, "com_id");
 						$your_host_str = ($users_host_id==$cand_id)? "(your section)": "";
 						
 					
@@ -303,7 +320,7 @@ if(loggedin()){
 										$insert->execute(array(
 											"comp_id"=>$comp_id,
 											"cand_id"=>$users_host_id, 
-											"user_id"=>$_SESSION['user_id'],
+											"user_id"=>$user_id,
 											"arg_text"=>$text,
 										));
 										if($judges!="norm"){
@@ -347,7 +364,7 @@ if(loggedin()){
 								<span style = 'color:#ffffff;'>By <a style = 'color:grey;' href = 'index.php?page=profile&user=".$row['user_id']."'>".get_user_field($row['user_id'], "user_username")."</a></span>";
 							if($rel_to_sec!=3){	
 								echo "<span style = 'float:right;color:grey;text-decoration:underline;cursor:pointer;' arg_id = '".$row['arg_id']."' class = 'add-comment-arg-opt' cand_id = '".$cand_id."'>Add Comment</span>";
-							}else if((user_already_voted_comp_arg("comp_arguments", $_SESSION['user_id'], $row['arg_id'])==false)&&(($judges=="norm")||($judges!="norm"&&in_array($_SESSION['user_id'], $judges)))){
+							}else if((user_already_voted_comp_arg("comp_arguments", $user_id, $row['arg_id'])==false)&&(($judges=="norm")||($judges!="norm"&&in_array($user_id, $judges)))){
 								echo "<span style = 'float:right;color:grey;text-decoration:underline;cursor:pointer;' arg_id = '1b-".$row['arg_id']."' class = 'vote-opt bcid".$row['arg_id']." bsuccess-msg".$row['arg_id']."'> Vote Up</span>
 							
 								<span style = 'float:right;color:grey;text-decoration:underline;cursor:pointer;' arg_id = '0b-".$row['arg_id']."' class = 'vote-opt bcid".$row['arg_id']."'>Vote Down &middot; </span>";
@@ -361,7 +378,7 @@ if(loggedin()){
 								echo "<div id = 'arg-text-body' style = 'width:70%;margin-top: 2px;background-color:".cand_color($row_['user_cand_id']).";'>".$row_['reply_text']."<br>
 								<span style = 'color:#ffffff;'>By <a style = 'color:grey;' href = 'index.php?page=profile&user=".$row_['user_id']."'>".get_user_field($row_['user_id'], "user_username")."</a>";
 							
-								if(($rel_to_sec==3)&&(user_already_voted_comp_arg("comp_arg_replies", $_SESSION['user_id'], $row_['arg_id'])==false)&&((judges=="norm")||($judges!="norm"&&in_array($_SESSION['user_id'], $judges)))){
+								if(($rel_to_sec==3)&&(user_already_voted_comp_arg("comp_arg_replies", $user_id, $row_['reply_id'])==false)&&(($judges=="norm")||($judges!="norm"&&in_array($user_id, $judges)))){
 									echo "<span style = 'float:right;color:grey;text-decoration:underline;cursor:pointer;' arg_id = '1m-".$row_['reply_id']."' class = 'vote-opt mcid".$row_['reply_id']." msuccess-msg".$row_['reply_id']."'> Vote Up</span>
 									<span style = 'float:right;color:grey;text-decoration:underline;cursor:pointer;' arg_id = '0m-".$row_['reply_id']."' class = 'vote-opt mcid".$row_['reply_id']."'>Vote Down &middot; </span>";
 								}
@@ -397,7 +414,7 @@ if(loggedin()){
 				
 								$insert->execute(array(
 									"arg_id"=>$arg_id,
-									"user_id"=>$_SESSION['user_id'], 
+									"user_id"=>$user_id, 
 									"cand_id"=>$cand_id,
 									"reply_text"=>$text,
 									"uci"=>$user_cand_id,

@@ -502,7 +502,7 @@ if(!loggedin()){
 			
 			<div id = "c1" style = "display:none;position:absolute;background-color:red;height:300px;width:300px;border-radius:300px;opacity:0.2;margin-top:-100px;margin-left:10px;"></div>
 			<div class = "loggedout-paragraph-container" id = "loggedout-paragraph-container1">
-				<span style = "color:#8E388E;" id = 'lpc-title1'>Login</span><br>
+				<span style = "color:#8E388E;" id = 'lpc-title1' class = 'lpctitle'>Login</span><br>
 				<div class = "loggedout-paragraph">
 					If you are already 
 					part of	a community, login
@@ -514,7 +514,7 @@ if(!loggedin()){
 			<div id = "r1" class = "rotate"></div>
 			<div id = "c2" style = "display:none;position:absolute;background-color:blue;height:300px;width:300px;border-radius:300px;opacity:0.2;margin-top:-20px;margin-left:430px;"></div>
 			<div class = "loggedout-paragraph-container" id = "loggedout-paragraph-container2">
-				<span style = "color:#79CDCD;" id = 'lpc-title2'>Contact Us</span><br>
+				<span style = "color:#79CDCD;" id = 'lpc-title2' class = 'lpctitle'>Contact Us</span><br>
 				<div class = "loggedout-paragraph">
 					If you have any questions
 					about anything, or something you 
@@ -527,7 +527,7 @@ if(!loggedin()){
 			
 			<div id = "c3" style = "display:none;position:absolute;background-color:pink;height:300px;width:300px;border-radius:300px;opacity:0.2;margin-top:-50px;margin-left:835px;padding:20px;"></div>
 			<div class = "loggedout-paragraph-container" id = "loggedout-paragraph-container3">
-				<span style = "color:#71C671;" id = 'lpc-title3'>Join A Community</span><br>
+				<span style = "color:#71C671;" id = 'lpc-title3' class = 'lpctitle'>Join A Community</span><br>
 				<div class = "loggedout-paragraph">
 					If you have been invited to
 					a community, enter some
@@ -547,7 +547,7 @@ if(!loggedin()){
 			
 			<div id = "c4" style = "display:none;position:absolute;background-color:orange;height:300px;width:300px;border-radius:300px;opacity:0.2;margin-top:-50px;margin-left:690px;"></div>
 			<div class = "loggedout-paragraph-container" id = "loggedout-paragraph-container4">
-				<span style = "color:#FF82AB;" id = 'lpc-title4'>Start A Community</span><br>
+				<span style = "color:#FF82AB;" id = 'lpc-title4' class = 'lpctitle'>Start A Community</span><br>
 				<div class = "loggedout-paragraph">
 					Want to get your real life community
 					involved in debating? 
@@ -556,7 +556,7 @@ if(!loggedin()){
 			</div>
 			<div id = "c5" style = "display:none;position:absolute;background-color:pink;height:300px;width:300px;border-radius:300px;opacity:0.2;margin-top:100px;margin-left:260px;"></div>
 			<div class = "loggedout-paragraph-container" id = "loggedout-paragraph-container5">
-				<span style = "color:#F4A460;" id = 'lpc-title5'>Happening</span><br>
+				<span style = "color:#F4A460;" id = 'lpc-title5' class = 'lpctitle'>Happening</span><br>
 				<div class = "loggedout-paragraph">
 					Have a look at the latest BuzzZap
 					news, and the latest site updates.
@@ -565,7 +565,7 @@ if(!loggedin()){
 
 			<div id = "c7" style = "display:none;position:absolute;background-color:yellow;height:300px;width:300px;border-radius:300px;opacity:0.2;margin-top:150px;margin-left:890px;"></div>
 			<div class = "loggedout-paragraph-container" id = "loggedout-paragraph-container7">
-				<span style = "color:#63B8FF;" id = 'lpc-title7'>Learn More</span><br>
+				<span style = "color:#63B8FF;" id = 'lpc-title7' class = 'lpctitle'>Learn More</span><br>
 				<div class = "loggedout-paragraph">
 					If you want to know more about what
 					BuzzZap is for, and how it all works, 

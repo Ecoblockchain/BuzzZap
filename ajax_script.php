@@ -93,34 +93,38 @@ if(loggedin()){
 		}	
 		echo implode(",",$pred);
 	}
-	
-	if(isset($_POST['vote'], $_POST['table'], $_POST['arg_id'], $_POST['comp_id'], $_POST['ctype'], $_POST['judges'])){
-		$table_columns = array("comp_arguments"=>"arg_id", "comp_arg_replies"=>"reply_id");
-		$table = htmlentities($_POST['table']);
-		$vote = $_POST['vote'];
-		$ctype = $_POST['ctype'];
-		$judges = $_POST['judges'];
-		$arg_id = $_POST['arg_id'];
-		$comp_id = $_POST['comp_id'];
-		$error = "Uknown error.";
-		if($table=="comp_arguments"||$table=="comp_arg_replies"){
-			if( (user_in_comp($_SESSION['user_id'], $comp_id, $ctype)!=true) && (user_already_voted_comp_arg($table, $_SESSION['user_id'], $arg_id)==false) && (($judges=="norm")||($judges!="norm"&&in_array($_SESSION['user_id'], $judges)))){
-			
-				if($vote==-1||$vote==1){
-					$update = $db->prepare("UPDATE `".$table."` SET points = points + :vote WHERE `".$table_columns[$table]."` = :arg_id");
-					$update->execute(array("arg_id"=>$arg_id, "vote"=>$vote));
-					add_voter_comp_arg($table, $_SESSION['user_id'], $arg_id);
+}else if(isset($_POST['vote'], $_POST['table'], $_POST['arg_id'], $_POST['comp_id'], $_POST['ctype'], $_POST['judges'], $_POST['user_id'])){
+	$table_columns = array("comp_arguments"=>"arg_id", "comp_arg_replies"=>"reply_id");
+	$table = htmlentities($_POST['table']);
+	$vote = $_POST['vote'];
+	$ctype = $_POST['ctype'];
+	$user_id = $_POST['user_id'];
+	$judges = $_POST['judges'];
+	if($judges!="norm"){
+		$judges = explode(",", $judges);
+	}
+	$arg_id = $_POST['arg_id'];
+	$comp_id = $_POST['comp_id'];
+	$error = "Uknown error.";
+	if($table=="comp_arguments"||$table=="comp_arg_replies"){
+		if( (user_in_comp($user_id, $comp_id, $ctype)!=true) && (user_already_voted_comp_arg($table, $user_id, $arg_id)==false) && (($judges=="norm")||($judges!="norm"&&in_array($user_id, $judges)))){
+		
+			if($vote==-1||$vote==1){
+				$update = $db->prepare("UPDATE `".$table."` SET points = points + :vote WHERE `".$table_columns[$table]."` = :arg_id");
+				$update->execute(array("arg_id"=>$arg_id, "vote"=>$vote));
+				add_voter_comp_arg($table, $user_id, $arg_id);
+				if(substr($user_id, 0,4)!="out:"){
 					add_rep(2, $_SESSION['user_id']);
-					echo "Successfully voted.";
-				}else{
-					echo $error;
-				}	
+				}
+				echo "Successfully voted.";
 			}else{
 				echo $error;
-			}
+			}	
 		}else{
 			echo $error;
-		}	
-	}
+		}
+	}else{
+		echo $error;
+	}	
 }
 ?>

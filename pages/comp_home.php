@@ -57,8 +57,15 @@ if(loggedin()){
 			<?php
 			if($type=="0"){
 				$p_title = "Private Competitions";
+				$des_opp_placeholder = "e.g group1, group2, group3";
+				$gc_string = "group";
+				$gp_string = "private";
+					
 			}else{
 				$p_title = "Global Competitions";
+				$des_opp_placeholder = "e.g community1, community2, community3";
+				$gc_string = "community";
+				$gp_string = "global";
 			}
 			echo "<div class = 'title-private-debate'>".$p_title."</div><br><br><br>";
 			if($type == "0" || $type == "1"){
@@ -66,7 +73,6 @@ if(loggedin()){
 				?>
 				<script>
 				$(document).ready(function(){
-
 					$("#des_opponents").keyup(function(){
 				 
 						var des_opp = $(this).val();
@@ -105,33 +111,27 @@ if(loggedin()){
 								$("#des_opponents").val(first_half+comma+mid);
 								$("#des_opponents").focus();
 								$("#pred_results").html("");
+								$("#des_opponents").blur(function(){
+									$("#pred_results").html("");
+								});
 							});
 						});
-					});
+					})
+				
 					
 					$(".comp-judge-sel").change(function(){
 						var val = $(this).val();
 						if(val=="jnorm"){
 							$(".tjudge-info").html("This means any user who is not involved in the competition can view the debate, and vote each argument up or down.<br>");
 						}else if(val=="jspec"){
-							$(".tjudge-info").html("This means you can choose any specific and trustworthy user(s) to judge the competition: <input type = 'text' placeholder = 'usernames... e.g user1,user2,user3' class = 'tjudge-spec-users-field' name = 'jspec_users'><br>");
+							$(".tjudge-info").html("This means you can choose any specific and trustworthy user(s) to judge the competition, however they cannot be in any of the involved <?php echo $gc_string.'\'s'; ?>: <input type = 'text' placeholder = 'usernames... e.g user1,user2,user3' class = 'tjudge-spec-users-field' name = 'jspec_users'><br>");
+						}else if(val=="jout"){
+							$(".tjudge-info").html("This means you would like someone who is not on BuzzZap at all to judge the competition, a link will be sent to them. Please supply their email(s) here: <input type = 'text' placeholder = 'emails... e.g email1,email2,email3' class = 'tjudge-out-email-field' name = 'jout_emails'>");
 						}
 					});		
 				});
 				</script>
-				<?php
-					if($type=="0"){
-						$des_opp_placeholder = "e.g group1, group2, group3";
-						$gc_string = "group";
-						$gp_string = "private";
-					}else{
-						$des_opp_placeholder = "e.g community1, community2, community3";
-						$gc_string = "community";
-						$gp_string = "global";
-					}
-					
-					
-				?>
+				
 				<div class = "start_comp_link" id = "start_comp">
 					Start New Competition
 					<div class = "start-comp-form" id = "start-comp-form">
@@ -179,6 +179,7 @@ if(loggedin()){
 									<option value = "">---</option>
 									<option value = "jnorm">Any user not involved vote each argument</option>
 									<option value = "jspec">Choose specific judge(s)</option>
+									<option value = "jout">Invite special judge (outside BuzzZap)</option>
 								</select><br><span style = "" id = "comp_field_labels" class = 'tjudge-info'></span>
 								<span id = 'comp_field_labels'>
 									<hr size = '1'>
@@ -224,8 +225,18 @@ if(loggedin()){
 									}
 								}else if($jtype=="jnorm"){
 									$judges = "norm";
+								}else if($jtype=="jout"){
+									$jemails = htmlentities($_POST['jout_emails']);
+									$judges = strlist_to_array($jemails, false);
+									$judges_emails = $judges;
+									foreach($judges as &$judge){
+										if(!filter_var($judge, FILTER_VALIDATE_EMAIL)){ 
+											$errors[]= "One of your desired special judges has an invalid email address.";
+											break;
+										}
+										$judge = "-out:".$judge.substr(encrypt($judge), 0,8);
+									}
 								}else{
-
 									$errors[]= "You must supply valid judges.";
 								}
 								
@@ -319,8 +330,21 @@ if(loggedin()){
 									$comp_id = start_comp($type, $opps, $end_time, $judges, $comp_topic_id, $starter_id);
 									add_note($_SESSION['user_id'], "You have successfully started a competition. Please wait while your opponents accept or decline to take part.", "");
 									
-									foreach($judges as $judgeid){
-										add_note($judgeid, "You have been invited to judge a competition. Please click here to view the competition and respond to the invitation.", "index.php?page=view_comp&comp=".$type.$comp_id);
+									if($jtype=="jspec"){
+										foreach($judges as $judgeid){
+											add_note($judgeid, "You have been invited to judge a competition. Please click here to view the competition and respond to the invitation.", "index.php?page=view_comp&comp=".$type.$comp_id);
+										}
+									}else if($jtype=="jout"){
+										$headers  = 'MIME-Version: 1.0' . "\r\n";
+										$headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
+										$headers .= "From: Administration@buzzzap.com" . "\r\n";
+
+										foreach($judges_emails as $key=>$email){
+											$link = $spec_judge_email_link."index.php?page=view_comp&comp=14&out_judge_key=".substr($judges[$key],4);
+											$body = "Dear ".$email.", <br> The user ".get_user_field("user_username", $_SESSION['user_id'])." at BuzzZap Online
+											Debating would like you to judge a competition. Please view it <a href = '".$link."'>here</a>. Simply vote up/down on the comments and arguments that are or are not particularly persuasive and agreeable.<br>Thank you!";
+											mail($email,"BuzzZap Judge request",$body,$headers);
+										}
 									}
 									
 									if($type=="0"){

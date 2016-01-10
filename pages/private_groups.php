@@ -83,7 +83,7 @@ if(loggedin()){
 			
 			<?php
 			if($groups->rowCount()==0){
-				echo "There are no groups in this community yet."; 
+				echo "<div id = 'no-threads-message'>There are no groups in this community yet.</div>"; 
 			}else{	
 				while($row = $groups->fetch(PDO::FETCH_ASSOC)){
 					

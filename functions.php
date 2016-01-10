@@ -1259,6 +1259,11 @@ function get_judge_list($comp_id){
 	return $clean_arr;	
 }	
 
+function get_special_judge_disname($judge_key){
+	$disname = substr($judge_key,4);
+	return $disname = substr($disname, 0, -8);
+}
+
 function get_judge_acceptance($comp_id){
 	global $db;
 	$judges_str = $db->query("SELECT judges FROM competitions WHERE comp_id =".$db->quote($comp_id))->fetchColumn();

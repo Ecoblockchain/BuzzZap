@@ -1,11 +1,14 @@
 <?php ob_start(); 
-//error_reporting(0);
+
 if(substr($_SERVER['PHP_SELF'], 0,3)=="/pr"){
 	//DEV 
 	$ajax_script_loc = "/projects/buzzzap/ajax_script.php";
+	$spec_judge_email_link = "http://localhost/projects/buzzzap/";
 }else{
 	//PROD
 	$ajax_script_loc = "../ajax_script.php";
+	error_reporting(0);
+	$spec_judge_email_link= "http://buzzzap.com/";
 }
 ?>
 <DOCTYPE html>
