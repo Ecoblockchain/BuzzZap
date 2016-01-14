@@ -617,7 +617,7 @@ if(!loggedin()){
 					<?php
 						echo nl2br(get_static_content("learn_more")); 
 					?>	
-					<br><br><iframe width="400" height="175" src="https://www.youtube.com/embed/DVbrPoJYfY8" frameborder="0" allowfullscreen></iframe>
+					<br><br><iframe width="400" height="175" src="https://www.youtube.com/watch?v=R8OlRYJ5GgY" frameborder="0" allowfullscreen></iframe>
 				</div>
 		</div>		
 	</div>
