@@ -18,8 +18,8 @@ if(loggedin()){
 						if(start_comp_opened==0){
 							start_comp_opened=1;
 							
-							$(this).animate({height:"530px"}, 500).animate({marginLeft:"22%"})
-							.animate({width:"33%"}, 500).css("color", "#ffffff")
+							$(this).animate({height:"600px"}, 500).animate({marginLeft:"28%"})
+							.animate({width:"40%"}, 500).css("color", "#ffffff")
 							.css("box-shadow", "0px 0px 40px dimgrey").css("border", "1px solid grey");
 					
 							setTimeout(function(){
@@ -60,12 +60,16 @@ if(loggedin()){
 				$des_opp_placeholder = "e.g group1, group2, group3";
 				$gc_string = "group";
 				$gp_string = "private";
+				$table_search = "private_groups";
+				$col_name = "group_name";
 					
 			}else{
 				$p_title = "Global Competitions";
 				$des_opp_placeholder = "e.g community1, community2, community3";
 				$gc_string = "community";
 				$gp_string = "global";
+				$table_search = "communities";
+				$col_name = "com_name";
 			}
 			echo "<div class = 'title-private-debate'>".$p_title."</div><br><br><br>";
 			if($type == "0" || $type == "1"){
@@ -73,51 +77,6 @@ if(loggedin()){
 				?>
 				<script>
 				$(document).ready(function(){
-					$("#des_opponents").keyup(function(){
-				 
-						var des_opp = $(this).val();
-						$.post("<?php echo $ajax_script_loc; ?>", {des_opponents:des_opp, ctype:"<?php echo $type; ?>"}, function(result){
-						
-							var pred= result.toString().split(",");
-							var count = 0;
-							var max = pred.length;
-							while(count<=max-1){
-								var new_html = "<div style = 'display:inline;font-size:60%;' pred = '"+pred[count]+"' class = 'prediction'>"+pred[count]+"</div>";
-								if($("#pred_results").html()!=new_html){
-									$("#pred_results").html(new_html);
-								}				
-								count++;
-							}
-							$("#pred_results").animate({color:"#62949b"}, 500).delay(200).animate({color:"#ffffff"}, 500);
-							setInterval(function(){
-								$("#pred_results").animate({color:"#62949b"}, 500).delay(200).animate({color:"#ffffff"}, 500);
-							}, 1200);
-						
-							$(".prediction").click(function(){
-								if($("#des_opponents").val().length>0){
-									first_half = $("#des_opponents").val().substring(0, $("#des_opponents").val().lastIndexOf(","));
-								
-								}else{
-									first_half="";
-								
-								}
-								if($("#des_opponents").val().lastIndexOf(",")>0){
-									comma = ", ";
-								}else{
-									comma = "";
-								}
-								mid = $(this).attr("pred");
-							
-								$("#des_opponents").val(first_half+comma+mid);
-								$("#des_opponents").focus();
-								$("#pred_results").html("");
-								$("#des_opponents").blur(function(){
-									$("#pred_results").html("");
-								});
-							});
-						});
-					})
-				
 					
 					$(".comp-judge-sel").change(function(){
 						var val = $(this).val();
@@ -126,9 +85,17 @@ if(loggedin()){
 						}else if(val=="jspec"){
 							$(".tjudge-info").html("This means you can choose any specific and trustworthy user(s) to judge the competition, however they cannot be in any of the involved <?php echo $gc_string.'\'s'; ?>: <input type = 'text' placeholder = 'usernames... e.g user1,user2,user3' class = 'tjudge-spec-users-field' name = 'jspec_users'><br>");
 						}else if(val=="jout"){
-							$(".tjudge-info").html("This means you would like someone who is not on BuzzZap at all to judge the competition, a link will be sent to them. Please supply their email(s) here: <input type = 'text' placeholder = 'emails... e.g email1,email2,email3' class = 'tjudge-out-email-field' name = 'jout_emails'>");
+							$(".tjudge-info").html("This means you would like someone who is not on BuzzZap at all to judge the competition, a link will be sent to them. Please supply their email(s) here: <input type = 'text' placeholder = 'emails... e.g email1,email2,email3' id = 'tjudge-out-email-field' name = 'jout_emails' class = 'tjudge-spec-users-field'>");
 						}
-					});		
+					});	
+
+					$("#deb_question").focus(function(){
+						$("#c-deb-sub-sec").hide();
+					}).blur(function(){
+						if($(this).val().length==0){
+							$("#c-deb-sub-sec").show();
+						}
+					});
 				});
 				</script>
 				
@@ -138,7 +105,13 @@ if(loggedin()){
 						<form action = "" method = "POST">
 						<span style = "color:grey;float:right;margin-top:-20px;" id = 'close-comp-form'>x</span>
 							<br>
-						
+
+								<span style = 'font-size:80%;'>Debate Notion: </span><br>
+								<input type = "text" id = "deb_question" class = "loggedout-form-fields" placeholder = "e.g Education is a human right." style = "height:30px;outline-width:0px;font-size:60%;box-shadow:none;" name = "deb_question"><br>
+								<span id = 'comp_field_labels'>
+									Leave this blank if you would like a randomly picked debate notion.
+								</span>	<br><br>
+
 								<span style = 'font-size:80%;'>Desired Opponents: </span><br>
 								<input type = "text" id = "des_opponents" class = "loggedout-form-fields" placeholder = "<?php echo $des_opp_placeholder; ?>" style = "height:30px;outline-width:0px;font-size:60%;box-shadow:none;" name = "des_opponents">
 							 
@@ -148,21 +121,25 @@ if(loggedin()){
 									Enter the <?php echo $gc_string; ?>(s) you want to compete agaisnt in this debate.
 									<?php if($type=="0"){ ?> As it is a private competition, the groups must be within this community.<?php } ?>
 								</span>	<br>
-								<br><span style = 'font-size:80%;'>Debate subject:</span><br>
-								<select name = "comp_topic" id = "contact-opt-sel" style = "margin-left:25px;width:305px;color:grey;">
-									<option value = "0">Any</option>
-									<?php
-										$get_topics = $db->prepare("SELECT topic_name, topic_id FROM debating_topics");
-										$get_topics->execute();
-										while($row = $get_topics->fetch(PDO::FETCH_ASSOC)){
-											echo "<option value = '".$row['topic_id']."'>".$row['topic_name']."</option>";
-										}
-									?>
-								</select>
-								<br>
-								<span id = 'comp_field_labels'>
-									Pick the subject of what you want to debate about in this competition. A random debate question will then be picked within that subject.
-								</span>	<br>
+								<span id = 'c-deb-sub-sec'>
+									<br><span style = 'font-size:80%;'>Debate subject:</span><br>
+									<select name = "comp_topic" id = "contact-opt-sel" style = "margin-left:25px;width:305px;color:grey;">
+										<option value = "">---</option>
+										<option value = "0">Any</option>
+										<?php
+											$get_topics = $db->prepare("SELECT topic_name, topic_id FROM debating_topics");
+											$get_topics->execute();
+											while($row = $get_topics->fetch(PDO::FETCH_ASSOC)){
+												echo "<option value = '".$row['topic_id']."'>".$row['topic_name']."</option>";
+											}
+										?>
+									</select>
+									<br>
+								
+									<span id = 'comp_field_labels'>
+										If you have not supplied your own notion, pick the subject of what you want to debate about in this competition. A random debate question will then be picked within that subject.
+									</span>	<br>
+								</span>
 								<br><span style = 'font-size:80%;'>Competition Duration:</span><br>
 								<select name = "comp_dur" id = "contact-opt-sel" style = "margin-left:25px;width:305px;color:grey;">
 									<option value = "24">24 Hours</option>
@@ -177,30 +154,31 @@ if(loggedin()){
 								<span style = 'font-size:80%;'>How would you like this competition to be judged?</span><br>
 								<select name = "comp_judge" id = "contact-opt-sel" class = "comp-judge-sel" style = "margin-left:25px;width:305px;color:grey;">
 									<option value = "">---</option>
-									<option value = "jnorm">Any user not involved vote each argument</option>
+									<option value = "jnorm">Any user not involved can judge</option>
 									<option value = "jspec">Choose specific judge(s)</option>
 									<option value = "jout">Invite special judge (outside BuzzZap)</option>
 								</select><br><span style = "" id = "comp_field_labels" class = 'tjudge-info'></span>
 								<span id = 'comp_field_labels'>
 									<hr size = '1'>
-									Each <?php echo $gc_string; ?> will be randomly chosen to be either FOR or AGAISNT (argue yes or no to) the randomly generated debate question. Groups are judged on how well they have argued their point, baring in mind it may not be their actual opinion.
+									Each <?php echo $gc_string; ?> will be randomly chosen to be either FOR or AGAISNT (argue yes or no to) the debate question/notion. Groups are judged on how well they have argued their point, baring in mind it may not be their actual opinion.
 								</span>	<br><br>
 								<input type = "submit" class = "loggedout-form-submit" style = "font-size:80%;box-shadow:none;width:200px;padding:10px;" value = "Start Competition">
 							</span>
 						</form>	
 					
 						<?php
-							if(isset($_POST['des_opponents'], $_POST['comp_topic'], $_POST['comp_dur'], $_POST['comp_judge'])){
+							if(isset($_POST['des_opponents'], $_POST['comp_topic'], $_POST['comp_dur'], $_POST['comp_judge'], $_POST['deb_question'])){
 								if($type=="0"){
 									$user_host_name = array(get_user_group($_SESSION['user_id'], "group_name"));
 								}else{
 									$user_host_name = array(get_user_community($_SESSION['user_id'], "com_name"));	
 								}
-								$opps_w_starter = strlist_to_array(htmlentities($_POST['des_opponents']), false);
+								$opps_w_starter = strlist_to_array(htmlentities(trim_commas(trim($_POST['des_opponents']))), false);
 								$opps = array_diff($opps_w_starter, $user_host_name);
 								
 								$comp_topic_id = htmlentities($_POST['comp_topic']);
 								$comp_dur = htmlentities($_POST['comp_dur']);
+								$deb_question = htmlentities($_POST['deb_question']);
 								
 								$errors = array();
 								
@@ -279,11 +257,8 @@ if(loggedin()){
 									}
 								}else{
 									$errors[] = "You must have atleast one valid opponent.";
-								}	
-								$check_valid_topic_id= $db->query("SELECT topic_id FROM debating_topics WHERE topic_id=".$db->quote($comp_topic_id))->fetchColumn();
-								if($check_valid_topic_id==""&&$comp_topic_id!=="0"){
-									$errors[] = "There was a problem with your chosen subject.<br>";
 								}
+
 
 								$end_time = ".".$comp_dur;
 								// once started, end time is time()+($comp_dur*3600);
@@ -298,7 +273,7 @@ if(loggedin()){
 								
 								$opps_ws = $opps;
 								$opps_ws[] = $user_host_id;
-								
+
 								if($jtype_spec_valid == true){
 									
 									foreach($opps_ws as $opph){
@@ -309,6 +284,7 @@ if(loggedin()){
 												}
 											}else{
 												if(user_in_community($judgeid, $opph)){
+
 													$invjudges = $invjudges.",".get_user_field($judgeid, "user_username");
 												}
 											}
@@ -325,9 +301,24 @@ if(loggedin()){
 								}else{
 									$errors[] = ($type=="0")? "You must be in a group and the group leader to start a private competition.<br>" : "You must be your community's leader to start a global competition.<br>";
 								}
+
+								if(empty($deb_question)){
+									$check_valid_topic_id= $db->query("SELECT topic_id FROM debating_topics WHERE topic_id=".$db->quote($comp_topic_id))->fetchColumn();
+									if((!empty($comp_topic_id)&&!empty($check_valid_topic_id))||$comp_topic_id=="0"){
+										$deb_question = get_rand_debate($comp_topic_id);
+										if(!$deb_question){
+											$errors[] = "We were unable to choose a random debate notion. Please choose another subject or enter your own.";
+										}
+									}else{
+										$errors[] = "You must supply a debate subject if you do not want to supply your own debate notion.";
+									}
+								}else if(strlen($deb_question)<8){
+									$errors[]= "Your debate notion must be longer.";
+								}
+
 								if(count($errors)==0){
 									setcookie("success", "1Successfully started competition", time()+10);
-									$comp_id = start_comp($type, $opps, $end_time, $judges, $comp_topic_id, $starter_id);
+									$comp_id = start_comp($type, $opps, $end_time, $judges, $comp_topic_id, $starter_id, $deb_question);
 									add_note($_SESSION['user_id'], "You have successfully started a competition. Please wait while your opponents accept or decline to take part.", "");
 									
 									if($jtype=="jspec"){
@@ -340,7 +331,7 @@ if(loggedin()){
 										$headers .= "From: Administration@buzzzap.com" . "\r\n";
 
 										foreach($judges_emails as $key=>$email){
-											$link = $spec_judge_email_link."index.php?page=view_comp&comp=14&out_judge_key=".substr($judges[$key],4);
+											$link = $spec_judge_email_link."index.php?page=view_comp&comp=".$type.$comp_id."&out_judge_key=".substr($judges[$key],4);
 											$body = "Dear ".$email.", <br> The user ".get_user_field("user_username", $_SESSION['user_id'])." at BuzzZap Online
 											Debating would like you to judge a competition. Please view it <a href = '".$link."'>here</a>. Simply vote up/down on the comments and arguments that are or are not particularly persuasive and agreeable.<br>Thank you!";
 											mail($email,"BuzzZap Judge request",$body,$headers);
@@ -384,7 +375,7 @@ if(loggedin()){
 									}	
 									
 								}else{
-									setcookie("success", "0".implode(", ",$errors), time()+10);
+									setcookie("success", "0".implode("<br>",$errors), time()+10);
 								}	
 							
 								header("Location: index.php?page=comp_home&type=".$type);
@@ -410,6 +401,7 @@ if(loggedin()){
 				$get_relevant_comps->execute(array("com_id"=>$com_id_parse, "ctype"=>$type));
 				if($get_relevant_comps->rowCount()>0){
 					while($row = $get_relevant_comps->fetch(PDO::FETCH_ASSOC)){
+
 						if(comp_started($row['comp_id'])){
 							$seconds_left = $row['end']-time();
 							$days_left = (int)($seconds_left / 86400);
@@ -422,10 +414,12 @@ if(loggedin()){
 							if($days_left==0 && $hours_left == "0"){
 								$time_left_str = "Time left: <span id = 'mins_end'>".$minutes_left."</span> mins  <span id = 'secs_end'>".$seconds_left_."</span> secs";
 							}
-						}else if(comp_ended($row['comp_id'])){
-							$time_left_str = "*NOTE: This competition has ended";
 						}else{
 							$time_left_str = "*NOTE: Waiting for all candidates to accept/decline invitation to participate.";
+						}
+
+						if(end_comp($row['comp_id'])||comp_ended($row['comp_id'])){
+							$time_left_str = "*NOTE: This competition has ended";
 						}
 						$user_involved = "false";
 						$cand_names = get_comp_acceptance_info($row['comp_id'], $type);

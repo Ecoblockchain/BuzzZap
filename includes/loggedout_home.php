@@ -467,7 +467,7 @@ if(!loggedin()){
 
 										<p>Login now, start debating, <br>
 										and participate with your <br>
-										commmunity in all sorts of events,<br> 
+										commmunity in all sorts of events<br> 
 										from competitions to general discussion. <br>
 										Enjoy!</p><br>
 

@@ -39,8 +39,10 @@ if(loggedin()){
 		});
 		</script>
 			<div class = "leader-cp-title">Welcome To The Community Manager<br>
-			<span style = 'font-size:60%;'>Any major action you may need to do such as deleting your community, or changing the community passcode <br>
-			must be requested manually via contacting BuzzZap administration.</span>
+			<span style = 'font-size:60%;'>Any major action you may need to do such as deleting your community<br>
+			must be requested manually via contacting BuzzZap administration.<br>
+			It is important as a communtity leader you frequently check this <br>
+			manager in order to approve posts and attend to reported users, etc.</span>
 			</div><br>
 			<div class= "leader-cp-section" id = "s3">
 				<b> <span style = "font-size:25px;cursor:pointer;color:salmon;" id = 't3'>General Management</span></b>
@@ -78,7 +80,7 @@ if(loggedin()){
 				<br><br>
 				<form method = "POST">
 					<textarea name = "ca-body" id = "about-me-textarea" placeholder = "Message..." style = "height:100px;"></textarea>	
-					<br><input type = "submit" value = "Post" class = "leader-cp-submit">
+					<br><input type = "submit" value = "Send" class = "leader-cp-submit">
 				</form>
 				<?php
 					if(isset($_POST['ca-body'])){
@@ -97,6 +99,40 @@ if(loggedin()){
 					}
 				?>
 				<br>
+				<hr size = "1">
+				<b><u>Change Community Passcode</u></b>
+				<br><br> 
+				<form action = "" method = "POST">
+ 					<input type = 'password' name = "new_passcode" placeholder = "New Passcode..." class = "leader-cp-fields" style = 'width:300px;'><br>
+					<input type = 'password' name = "vnew_passcode" placeholder = "Verify New Passcode..." class = "leader-cp-fields" style = 'width:300px;'><br>
+					<input type = "submit" value = "Change" class = "leader-cp-fields">
+				</form>
+				<br><br>
+
+				<?php
+					if(isset($_POST['new_passcode'], $_POST['vnew_passcode'])){
+						$passcode = htmlentities($_POST['new_passcode']);
+						$vpasscode = htmlentities($_POST['vnew_passcode']);
+						$errors  = array();
+						if(strlen($password)<=3){
+							$errors[]="Your password must be over 3 characters long.";
+						}
+						if($passcode!=$vpasscode){
+							$errors[] = "Your passcodes do not match.";
+						}
+
+						$passcode = encrypt($passcode);
+
+						if(count($errors)==0){
+							$db->query("UPDATE communities SET com_password = ".$db->quote($passcode)." WHERE com_id = ".$db->quote($com_id));
+							setcookie("success", "1Successfully updated passcode! Make sure to inform all members.", time()+10);	
+						}else{
+							setcookie("success", "0".implode(" ",$errors), time()+10);
+						}
+						header("Location: index.php?page=leader_cp&go_to=3");
+
+					}
+				?>
 			</div>
 			<br>
 			<div class= "leader-cp-section" id = "s1">
@@ -111,6 +147,7 @@ if(loggedin()){
 				 <form action = "" method = "POST">
 				 	Enter the relevant user:<br>
 				 	<input type = "text" name = "username_action" placeholder = "Enter Username..." class = "leader-cp-fields" id ='act-on-user'>
+				 	<div id = "pred_results"></div>
 				 	<input type = "hidden" name = "from-c-repo" value = "false" id = "fcr">
 				 	<select class = "leader-cp-fields" name = "user_action" id ="spec-act">
 				 		<option value = "na">Select Action</option>
@@ -147,17 +184,25 @@ if(loggedin()){
 
 				 		if($reg=="true"){
 				 			setcookie("success", "1Successfully added user!", time()+10);
-				 			header("Location: index.php?page=leader_cp&go_to=1");	
+				 			header("Location: index.php?page=leader_cp&go_to=1");
 				 		}else{
+				 			header("Location: index.php?page=leader_cp&go_to=1&reg_ue=v62sd56".implode(",",$reg));
+				 		}	
+				 	}
+			 		if(isset($_GET['reg_ue'])){	
+			 			$reg = $_GET['reg_ue'];
+			 			if(substr($reg, 0,7)=="v62sd56"){
+				 			$reg = substr($reg, 7);
+				 			$reg = explode(",",$reg);
 				 			foreach($reg as $e){
 				 				if(substr($e, 0, 4)=="Your"){
 				 					$e = "The ".substr($e, 4, strlen($e));
 				 				}
 				 				echo "<span style= 'color: salmon;'>-".$e."</span><br>";
 				 			}
-				 		}
-				 	}
-				 
+			 			}
+			 		}
+
 				 ?>
 				 <br><hr size = "1">
 				 <b><u>Banned users</u></b>
@@ -272,7 +317,7 @@ if(loggedin()){
 			</div><br>
 			<div class= "leader-cp-section" id = 's2'>
 				<b> <span style = "font-size:25px;cursor:pointer;color:salmon;" id = 't2'>Content Management</span></b>
-				<br><br>To delete/manipulate existing posts/content, go to the actual post.
+				<br><br>To delete/manipulate existing posts, visit the actual post.
 				<hr size = "1">
 				<b><u>Debates/I Wonder questions awaiting approvel</u></b>
 				<br><br>
@@ -355,7 +400,7 @@ if(loggedin()){
 				if(!empty($valid_user_check)){
 					if($action=="edit_user"){
 						// real column => display name
-						$allowed_columns = array("user_username"=>"Username", "user_password"=>"Password", "user_firstname"=>"Firstname", "user_lastname"=>"Lastname", "user_email"=>"Email");
+						$allowed_columns = array("user_username"=>"Username", "user_password"=>"Password", "user_firstname"=>"Firstname", "user_lastname"=>"Lastname", "user_email"=>"Email", "user_rank"=>"Rank");
 						$options = "<option val = ''>-----</option>";
 						foreach($allowed_columns as $column=>$display_name){
 							$options .= "<option value = '".$column."'>".$display_name."</option>";
@@ -371,6 +416,7 @@ if(loggedin()){
 									</select><br><br>
 									<input type = 'text' name = 'new_val' placeholder = 'New Value...' class = 'leader-cp-fields' id = 'edit_new_value'>
 									<input type = 'hidden' value = '".$username."' name = 'username'><br><br>
+									<span id = 'ex_info_cuser' style = 'font-size: 70%'></span><br>
 									<input type = 'submit' class = 'leader-cp-sumbit'>
 								
 								</form>
@@ -390,6 +436,11 @@ if(loggedin()){
 											$('#edit_new_value').attr('type', 'password');
 										}else{
 											$('#edit_new_value').attr('type', 'text');
+										}
+										if($(this).val()=='user_rank'){
+											$('#ex_info_cuser').html('Enter \'leader\' or \'member\'. Remember, giving a user the leader rank will give them full access to this community manager.<br>');
+										}else{
+											$('#ex_info_cuser').html('');
 										}
 										$('#edit_new_value').attr('placeholder', 'New '+dis_name);
 									});
@@ -418,14 +469,27 @@ if(loggedin()){
 			$users_com = get_user_community($euser_id, "com_id");
 			$leader_com = get_user_community($_SESSION['user_id'], "com_id");
 			if($users_com == $leader_com){
+				$check_email = $db->query("SELECT user_email FROM users WHERE user_email = ".$db->quote($new_val));
 				if((($field=="user_email")&&(filter_var($new_val, FILTER_VALIDATE_EMAIL)))||($field!="user_email")){
 					if($field == "user_password"){
 						$new_val = encrypt($new_val);
 					}
-					if(update_user_field($euser_id, $new_val, $field)){
-						setcookie("success", "1Successfully altered user!", time()+10);	
+					if(($field=="user_email"&&$check_email->rowCount()==0)||($field!="user_email")){
+						$valid_rank_opts = array("leader", "member");
+						if( ( ($field=="user_rank" ) && (in_array($new_val, $valid_rank_opts) ) ) || ($field!="user_rank") ){
+
+						
+							if(update_user_field($euser_id, $new_val, $field)){
+								setcookie("success", "1Successfully altered user!", time()+10);	
+							}else{
+								setcookie("success", "0Unknown error.", time()+10);
+							}
+
+						}else{
+							setcookie("success", "0Invalid rank, must be 'leader' or 'member'.", time()+10);
+						}
 					}else{
-						setcookie("success", "0Unknown error.", time()+10);
+						setcookie("success", "0That email is already taken.", time()+10);
 					}
 				}else{
 					setcookie("success", "0Invalid email.", time()+10);	

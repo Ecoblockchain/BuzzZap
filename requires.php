@@ -1,7 +1,3 @@
-<?php
-require("functions.php"); 
-require("connect_db.php");
-?>
 
 <script type="text/javascript" src = "ext/jquery/jquery.js"></script>
 <script type="text/javascript" src = "ext/jquery/jqueryColorAnimation.js"></script>
@@ -16,3 +12,8 @@ require("connect_db.php");
 <link href='ext/styles/styles.css' rel='stylesheet' type='text/css'>
 <link href='http://fonts.googleapis.com/css?family=Dosis|Poiret+One' rel='stylesheet' type='text/css'>
 <link href='http://fonts.googleapis.com/css?family=Roboto:400,300,100' rel='stylesheet' type='text/css'>
+<?php
+require("functions.php"); 
+require("connect_db.php");
+require("ext/predtextjs.php");
+?>

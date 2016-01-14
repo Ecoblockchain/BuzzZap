@@ -5,6 +5,9 @@ if($check_valid!="true"){
 }
 if(isset($_GET['out_judge_key'])){
 	$out_judge_key = "out:".htmlentities($_GET['out_judge_key']);
+	if(isset($_SESSION['user_id'])){
+		header("Location: index.php?page=home");
+	}
 }
 if(loggedin()||!empty($out_judge_key)){
 	if(isset($_GET['comp'])){
@@ -19,17 +22,25 @@ if(loggedin()||!empty($out_judge_key)){
 		$user_id = (isset($_SESSION['user_id']))? $_SESSION['user_id']: $out_judge_key;
 
 		
-			
+		//if in correct com (includes public where com = 0)
 		if(empty($out_judge_key)){
 			$com_id = ($type=="0")? get_user_community($_SESSION['user_id'], "com_id"): "0";
 			if($com_id==$comp_com_id){
 				$valid_to_view = true;
+			}else{
+				$valid_to_view = false;
 			}
 		}	
-		if(in_array($user_id, $judges)){
-			$valid_to_view = true;
+
+		//if judge
+		if($judges!="norm"){
+			if(in_array($user_id, $judges)){
+				$valid_to_view = true;
+			}
 		}
+
 		if((!empty($comp_info["comp_title"]))&&($valid_to_view==true)&&(in_array($type, array("0","1"))&&(!empty($type_match_comp)))){
+
 			?>
 			<script>
 			$(document).ready(function(){
@@ -68,8 +79,11 @@ if(loggedin()||!empty($out_judge_key)){
 					
 					var arg_id = info.substring(3);
 					var comp_id = "<?php echo $comp_id; ?>";
-					var parse_judges = "<?php echo ($judges=='norm')? $norm : implode(',',$judges); ?>";
-					$.post("<?php echo $ajax_script_loc; ?>", {vote:vote, table:table, arg_id:arg_id, comp_id:comp_id, ctype:"<?php echo $type; ?>", judges:parse_judges, user_id:"<?php echo $user_id; ?>"}, function(result,err){
+					var parse_judges = "<?php echo ($judges=='norm')? 'norm' : implode(',',$judges); ?>";
+					var post_data = {vote:vote, table:table, arg_id:arg_id, comp_id:comp_id, ctype:"<?php echo $type; ?>", judges:parse_judges, user_id:"<?php echo $user_id; ?>"};
+					console.log(post_data);
+					$.post("<?php echo $ajax_script_loc; ?>", post_data, function(result,err){
+						console.log(err+result);
 						$("."+c_prefix+"cid"+arg_id).fadeOut(100);
 						setTimeout(function(){
 							$("."+c_prefix+"success-msg"+arg_id).html(result);
@@ -163,8 +177,15 @@ if(loggedin()||!empty($out_judge_key)){
 						if(in_array($user_id, $judges)){
 							echo "As a judge, you must read through the different arguments and comments, and simply vote up or down to which comments you are or aren't persuaded by. It is important you vote as many comments as possible.";
 						}
+					}else if(!user_in_comp($user_id, $comp_id, $type)){
+						echo "As a reader, you can read through the different arguments and comments, and simply vote up or down to which comments you are or aren't persuaded by. This will help towards your reputation!";
 					}else{
-						echo "As a reader, read through the different arguments and comments, and simply vote up or down to which comments you are or aren't persuaded by. This will help towards your reputation!";
+						echo "As you are involved in this competition, make sure to submit your main argument in your section, and argue against arguments in other sections.";
+					}
+					if(empty($out_judge_key)){
+						if((user_rank($user_id, "3")==true)&&(user_in_comp($user_id, $comp_id, $type))){
+							echo "<br>NOTE: As a leader, only delete comments if they are abusive or spam.";
+						}
 					}
 				}
 				?>
@@ -175,7 +196,7 @@ if(loggedin()||!empty($out_judge_key)){
 			<?php
 					$jacceptance = get_judge_acceptance($comp_id);
 					if(($judges!="norm")&&(in_array($user_id, $judges))&&($jacceptance[$user_id]!="1")){
-						echo "<div style = 'z-index:1000000;margin:0 auto;padding:10px;background-color:lightgrey;color:grey;letter-spacing:2px;box-shadow: 0px 0px 30px grey;width:200px;'>Do you 
+						echo "<div id = 'judge-invite-box' style = ''>Do you 
 						<a href = 'index.php?page=view_comp&comp=".$_GET['comp']."&res_j_in=1".$user_id."' style = 'color:#66CDAA;'>accept</a>
 						  or <a href = 'index.php?page=view_comp&comp=".$_GET['comp']."&res_j_in=0".$user_id."' style = 'color:salmon;'>decline</a>
 						  your invitation to judge this competition?
@@ -192,10 +213,7 @@ if(loggedin()||!empty($out_judge_key)){
 						}
 					}
 				
-						
-					if((comp_started($comp_id)==false)&&(!comp_ended($comp_id))){
-						echo "<div id = 'page-disabled'>This competition will not start untill all candidates have responded to their invitation to participate.</div>";
-					}else if(comp_ended($comp_id)){
+					if(end_comp($comp_id)||comp_ended($comp_id)){
 						$winner_ids = get_comp_winner($comp_id, $type);
 						if(count($winner_ids)==1){
 							$winner = ($type=="0")?$db->query("SELECT group_name FROM private_groups WHERE group_id=".$db->quote($winner_ids[0]))->fetchColumn():$db->query("SELECT com_name FROM communities WHERE com_id=".$db->quote($winner_ids[0]))->fetchColumn();
@@ -218,6 +236,9 @@ if(loggedin()||!empty($out_judge_key)){
 						
 							</div>";
 						}
+					}
+					if((comp_started($comp_id)==false)&&(!comp_ended($comp_id))){
+						echo "<div id = 'page-disabled'>This competition will not start untill all candidates have responded to their invitation to participate.</div>";
 					}
 			?>
 				<form method = "POST" class = "add-arg-comp-form" id = "add-arg-comp-form">
@@ -363,12 +384,19 @@ if(loggedin()||!empty($out_judge_key)){
 							echo "<div id = 'arg-text-body' style = 'margin-top: 10px;background-color:".cand_color($cand_id).";'>".$row['arg_text']."<br>
 								<span style = 'color:#ffffff;'>By <a style = 'color:grey;' href = 'index.php?page=profile&user=".$row['user_id']."'>".get_user_field($row['user_id'], "user_username")."</a></span>";
 							if($rel_to_sec!=3){	
-								echo "<span style = 'float:right;color:grey;text-decoration:underline;cursor:pointer;' arg_id = '".$row['arg_id']."' class = 'add-comment-arg-opt' cand_id = '".$cand_id."'>Add Comment</span>";
+								echo "<span style = 'float:right;color:grey;cursor:pointer;' arg_id = '".$row['arg_id']."' class = 'add-comment-arg-opt' cand_id = '".$cand_id."'>Add Comment</span>";
 							}else if((user_already_voted_comp_arg("comp_arguments", $user_id, $row['arg_id'])==false)&&(($judges=="norm")||($judges!="norm"&&in_array($user_id, $judges)))){
-								echo "<span style = 'float:right;color:grey;text-decoration:underline;cursor:pointer;' arg_id = '1b-".$row['arg_id']."' class = 'vote-opt bcid".$row['arg_id']." bsuccess-msg".$row['arg_id']."'> Vote Up</span>
+								echo "<span style = 'float:right;color:grey;cursor:pointer;' arg_id = '1b-".$row['arg_id']."' class = 'vote-opt bcid".$row['arg_id']." bsuccess-msg".$row['arg_id']."'> Vote Up</span>
 							
-								<span style = 'float:right;color:grey;text-decoration:underline;cursor:pointer;' arg_id = '0b-".$row['arg_id']."' class = 'vote-opt bcid".$row['arg_id']."'>Vote Down &middot; </span>";
+								<span style = 'float:right;color:grey;cursor:pointer;' arg_id = '0b-".$row['arg_id']."' class = 'vote-opt bcid".$row['arg_id']."'>Vote Down &middot; </span>";
 							}
+							if(empty($out_judge_key)){
+								if((user_rank($user_id, "3")==true)&&(get_user_community($user_id, "com_id")==get_user_community($row['user_id'], "com_id"))){
+								
+									echo "<a style = 'float:right;color:black;text-decoration:none;cursor:pointer;' href = 'index.php?page=view_comp&comp=".$_GET['comp']."&delc=1".$row['arg_id']."&uid=".$row['user_id']."' >&ensp;&ensp;Delete&ensp;&ensp;</a>";
+
+								}
+							}		
 							echo "</div>";
 						
 							$get_replies = $db->prepare("SELECT * FROM comp_arg_replies WHERE arg_id = :arg_id AND cand_id = :cand_id");
@@ -380,9 +408,15 @@ if(loggedin()||!empty($out_judge_key)){
 							
 								if(($rel_to_sec==3)&&(user_already_voted_comp_arg("comp_arg_replies", $user_id, $row_['reply_id'])==false)&&(($judges=="norm")||($judges!="norm"&&in_array($user_id, $judges)))){
 									echo "<span style = 'float:right;color:grey;text-decoration:underline;cursor:pointer;' arg_id = '1m-".$row_['reply_id']."' class = 'vote-opt mcid".$row_['reply_id']." msuccess-msg".$row_['reply_id']."'> Vote Up</span>
-									<span style = 'float:right;color:grey;text-decoration:underline;cursor:pointer;' arg_id = '0m-".$row_['reply_id']."' class = 'vote-opt mcid".$row_['reply_id']."'>Vote Down &middot; </span>";
+									<span style = 'float:right;color:grey;cursor:pointer;' arg_id = '0m-".$row_['reply_id']."' class = 'vote-opt mcid".$row_['reply_id']."'>Vote Down &middot; </span>";
 								}
-							
+								if(empty($out_judge_key)){
+									if((user_rank($user_id, "3")==true)&&(get_user_community($user_id, "com_id")==get_user_community($row_['user_id'], "com_id"))){
+									
+										echo "<a style = 'float:right;color:black;text-decoration:none;cursor:pointer;' href = 'index.php?page=view_comp&comp=".$_GET['comp']."&delc=0".$row_['reply_id']."&uid=".$row_['user_id']."' >&ensp;&ensp;Delete&ensp;&ensp; </a>";
+
+									}
+								}
 								echo "</div>";
 							}	
 						}	
@@ -396,6 +430,38 @@ if(loggedin()||!empty($out_judge_key)){
 						</div>";
 					}
 				}
+
+				if(isset($_GET['delc'], $_GET['uid'])){
+					$del_c = htmlentities($_GET['delc']);
+					$ctype = substr($del_c, 0,1);
+					$uid = htmlentities($_GET['uid']);
+					$cid = substr($del_c, 1);
+					$table = ($ctype == "1") ? "comp_arguments" : "comp_arg_replies";
+					$col = array("comp_arguments"=>"arg_id", "comp_arg_replies"=>"reply_id")[$table];
+					$check = $db->query("SELECT user_id FROM `".$table."` WHERE `".$col."` = ".$db->quote($cid)." AND user_id = ".$db->quote($uid))->fetchColumn();
+					$error = false;
+					if(!empty($check)){
+						if(empty($out_judge_key)){
+							if((user_rank($user_id, "3")==true)&&(get_user_community($user_id, "com_id")==get_user_community($uid, "com_id"))){
+								$db->query("DELETE FROM `".$table."` WHERE `".$col."` = ".$db->quote($cid));
+							}else{
+								$error = true;
+							}
+						}else{
+							$error = true;
+						}
+					}else{
+						$error = true;
+					}
+					if($error == true){
+						$msg = "0Unknown Error";
+					}else{
+						$msg = "1Successfully deleted.";
+					}
+					setcookie("success", $msg, time()+10);	
+					header("Location: index.php?page=view_comp&comp=".$_GET['comp']);
+				}
+
 				if($rel_to_sec!=3){	
 					if(isset($_POST['com_cand_id'],$_POST['com_arg_id'],$_POST['com_text'])&&(!comp_ended($comp_id))){
 						$arg_id = htmlentities($_POST['com_arg_id']);

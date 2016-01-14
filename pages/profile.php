@@ -179,10 +179,14 @@ if(loggedin()){
 											setcookie("success", "0Field must be shorter.", time()+10);
 										}	
 									}else if((($column=="user_email")&&(filter_var($value, FILTER_VALIDATE_EMAIL)))||($column!=="user_email")){		
-					
-										$update = $db->prepare("UPDATE users SET `$column` = :value WHERE user_id = :user_id");
-										$update->execute(array("value"=>$value,"user_id"=>$user_id));
-										setcookie("success", "1Successfully updated!", time()+10);
+										$check_email = $db->query("SELECT user_email FROM users WHERE user_email = ".$db->quote($value));
+										if($check_email->rowCount()==0){
+											$update = $db->prepare("UPDATE users SET `$column` = :value WHERE user_id = :user_id");
+											$update->execute(array("value"=>$value,"user_id"=>$user_id));
+											setcookie("success", "1Successfully updated!", time()+10);
+										}else{
+											setcookie("success", "0That email is already taken.", time()+10);
+										}
 									}else{
 										setcookie("success", "0Invalid email.", time()+10);
 									}		

@@ -46,12 +46,11 @@ if(loggedin()){
 					<span id = 'c_group_form' style = 'display:none;float:right;position:absolute;'>
 						<form action = "" method = "POST">
 							<input type = "text" name = "group_name" placeholder = "Group Name" class = "group-fields">
-							<input type = "text" name = "group_members" placeholder = "Desired Members" class = "group-fields">
+							<input id = 'desired_g_mems' type = "text" name = "group_members" placeholder = "e.g user1, user2, user2" class = "group-fields">
 							<input type = "submit" class = "group-fields" style = "width:70px;"><br>
-							<span style = 'color:grey;font-size:70%;float:right;'>
-								Enter desired members by separating each<br>
-								username with commas, e.g user1, user2, user3
-							</span>	
+							<div style = 'margin-left: 200px'id = "pred_results">
+								(desired members)
+							</div>	
 						</form>
 					</span>	
 				</div>
@@ -91,7 +90,7 @@ if(loggedin()){
 
 					if((user_in_group($_SESSION['user_id'], $row['group_id'], "")==true)&&(user_in_group($_SESSION['user_id'], $row['group_id'], "true")==false)){
 						$join_link = "<br><a href = 'index.php?page=private_groups&join=".$row['group_id']."' id = 'group_link' style = 'color:#a0db8e;font-size:60%;'>Accept invitation to join</a><br>
-						<a href = 'index.php?page=private_groups&dec=".$row['group_id']."' id = 'group_link' style = 'color:grey;font-size:60%;'>Decline invitation to join</a>";	
+						<a href = 'index.php?page=private_groups&dec=".$row['group_id']."' id = 'group_link' style = 'color:#fb998e;font-size:60%;'>Decline invitation to join</a>";	
 					}else if(user_in_group($_SESSION['user_id'], $row['group_id'], "true")){
 						$join_link = "<br><a href = 'index.php?page=private_groups&leave=".$row['group_id']."' id = 'group_link'>Leave Group </a>";	
 						if(group_leader($_SESSION['user_id'])){
@@ -165,9 +164,9 @@ if(loggedin()){
 		}else if(isset($_GET['leave'])){
 			$group_id = htmlentities($_GET['leave']);
 			$leave_act = group_action($_SESSION['user_id'], $group_id, "leave");
-			if($leave_act==true&&$leave_act!="compe"){
+			if($leave_act===true){
 				setcookie("success", "1Successfully left group.", time()+10);	
-			}else if($leave_act=="compe"){
+			}else if($leave_act==="compe"){
 				setcookie("success", "0You cannot leave a group while the group is involved in competitions. Please wait untill any competitions are over.", time()+10);	
 			}else{
 				setcookie("success", "0There was an error.", time()+10);	
@@ -175,38 +174,42 @@ if(loggedin()){
 			header("Location: index.php?page=private_groups");	
 		}else if(isset($_POST['group_name'], $_POST['group_members'])){
 			$name = htmlentities($_POST['group_name']);
-			$members = htmlentities($_POST['group_members']);
-			$members = strlist_to_array($members);
-			if(end($members)!=="ERROR"){
-				$user_id = $_SESSION['user_id'];
-				if(create_p_group($user_id, $name, $members)){
-					foreach($members as $member){
+			if(strlen($name)>3){
+				$members = htmlentities($_POST['group_members']);
+				$members = strlist_to_array($members);
+				if(end($members)!=="ERROR"){
+					$user_id = $_SESSION['user_id'];
+					if(create_p_group($user_id, $name, $members)){
+						foreach($members as $member){
+							
+							$text = "You have been invited to join the group '".$name."', to accept or decline please click here.";
+							$link = "index.php?page=private_groups";
+							
+							add_note($db->query("SELECT user_id FROM users WHERE user_username=".$db->quote($member))->fetchColumn(), $text, $link);
+						}
+						$text = "Your group '".$name."' has successfully been created. Your desired members will recieve their invitations to join shortly.";
+						$link = "";
+						add_note($_SESSION['user_id'], $text, $link);
 						
-						$text = "You have been invited to join the group '".$name."', to accept or decline please click here.";
-						$link = "index.php?page=private_groups";
 						
-						add_note($db->query("SELECT user_id FROM users WHERE user_username=".$db->quote($member))->fetchColumn(), $text, $link);
+						setcookie("success", "1Successfully created group.", time()+10);
+					}else{
+					
+						setcookie("success", "0There was an error.", time()+10);
 					}
-					$text = "Your group '".$name."' has successfully been created. Your desired members will recieve their invitations to join shortly.";
-					$link = "";
-					add_note($_SESSION['user_id'], $text, $link);
-					
-					
-					setcookie("success", "1Successfully created group.", time()+10);
 				}else{
-				
-					setcookie("success", "0There was an error.", time()+10);
-				}
-			}else{
-				$text = "The following users don't exist:<br><b>";
-				foreach($members as $user){
-					if($count!=count($members)-1){
-						$text = $text.$user."<br>";
+					$text = "The following users don't exist:<br><b>";
+					foreach($members as $user){
+						if($count!=count($members)-1){
+							$text = $text.$user."<br>";
+						}
+						$count++;	
 					}
-					$count++;	
-				}
-				$text = "0".trim_commas($text)."</b>";
-				setcookie("success", $text, time()+10);	
+					$text = "0".trim_commas($text)."</b>";
+					setcookie("success", $text, time()+10);	
+				}	
+			}else{
+				setcookie("success", "0Your group name must be longer.", time()+10);
 			}		
 			header("Location: index.php?page=private_groups");
 			

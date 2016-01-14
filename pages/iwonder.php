@@ -24,7 +24,9 @@ if(loggedin()){
 			});
 			
 			$("#new-sticky-text").blur(function(){
-					window.location="index.php?page=iwonder&start_t="+$(this).val();
+					if($(this).val().ength>0){
+						window.location="index.php?page=iwonder&start_t="+$(this).val();
+					}
 			});
 		});
 		

@@ -165,8 +165,15 @@ function register_user($username, $password, $vpassword, $firstname, $lastname, 
 
 function update_user_field($user_id, $value, $field){
 	global $db;
+
+	$rank_binds = array("leader"=>3, "member"=>1);
+
 	$value = htmlentities($value);
 	$user_id = (int) $user_id;
+
+	if($field=="user_rank"){
+		$value = $rank_binds[$value];
+	}
 
 	$update = $db->prepare("UPDATE users SET ".$field." = :value WHERE user_id = :id");
 	$update->execute(array("value"=>$value, "id"=>$user_id));
@@ -579,10 +586,10 @@ function group_in_a_comp($group_id){
 	$like4 = $group_id;
 	
 	$get_opp_ids = $db->query("SELECT * FROM competitions WHERE comp_type = 0 AND
-	 opp_id LIKE '%$like1%' OR 
-	 opp_id LIKE '%$like2%' OR
+	 opp_id LIKE '%$like1' OR 
+	 opp_id LIKE '$like2%' OR
 	 opp_id LIKE '%$like3%' OR
-	 opp_id LIKE '%$like4%'");
+	 opp_id LIKE '$like4'");
 	 
 	$get_as_starter = $db->query("SELECT starter_id FROM competitions WHERE starter_id = '$group_id' AND comp_type = 0")->fetchColumn();
 	if($get_opp_ids->rowCount()>0){
@@ -623,14 +630,17 @@ function group_action($user_id, $group_id, $action){
 			if($action=="leave"){
 				add_rep(-10, $user_id);
 			}
-			if(($action == "leave"&&!group_in_a_comp($group_id))||($action=="dec")){
+			$check_in_comp = group_in_a_comp($group_id);
+			if(($action == "leave"&&!$check_in_comp)||($action=="dec")){
 				$delete = $db->prepare("DELETE FROM group_members WHERE user_id = :user_id AND group_id = :group_id");
 				$delete->execute(array("user_id"=>$user_id, "group_id"=>$group_id));
-				$check_leader = $db->query("SELECT user_id FROM group_members WHERE user_id = ".$_SESSION['user_id']." AND leader = 1")->fetchColumn();
-				if(!empty($check_leader)){
+				$check_group_count = $db->query("SELECT user_id FROM group_members WHERE active = 1 AND group_id = ".$db->quote($group_id));
+				if($check_group_count->rowCount()==0){
 					delete_group($group_id);
+
 				}
 			}else{
+				echo "compe";
 				return "compe";
 			}
 			return true;
@@ -642,7 +652,7 @@ function group_action($user_id, $group_id, $action){
 
 function strlist_to_array($list, $valid_as_user = true){
 	global $db;
-	$list = explode(",", $list);
+	$list = explode(",", trim_commas(trim($list)));
 	if($valid_as_user==true){
 		$invalid_users = array();	
 	}
@@ -753,6 +763,14 @@ function send_pm($valid_ids, $body, $subject){
 	
 	return $pm_id;
 }
+
+function delete_pm($pm_id){
+	global $db;
+	$db->query("DELETE * FROM private_messages WHERE pm_id = ".$db->quote($pm_id));
+	$db->query("DELETE * FROM pm_members WHERE pm_id = ".$db->quote($pm_id));
+	$db->query("DELETE * FROM pm_replies WHERE pm_id = ".$db->quote($pm_id));
+	return true;
+}
 function mark_pms_as_seen($user_id, $pm_ids){
 	global $db;
 	foreach($pm_ids as $pm_id){
@@ -802,7 +820,7 @@ function users_seen_pm_reply($reply_id, $pm_id){
 function get_unread_pm_quant($user_id){
 	global $db;
 	$quant = 0;
-	$get_active_pms = $db->prepare("SELECT pm_id FROM pm_members WHERE user_id = :user_id");
+	$get_active_pms = $db->prepare("SELECT pm_id FROM pm_members WHERE user_id = :user_id AND visible = 1");
 	$get_active_pms->execute(array("user_id"=>$user_id));
 	while($row = $get_active_pms->fetch(PDO::FETCH_ASSOC)){
 		if(user_not_seen_latest_pm($user_id, $row['pm_id'])){
@@ -1033,7 +1051,7 @@ function run_admin_query($query){
 
 function get_rand_debate($topic = ""){
 	global $db;
-	if($topic==""){
+	if($topic=="0"){
 		$ext1 = "";
 	}else{
 		$get_topic_id = $topic;
@@ -1046,9 +1064,13 @@ function get_rand_debate($topic = ""){
 	while($row = $get_title->fetch(PDO::FETCH_ASSOC)){
 		$title_list[] = $row["thread_title"];
 	}
+	if(count($title_list)>0){
+		$rand_title = $title_list[rand(0, count($title_list)-1)];
+		return $rand_title;
+	}else{
+		return false;
+	}
 	
-	$rand_title = $title_list[rand(0, count($title_list)-1)];
-	return $rand_title;
 }
 
 function trim_commas($string){
@@ -1062,7 +1084,7 @@ function trim_commas($string){
 	return $string;
 	
 }
-function start_comp($type, $opps_array, $end_time, $judges, $topic, $starter_id){
+function start_comp($type, $opps_array, $end_time, $judges, $topic, $starter_id, $deb_question){
 	global $db;
 
 	$acceptance_str = "";
@@ -1071,20 +1093,18 @@ function start_comp($type, $opps_array, $end_time, $judges, $topic, $starter_id)
 	}
 
 	$acceptance_str = trim_commas($acceptance_str);
-	if($topic=="0"){
-		$topic = "";
-	}
+
 	$comp_com_id = ($type=="0")? get_user_field($_SESSION['user_id'], "user_com"): "0";
 
 	if($judges != "norm"){
 		$judges = implode(",",$judges);
 	}
 
-	$debate_title = get_rand_debate($topic);
+	
 	$opps = implode(",",$opps_array);
 	$insert = $db->prepare("INSERT INTO competitions VALUES('', :title, :type, :starter, :opps, UNIX_TIMESTAMP(), :end, :judges, :com, :acceptance)");
 	$insert->execute(array(
-			"title"=>$debate_title,
+			"title"=>$deb_question,
 			"type"=>$type,
 			"starter"=>$starter_id,
 			"opps"=>$opps,
@@ -1328,7 +1348,9 @@ function check_comp_ready($comp_id, $type){
 				$opp_id_as_key = get_comp_acceptance_info($comp_id, "1");
 				$opp_ids = array();
 				foreach($opp_id_as_key as $opp_id=>$element){
-					$opp_ids[] = $opp_id;
+					if($element=="1"){
+						$opp_ids[] = $opp_id;
+					}
 				}	
 				$gci = get_comp_info($comp_id);
 				$opp_ids[] = $gci["starter_id"];
@@ -1476,77 +1498,50 @@ function get_users_contributed_comp($comp_id, $cand_id){
 	
 	return $user_ids = array_unique($user_ids);
 }
-function end_comps_rel_to_user(){
+function end_comp($comp_id){
 	global $db;
-	
-	$rel_comps = array();
-	$get_relevant_comps= $db->prepare("SELECT * FROM competitions WHERE comp_com_id = :com_id");
-	$get_relevant_comps->execute(array("com_id"=>get_user_field($_SESSION['user_id'], "user_com")));
-	while($row = $get_relevant_comps->fetch(PDO::FETCH_ASSOC)){
-		$rel_comps[]=$row['comp_id'];
-	}
-	
-	$like1 = get_user_field($_SESSION['user_id'], "user_com");
-	$like2 = ",".get_user_field($_SESSION['user_id'], "user_com");
-	$like3 = get_user_field($_SESSION['user_id'], "user_com").",";
-	$like4 = ",".get_user_field($_SESSION['user_id'], "user_com").",";
-	$get_relevant_comps= $db->prepare("SELECT * FROM competitions WHERE comp_type = 1 AND
-	opp_id LIKE :like1 OR
-	opp_id LIKE :like2 OR
-	opp_id LIKE :like3 OR
-	opp_id LIKE :like4");
-	$get_relevant_comps->execute(array("like1"=>$like1, "like2"=>$like2,"like3"=>$like3,"like4"=>$like4));
-	while($row = $get_relevant_comps->fetch(PDO::FETCH_ASSOC)){
-		$rel_comps[]=$row['comp_id'];
-	}
-	
-	$get_relevant_comps= $db->prepare("SELECT * FROM competitions WHERE starter_id = :com_id");
-	$get_relevant_comps->execute(array("com_id"=>get_user_field($_SESSION['user_id'], "user_com")));
-	while($row = $get_relevant_comps->fetch(PDO::FETCH_ASSOC)){
-		$rel_comps[]=$row['comp_id'];
-	}
-	
-	
-	
-	foreach($rel_comps as $comp_id){
-		$comp_info = get_comp_info($comp_id);
-		if((substr($comp_info['end'],0,1)!=".")&&(!comp_ended($comp_id))){
-			if(time()>intval($comp_info['end'])){
-				if($comp_info['comp_type']=="0"){
-					$all_users = get_all_users_in_p_comp($comp_id);
-					foreach($all_users as $uid){
-						add_note($uid, "A competition you are involved in ('".$comp_info['comp_title']."') has just ended. Click here to see the results.", "index.php?page=view_comp&comp=".$comp_info['comp_type'].$comp_id);
-					}
-				}else{
-					$opp_id_as_key = get_comp_acceptance_info($comp_id, "1");
-					$opp_ids = array();
-					foreach($opp_id_as_key as $opp_id=>$element){
-						$opp_ids[] = $opp_id;
-					}	
-					
-					$opp_ids[] = $comp_info["starter_id"];
-					foreach($opp_ids as $cid){
-					
-						add_com_feed($cid, "A global competition we are all involved in has just ended! <a href = 'index.php?page=view_comp&comp=1".$comp_id."' >Click here</a> to see the results.");
-				
-					}
+	$comp_info = get_comp_info($comp_id);
+	if((substr($comp_info['end'],0,1)!=".")&&(!comp_ended($comp_id))){
+		if(time()>intval($comp_info['end'])){
+			if($comp_info['comp_type']=="0"){
+				$all_users = get_all_users_in_p_comp($comp_id);
+				foreach($all_users as $uid){
+					add_note($uid, "A competition you are involved in ('".$comp_info['comp_title']."') has just ended. Click here to see the results.", "index.php?page=view_comp&comp=".$comp_info['comp_type'].$comp_id);
 				}
-		
-				$end = $db->prepare("UPDATE competitions SET end = 'true' WHERE comp_id = :comp_id");
-				$end->execute(array("comp_id"=>$comp_id));
-				
-				$winner_ids = get_comp_winner($comp_id, $comp_info['comp_type']);
-				if(count($winner_ids)==1){
-					$winner = $winner_ids[0];
-					$gc_string = ($comp_info['comp_type']=="0")? "group":"community";
-					$rew_users = get_users_contributed_comp($comp_id, $winner);
-					foreach($rew_users as $uid){
-						add_rep(10, $uid, " you contributed to your ".$gc_string."'s victory in the competition '".$comp_info['comp_title']."'");
-						add_badge("Being on the winning side of a competition.", $uid, "you contributed to your ".$gc_string."'s victory in the competition '".$comp_info['comp_title']."'");
+			}else{
+				$opp_id_as_key = get_comp_acceptance_info($comp_id, "1");
+				$opp_ids = array();
+				foreach($opp_id_as_key as $opp_id=>$element){
+					if($element=="1"){
+						$opp_ids[] = $opp_id;
 					}
-					
+				}	
+				
+				$opp_ids[] = $comp_info["starter_id"];
+				foreach($opp_ids as $cid){
+				
+					add_com_feed($cid, "A global competition we are all involved in has just ended! <a href = 'index.php?page=view_comp&comp=1".$comp_id."' >Click here</a> to see the results.");
+			
 				}
 			}
+	
+			$end = $db->prepare("UPDATE competitions SET end = 'true' WHERE comp_id = :comp_id");
+			$end->execute(array("comp_id"=>$comp_id));
+			
+			$winner_ids = get_comp_winner($comp_id, $comp_info['comp_type']);
+			if(count($winner_ids)==1){
+				$winner = $winner_ids[0];
+				$gc_string = ($comp_info['comp_type']=="0")? "group":"community";
+				$rew_users = get_users_contributed_comp($comp_id, $winner);
+				foreach($rew_users as $uid){
+					add_rep(10, $uid, " you contributed to your ".$gc_string."'s victory in the competition '".$comp_info['comp_title']."'");
+					add_badge("Being on the winning side of a competition.", $uid, "you contributed to your ".$gc_string."'s victory in the competition '".$comp_info['comp_title']."'");
+				}
+				
+			}
+			return true;
+		}else{
+			return false;
 		}
 	}
 }
