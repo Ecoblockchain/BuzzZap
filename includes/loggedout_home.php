@@ -384,7 +384,7 @@ if(!loggedin()){
 								<input type= "password" autocomplete="off" spellcheck="false" name = "com_pass_" class = "loggedout-form-fields"><br><br>
 
 								<input type = "submit" value = "Join" class = "loggedout-form-submit"><br><br>
-								<span class = "join-a">By joining, you accept and agree<br> to the terms and conditions.</span>
+								<span class = "join-a">By signing up you understand <br>and accept the legal agreements.</span>
 							</form>
 							
 						<?php
@@ -575,6 +575,7 @@ if(!loggedin()){
 			
 		</div>	
 		</center>
+		
 	</div>
 	
 	<div id = "nav-bar-out">
@@ -588,6 +589,7 @@ if(!loggedin()){
 		<div class = 'nav-bar-out-opt' id = 'nbo5'>Legal Agreements</div>
 		
 	</div>
+	<div id = 'copy-text' style  = 'margin-top: -20px;position: fixed;color: grey;font-size: 80%;'>Copyright &copy; 2016 BuzzZap</div>
 	<div id = "section2" class = "section">
 		<div class = "sec-title">HAPPENING</div>
 		<div class = "loggedout-main-container1" style = "">
@@ -720,7 +722,7 @@ if(!loggedin()){
 				<div class = "snc-form" style = "">
 					<form action = "index.php?page=home&go_to=4" method = "POST" id = "snc-form-in">
 						<span style = 'line-height: 20px;letter-spacing: 1px;'>Current Subscription Fee: Free for the six months<br>
-						then &pound;199.99 GBP a year. <span class ="contact-email" style = 'cursor: pointer;' id ='mpic-show'>More Info</span><br> or contact <span class ="contact-email">billing@buzzzap.com</span> for any questions.</span><br><br>
+						then &pound;199.99 GBP a year. <span class ="contact-email" style = 'cursor: pointer;' id ='mpic-show'>More Info</span><br> or contact <span class ="contact-email">billing@buzzzap.com</span> for any questions.<br> By signing up you understand and accept the legal agreements.</span><br><br>
 						<input placeholder = "Community Name" type = "text" name = "snc_com_name" class = "loggedout-form-fields-snc" style = "width:500px;" id = "sf1"><div class = "snc-field-note" id = "sfn1">This is the name of your community.</div>
 						<input placeholder = "Community Pass Code" type = "password" name = "snc_com_pass" class = "loggedout-form-fields-snc" style = "width:400px;" id = "sf2"><div class = "snc-field-note" id = "sfn2">This is the passcode used to access the community by all members.</div>
 						<input placeholder = "Your Username" type = "text" name = "snc_leader_username" class = "loggedout-form-fields-snc" style = "width:500px;" id = "sf3"><div class = "snc-field-note" id = "sfn3">This is the community leaders username, you.</div>
