@@ -850,8 +850,8 @@ if(!loggedin()){
 	
 	<div id = "section6" class = "section">
 		<div class = "sec-title">LEGAL AGREEMENTS</div>
-		<div class = "loggedout-main-container1">
-			<div style = "color: lightgrey;font-size:300%;" class = "contact-result-msg">Coming Soon</div>
+		<div class = "loggedout-main-container1" style = 'text-align: center;white-space:normal;color: #3b3b3b;'>
+			<?php echo get_static_content("legal"); ?> 
 		</div>
 	</div>
 
