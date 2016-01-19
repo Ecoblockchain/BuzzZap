@@ -498,6 +498,7 @@ if(loggedin_as_admin()){
 				if(isset($_GET['rerr'])){
 					$handle = fopen("php-error.log", "w+");
 					fwrite($handle , ' ');
+					header("Location: index.php?page=home&sp=10");
 				}
 			?>
 		
