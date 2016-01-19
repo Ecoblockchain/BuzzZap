@@ -31,7 +31,7 @@ if(loggedin_as_admin()){
 		<a href = "index.php?page=home&sp=8" style = 'color:#71C671;'>Static Content ></a><br><br>
 		<a href = "index.php?page=home&sp=9" style = 'color:#71C671;'>Use Encryption Method ></a><br>
 		<a href = "index.php?page=home&sp=10" style = 'color:#71C671;'>Error Log ></a><br>
-		<a href = "index.php?page=home&sp=11" style = 'color:#71C671;'>Admin Notifications ></a><br>
+		<a href = "index.php?page=home&sp=11" style = 'color:#71C671;'>Admin Notification ></a><br>
 	
 	
 	</div>
@@ -496,12 +496,22 @@ if(loggedin_as_admin()){
 		
 			
 		</div>
-		<div id = "admin-page-10" class = 'admin-sub-page'>
+		<div id = "admin-page-11" class = 'admin-sub-page'>
 			<b>Admin Notifications</b><br><br>
 			<?php
-				
+				if(isset($_POST['caml_val'])){
+					//change admin mailing list
+					$newlist = htmlentities($_POST['caml_val']);
+					change_static_content("admin_note_emails", $newlist);
+
+				}
 			?>
-			
+			Current List:
+			<form action = "" method = "POST">
+				<input type = "text" name = "caml_val" style = 'width: 300px;' value = "<?php echo get_static_content('admin_note_emails'); ?>" class = "leader-cp-fields">
+				<input type = "submit" value = "Change" class = "leader-cp-submit">	
+			</form>	
+			must be emails seperated by commas
 		</div>
 	</div>	
 <?php		
