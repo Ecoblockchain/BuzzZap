@@ -628,6 +628,7 @@ if(!loggedin()){
 					$_POST['snc_leader_pass'],$_POST['snc_leader_vpass'],$_POST['snc_leader_firstname'],
 					$_POST['snc_leader_lastname'],$_POST['snc_leader_email']);
 					if($snc=="true"){
+						send_admin_note("This new community is awaiting payment approval: ".$_POST['snc_come_name']);
 						header("Location: index.php?page=home&go_to=4&pay=true");
 					}else{
 				
@@ -667,6 +668,7 @@ if(!loggedin()){
 				
 				if(isset($_GET['pay'])){
 					$suc_msg = ($_GET['pay']=="true")? "Successfully registered your<br> community :-)" : "";
+					
 					?>
 					<form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top" id = "subscribe-form" style = 'display:none;'>
 						<input type="hidden" name="cmd" value="_s-xclick">

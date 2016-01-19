@@ -1660,4 +1660,16 @@ function refresh_password_resets(){
 	$db->query("DELETE FROM password_resets WHERE expire_time < UNIX_TIMESTAMP()");
 }
 
+
+function send_admin_note($note){
+	global $db;
+	$emails = $db->query("SELECT cont FROM static_content WHERE cont_name = 'admin_note_emails' LIMIT 1")->fetchColumn();
+	$emails = explode(",", $emails);
+	foreach($emails as $email){
+		if(filter_var($email, FILTER_VALIDATE_EMAIL)){
+			mail($email, "BuzzZap Admin Note", $note, "From: admin@buzzzap.com");
+		}
+	}
+
+}
 ?>

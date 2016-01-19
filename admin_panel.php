@@ -31,6 +31,7 @@ if(loggedin_as_admin()){
 		<a href = "index.php?page=home&sp=8" style = 'color:#71C671;'>Static Content ></a><br><br>
 		<a href = "index.php?page=home&sp=9" style = 'color:#71C671;'>Use Encryption Method ></a><br>
 		<a href = "index.php?page=home&sp=10" style = 'color:#71C671;'>Error Log ></a><br>
+		<a href = "index.php?page=home&sp=11" style = 'color:#71C671;'>Admin Notifications ></a><br>
 	
 	
 	</div>
@@ -487,10 +488,17 @@ if(loggedin_as_admin()){
 			<b>Error Log</b><br><br>
 			<?php
 				$errors = fopen("php-error.log", "r") or die("Unable to open file!");
-				echo fread($errors,filesize("php-error.log"));
+				echo nl2br(fread($errors,filesize("php-error.log")));
 				fclose($errors);
 			?>
 		
+			
+		</div>
+		<div id = "admin-page-10" class = 'admin-sub-page'>
+			<b>Admin Notifications</b><br><br>
+			<?php
+				
+			?>
 			
 		</div>
 	</div>	
