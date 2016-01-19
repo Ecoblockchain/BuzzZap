@@ -7,8 +7,7 @@ if(substr($_SERVER['PHP_SELF'], 0,3)=="/pr"){
 }else{
 	//PROD
 	$ajax_script_loc = "../ajax_script.php";
-	display_errors(0);
-	log_errors(1);
+	error_reporting(0);
 	$spec_judge_email_link= "http://buzzzap.com/";
 }
 ?>
