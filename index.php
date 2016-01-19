@@ -30,7 +30,7 @@ if(substr($_SERVER['PHP_SELF'], 0,3)=="/pr"){
 				header("Location: site_disabled.php");
 				exit();
 			}
-			if((iset($_GET['page']))&&(valid_page($_GET['page']))){
+			if((isset($_GET['page']))&&(valid_page($_GET['page']))){
 				$page = "pages/".htmlentities($_GET['page']).".php";
 				
 					if((loggedin())&&(loggedin_as_admin()==false)){
