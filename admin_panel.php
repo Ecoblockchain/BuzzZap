@@ -485,13 +485,20 @@ if(loggedin_as_admin()){
 			
 		</div>
 		<div id = "admin-page-10" class = 'admin-sub-page'>
-			<b>Error Log</b><br><br>
+			
+
+			<b>Error Log</b>-<a href  = 'index.php?page=home&sp=10&rerr=true'>CLEAR FILE</a><br><br>
 			<?php
 				change_static_content("last_errorf_size", filesize("php-error.log"));
 				echo "SIZE: ".filesize("php-error.log")."<br><br>";
 				$errors = fopen("php-error.log", "r") or die("Unable to open file!");
 				echo nl2br(fread($errors,filesize("php-error.log")));
 				fclose($errors);
+
+				if(isset($_GET['rerr'])){
+					$handle = fopen("php-error.log", "w+");
+					fwrite($handle , ' ');
+				}
 			?>
 		
 			
