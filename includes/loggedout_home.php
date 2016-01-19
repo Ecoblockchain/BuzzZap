@@ -504,10 +504,7 @@ if(!loggedin()){
 			<div class = "loggedout-paragraph-container" id = "loggedout-paragraph-container1">
 				<span style = "color:#8E388E;" id = 'lpc-title1' class = 'lpctitle'>Login</span><br>
 				<div class = "loggedout-paragraph">
-					If you are already 
-					part of	a community, login
-					and access all the 
-					discussions and get debating! 
+					<?php echo get_static_content("lo_para1"); ?>
 				</div>
 			</div>
 
@@ -516,10 +513,7 @@ if(!loggedin()){
 			<div class = "loggedout-paragraph-container" id = "loggedout-paragraph-container2">
 				<span style = "color:#79CDCD;" id = 'lpc-title2' class = 'lpctitle'>Contact Us</span><br>
 				<div class = "loggedout-paragraph">
-					If you have any questions
-					about anything, or something you 
-					think we should know, please 
-					get in touch.
+					<?php echo get_static_content("lo_para2"); ?>
 				</div>
 			</div>
 				
@@ -529,10 +523,7 @@ if(!loggedin()){
 			<div class = "loggedout-paragraph-container" id = "loggedout-paragraph-container3">
 				<span style = "color:#71C671;" id = 'lpc-title3' class = 'lpctitle'>Join A Community</span><br>
 				<div class = "loggedout-paragraph">
-					If you have been invited to
-					a community, enter some
-					details and the  
-					passcode you were given. 
+				<?php echo get_static_content("lo_para3"); ?>
 				</div>
 			</div>
 			<div class = "rotate" id = "r3"></div>
@@ -549,17 +540,14 @@ if(!loggedin()){
 			<div class = "loggedout-paragraph-container" id = "loggedout-paragraph-container4">
 				<span style = "color:#FF82AB;" id = 'lpc-title4' class = 'lpctitle'>Start A Community</span><br>
 				<div class = "loggedout-paragraph">
-					Want to get your real life community
-					involved in debating? 
-					Get started here! 
+					<?php echo get_static_content("lo_para4"); ?>
 				</div>
 			</div>
 			<div id = "c5" style = "display:none;position:absolute;background-color:pink;height:300px;width:300px;border-radius:300px;opacity:0.2;margin-top:100px;margin-left:260px;"></div>
 			<div class = "loggedout-paragraph-container" id = "loggedout-paragraph-container5">
 				<span style = "color:#F4A460;" id = 'lpc-title5' class = 'lpctitle'>Happening</span><br>
 				<div class = "loggedout-paragraph">
-					Have a look at the latest BuzzZap
-					news, and the latest site updates.
+					<?php echo get_static_content("lo_para5"); ?>
 				</div>
 			</div>
 
@@ -567,9 +555,7 @@ if(!loggedin()){
 			<div class = "loggedout-paragraph-container" id = "loggedout-paragraph-container7">
 				<span style = "color:#63B8FF;" id = 'lpc-title7' class = 'lpctitle'>Learn More</span><br>
 				<div class = "loggedout-paragraph">
-					If you want to know more about what
-					BuzzZap is for, and how it all works, 
-					read here. 
+					<?php echo get_static_content("lo_para6"); ?>
 				</div>
 			</div>
 			
@@ -620,7 +606,7 @@ if(!loggedin()){
 						echo nl2br(get_static_content("learn_more")); 
 					?>	
 					<br><br>
-					<iframe width="400" height="175" src="https://www.youtube.com/embed/RGDGc_sSSGM" frameborder="0" allowfullscreen></iframe>
+					<iframe width="400" height="175" src="<?php echo get_static_content('video_link'); ?>" frameborder="0" allowfullscreen></iframe>
 				</div>
 		</div>		
 	</div>
@@ -721,8 +707,7 @@ if(!loggedin()){
 				<div class = "snc-error-container"></div>
 				<div class = "snc-form" style = "">
 					<form action = "index.php?page=home&go_to=4" method = "POST" id = "snc-form-in">
-						<span style = 'line-height: 20px;letter-spacing: 1px;'>Current Subscription Fee: Free for the six months<br>
-						then &pound;199.99 GBP a year. <span class ="contact-email" style = 'cursor: pointer;' id ='mpic-show'>More Info</span><br> or contact <span class ="contact-email">billing@buzzzap.com</span> for any questions.<br> By signing up you understand and accept the legal agreements.</span><br><br>
+						<span style = 'line-height: 20px;letter-spacing: 1px;'><?php echo get_static_content("snc_header"); ?></span><br><br>
 						<input placeholder = "Community Name" type = "text" name = "snc_com_name" class = "loggedout-form-fields-snc" style = "width:500px;" id = "sf1"><div class = "snc-field-note" id = "sfn1">This is the name of your community.</div>
 						<input placeholder = "Community Pass Code" type = "password" name = "snc_com_pass" class = "loggedout-form-fields-snc" style = "width:400px;" id = "sf2"><div class = "snc-field-note" id = "sfn2">This is the passcode used to access the community by all members.</div>
 						<input placeholder = "Your Username" type = "text" name = "snc_leader_username" class = "loggedout-form-fields-snc" style = "width:500px;" id = "sf3"><div class = "snc-field-note" id = "sfn3">This is the community leaders username, you.</div>
