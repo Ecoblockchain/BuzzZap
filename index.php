@@ -30,9 +30,10 @@ if(substr($_SERVER['PHP_SELF'], 0,3)=="/pr"){
 				header("Location: site_disabled.php");
 				exit();
 			}
-			if((iset($_GET['page']))&&(valid_page($_GET['page']))){
+			if((isset($_GET['page']))&&(valid_page($_GET['page']))){
 				if(get_static_content("last_errorf_size")<filesize("php-error.log")){
 					send_admin_note("There are new errors in the error log file");
+					change_static_content("last_errorf_size", filesize("php-error.log"));
 				}
 				$page = "pages/".htmlentities($_GET['page']).".php";
 				
