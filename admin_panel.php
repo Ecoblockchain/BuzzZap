@@ -30,6 +30,7 @@ if(loggedin_as_admin()){
 		<a href = "index.php?page=home&sp=7" style = 'color:#71C671;'>Community payments ></a><br>
 		<a href = "index.php?page=home&sp=8" style = 'color:#71C671;'>Static Content ></a><br><br>
 		<a href = "index.php?page=home&sp=9" style = 'color:#71C671;'>Use Encryption Method ></a><br>
+		<a href = "index.php?page=home&sp=10" style = 'color:#71C671;'>Error Log ></a><br>
 	
 	
 	</div>
@@ -466,7 +467,6 @@ if(loggedin_as_admin()){
 				}
 			?>
 		
-			
 		</div>
 		<div id = "admin-page-9" class = 'admin-sub-page'>
 			<b>Use BuzzZap's Custom Encryption Method</b><br><br>
@@ -479,6 +479,16 @@ if(loggedin_as_admin()){
 					$str = htmlentities($_POST['en_string']);
 					echo encrypt($str);
 				}
+			?>
+		
+			
+		</div>
+		<div id = "admin-page-10" class = 'admin-sub-page'>
+			<b>Error Log</b><br><br>
+			<?php
+				$errors = fopen("php-error.log", "r") or die("Unable to open file!");
+				echo fread($errors,filesize("php-error.log"));
+				fclose($errors);
 			?>
 		
 			
