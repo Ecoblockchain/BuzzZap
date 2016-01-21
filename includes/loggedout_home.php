@@ -668,7 +668,7 @@ if(!loggedin()){
 				
 				
 				if(isset($_GET['pay'], $_GET['com_ident'])){
-					$suc_msg = ($_GET['pay']=="true")? "Successfully registered your<br> community " : "";
+					$suc_msg = ($_GET['pay']=="true")? "Successfully registered your<br> community. " : "";
 					$com_ident = htmlentities($_GET['com_ident']);
 					?>
 					

@@ -404,7 +404,7 @@ if(loggedin_as_admin()){
 						$leadername = $leadername." ".$db->query("SELECT user_lastname FROM users WHERE user_com = ".$row['com_id']. " AND user_rank = 3")->fetchColumn();
 						$leaderemail = $db->query("SELECT user_email FROM users WHERE user_com = ".$row['com_id']. " AND user_rank = 3")->fetchColumn();
 						$default_msg = "Dear ".$leadername.", \r\n \r\nBuzzZap is still waiting for your payment before your community can be accessed. \r\nTo pay now, please visit: \r\n\r\nhttp://www.buzzzap.com?page=home&go_to=4&pay=t \r\n\r\nOnce you have paid, it may take up to 48 hours for your community to be accessible.\r\n \r\n Thank you!";
-						echo $name." - ".$leaderemail."-".$leadername."-  <a href = 'index.php?page=home&sp=7&&actc=".$row['com_id']."'>Activate</a> or
+						echo $name." - ".$leaderemail."-".$leadername."-  <a href = 'index.php?page=home&sp=7&actc=".$row['com_id']."'>Activate</a> or
 						email:<form method = 'POST'>
 							<textarea name = 'emailc' style = 'height: 150px;width: 400px;'>".$default_msg."</textarea>
 							<input type = 'hidden' name = 'com_id' value = '".$row['com_id']."'>
@@ -416,11 +416,11 @@ if(loggedin_as_admin()){
 				}
 				
 				if(isset($_GET['actc'])){
-						$com_ident = htmlentities($_GET['actc']);
-						activate_com($com_ident);
-						header("Location: index.php?page=home&m=17Successfully activated.");
-					}
+					$com_ident = htmlentities($_GET['actc']);
+					activate_com($com_ident);
+					header("Location: index.php?page=home&m=17Successfully activated.");
 				}
+	
 				if(isset($_POST['emailc'], $_POST['com_id'])){
 					$com_id = htmlentities($_POST['com_id']);
 					$body = nl2br(htmlentities($_POST['emailc']));
