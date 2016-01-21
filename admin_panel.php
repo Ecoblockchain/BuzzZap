@@ -393,17 +393,18 @@ if(loggedin_as_admin()){
 			
 			<u>Not paid/disabled</u><br><br>
 			<?php
-				$get_un = $db->prepare("SELECT com_id FROM com_act WHERE act = 0");
+				$get_un = $db->prepare("SELECT * FROM com_act WHERE act = 0");
 				$get_un->execute();
 				if($get_un->rowCount()>0){
 				
 					while($row=$get_un->fetch(PDO::FETCH_ASSOC)){
 				
 						$name = $db->query("SELECT com_name FROM communities WHERE com_id = ".$row['com_id'])->fetchColumn();
+						$com_ident = $row['ipn'];
 						$leadername = $db->query("SELECT user_firstname FROM users WHERE user_com = ".$row['com_id']. " AND user_rank = 3")->fetchColumn();
 						$leadername = $leadername." ".$db->query("SELECT user_lastname FROM users WHERE user_com = ".$row['com_id']. " AND user_rank = 3")->fetchColumn();
 						$leaderemail = $db->query("SELECT user_email FROM users WHERE user_com = ".$row['com_id']. " AND user_rank = 3")->fetchColumn();
-						$default_msg = "Dear ".$leadername.", \r\n \r\nBuzzZap is still waiting for your payment before your community can be accessed. \r\nTo pay now, please visit: \r\n\r\nhttp://www.buzzzap.com?page=home&go_to=4&pay=t \r\n\r\nOnce you have paid, it may take up to 48 hours for your community to be accessible.\r\n \r\n Thank you!";
+						$default_msg = "Dear ".$leadername.", \r\n \r\nBuzzZap is still waiting for your payment before your community can be accessed. \r\nTo pay now, please visit: \r\n\r\nhttp://www.buzzzap.com?page=home&go_to=4&pay=true&com_ident=".$com_ident." \r\n\r\nOnce you have paid, it may take up to 48 hours for your community to be accessible.\r\n \r\n Thank you!";
 						echo $name." - ".$leaderemail."-".$leadername."-  <a href = 'index.php?page=home&sp=7&actc=".$row['com_id']."'>Activate</a> or
 						email:<form method = 'POST'>
 							<textarea name = 'emailc' style = 'height: 150px;width: 400px;'>".$default_msg."</textarea>

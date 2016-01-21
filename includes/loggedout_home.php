@@ -666,18 +666,23 @@ if(!loggedin()){
 					}
 				}
 				
-				
-				if(isset($_GET['pay'], $_GET['com_ident'])){
+				if(isset($_GET['snc_suc'])){
+					?>
+					<div style = "color: #62c9b2;font-size: 240%;" class = "contact-result-msg">
+						Your community has been<br> successfully registered, and <br>your payment is being processed. <br>You will be able to access your <br>community within the next <br>48 hours!
+					</div>
+					<?php
+				}else if(isset($_GET['pay'], $_GET['com_ident'])){
 					$suc_msg = ($_GET['pay']=="true")? "Successfully registered your<br> community. " : "";
 					$com_ident = htmlentities($_GET['com_ident']);
 					?>
 					
-					<form action="https://www.sandbox.paypal.com/cgi-bin/webscr" method="post" target="_top" id = "subscribe-form" style = 'display:none;'>
+					<form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top" id = "subscribe-form" style = 'display:none;'>
 						<input type="hidden" name="cmd" value="_s-xclick">
-						<input type="hidden" name="hosted_button_id" value="DDMLTMPTV3NVQ">
+						<input type="hidden" name="hosted_button_id" value="AC8KH6JANA92E">
 						<input type = "hidden" name = "custom" value = "<?php echo $com_ident; ?>">
-						<input type="image" src="https://www.sandbox.paypal.com/en_US/GB/i/btn/btn_subscribeCC_LG.gif" border="0" name="submit" alt="PayPal – The safer, easier way to pay online.">
-						<img alt="" border="0" src="https://www.sandbox.paypal.com/en_GB/i/scr/pixel.gif" width="1" height="1">
+						<input type="image" src="https://www.paypalobjects.com/en_US/GB/i/btn/btn_subscribeCC_LG.gif" border="0" name="submit" alt="PayPal – The safer, easier way to pay online.">
+						<img alt="" border="0" src="https://www.paypalobjects.com/en_GB/i/scr/pixel.gif" width="1" height="1">
 					</form>
 
 					<div style = "color: #62c9b2;" class = "contact-result-msg">
