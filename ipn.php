@@ -48,8 +48,5 @@ if (strcmp ($res, "VERIFIED") == 0) {
 	$com_ident = $raw_post_array["com_ident"];
   activate_com($com_ident);
    
-} else if (strcmp ($res, "INVALID") == 0) {
-    // IPN invalid, log for manual investigation
-    echo "The response from IPN was: <b>" .$res ."</b>";
 }
 ?>
