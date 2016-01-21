@@ -629,7 +629,7 @@ if(!loggedin()){
 					$_POST['snc_leader_lastname'],$_POST['snc_leader_email']);
 					if($snc[0]=="true"){
 						$com_ipn_ident = $snc[1];
-						send_admin_note("This new community is awaiting payment approval: ".$_POST['snc_come_name']);
+						send_admin_note("This new community is awaiting payment approval: ".$_POST['snc_com_name']);
 						header("Location: index.php?page=home&go_to=4&pay=true&com_ident=".$com_ipn_ident);
 					}else{
 				

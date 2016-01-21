@@ -47,8 +47,8 @@ if (strcmp ($res, "VERIFIED") == 0) {
   $myfile = fopen("ipnnnn.txt", "r");
   fwrite($myfile, $raw_post_data);
   fclose($myfile);
-	//$com_ident = $raw_post_array["com_ident"];
- // activate_com($com_ident);
+	$com_ident = $raw_post_array["com_ident"];
+  activate_com($com_ident);
    
 }
 ?>
