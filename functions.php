@@ -971,13 +971,14 @@ function snc($com_name, $com_pass, $l_username, $l_password, $l_vpassword, $l_fi
 			$insert = $db->prepare("INSERT INTO communities VALUES('', :com_name, :com_pass)");
 			$insert->execute(array("com_name"=>$com_name, "com_pass"=>encrypt($com_pass)));
 			$com_id = $db->lastInsertId();
-			$insert1 = $db->prepare("INSERT INTO com_act VALUES(:com_id, :act)");
-			$insert1->execute(array("com_id"=>$com_id, "act"=>0));
+			$com_ipn_ident = encrypt($_POST['snc_leader_email'].$_POST['snc_com_name']);
+			$insert1 = $db->prepare("INSERT INTO com_act VALUES(:com_id, :act, :ipn)");
+			$insert1->execute(array("com_id"=>$com_id, "act"=>0, "ipn"=>$com_ipn_ident));
 			
 			$update_com_id = $db->prepare("UPDATE users SET user_com = :com_id, user_rank = 3 WHERE user_username = :username");
 			$update_com_id->execute(array("com_id"=>$com_id, "username"=>$l_username));
 			$true = 1;
-			return "true";
+			return array("true",$com_ipn_ident);
 			
 		}else{
 			$all_errors = $reg_user;
@@ -1670,6 +1671,25 @@ function send_admin_note($note){
 			mail($email, "BuzzZap Admin Note", $note, "From: admin@buzzzap.com");
 		}
 	}
-
 }
+
+function activate_com($ident, $manual = false){
+	global $db;
+	//if manual = false, $ident will be ipn code, else com id.
+	if($manual == false){
+		$com_id = $db->query("SELECT com_id WHERE act = 0 AND ipn = ".$db->quote($ident));
+	}else{
+		$com_id = $ident;
+	}
+	$db->query("UPDATE com_act SET act = 1 WHERE com_id = ".$db->quote($com_id));
+	$leadername = $db->query("SELECT user_firstname FROM users WHERE user_com = ".$db->quote($com_id)." AND user_rank = 3 LIMIT 1");
+	$email = $db->query("SELECT user_email FROM users WHERE user_com = ".$db->quote($com_id)." AND user_rank = 3 LIMIT 1");;
+	$headers  = 'MIME-Version: 1.0' . "\r\n";
+	$headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
+	$headers .= "From: Administration@buzzzap.com" . "\r\n";
+	$com_name = $db->query("SELECT com_name FROM communities WHERE com_id = ".$db->quote($com_id))->fetchColumn();
+	$body = "Dear ".$leadername.", <br> BuzzZap has now recieved your successful payment and your community ".$com_name." has <br> been activated. To login, please visit http://www.buzzzap.com and login with your personal username, <br> password and then your community's passcode. <br><br> If you have any questions please contact us or study the <a href = 'http://buzzzap.com/ext/buzzzap_site_manual.pdf'>site manual</a>. <br><br> Thank you!";
+	mail($email,"BuzzZap Community Activation",$body,$headers);
+}
+
 ?>

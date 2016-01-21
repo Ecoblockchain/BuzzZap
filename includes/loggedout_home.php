@@ -627,9 +627,10 @@ if(!loggedin()){
 					$snc = snc($_POST['snc_com_name'],$_POST['snc_com_pass'],$_POST['snc_leader_username'],
 					$_POST['snc_leader_pass'],$_POST['snc_leader_vpass'],$_POST['snc_leader_firstname'],
 					$_POST['snc_leader_lastname'],$_POST['snc_leader_email']);
-					if($snc=="true"){
+					if($snc[0]=="true"){
+						$com_ipn_ident = $snc[1];
 						send_admin_note("This new community is awaiting payment approval: ".$_POST['snc_come_name']);
-						header("Location: index.php?page=home&go_to=4&pay=true");
+						header("Location: index.php?page=home&go_to=4&pay=true&com_ident=".$com_ipn_ident);
 					}else{
 				
 						?>
@@ -666,15 +667,16 @@ if(!loggedin()){
 				}
 				
 				
-				if(isset($_GET['pay'])){
+				if(isset($_GET['pay'], $_GET['com_ident'])){
 					$suc_msg = ($_GET['pay']=="true")? "Successfully registered your<br> community :-)" : "";
-					
+					$com_ident = htmlentities($_GET['com_ident']);
 					?>
-					<form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top" id = "subscribe-form" style = 'display:none;'>
+					
+					<form action="https://www.sandbox.paypal.com/cgi-bin/webscr" method="post" target="_top" id = "subscribe-form" style = 'display:none;'>
 						<input type="hidden" name="cmd" value="_s-xclick">
-						<input type="hidden" name="hosted_button_id" value="AC8KH6JANA92E">
-						<input type="image" src="https://www.paypalobjects.com/en_US/GB/i/btn/btn_subscribeCC_LG.gif" border="0" name="submit" alt="PayPal – The safer, easier way to pay online.">
-						<img alt="" border="0" src="https://www.paypalobjects.com/en_GB/i/scr/pixel.gif" width="1" height="1">
+						<input type="hidden" name="hosted_button_id" value="DDMLTMPTV3NVQ">
+						<input type="image" src="https://www.sandbox.paypal.com/en_US/GB/i/btn/btn_subscribeCC_LG.gif" border="0" name="submit" alt="PayPal – The safer, easier way to pay online.">
+						<img alt="" border="0" src="https://www.sandbox.paypal.com/en_GB/i/scr/pixel.gif" width="1" height="1">
 					</form>
 
 					<div style = "color: #62c9b2;" class = "contact-result-msg">
