@@ -16,5 +16,4 @@
 require("functions.php"); 
 require("connect_db.php");
 require("ext/predtextjs.php");
-require("ipn.php");
 ?>
