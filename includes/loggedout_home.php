@@ -675,7 +675,7 @@ if(!loggedin()){
 					<form action="https://www.sandbox.paypal.com/cgi-bin/webscr" method="post" target="_top" id = "subscribe-form" style = 'display:none;'>
 						<input type="hidden" name="cmd" value="_s-xclick">
 						<input type="hidden" name="hosted_button_id" value="DDMLTMPTV3NVQ">
-						<input type = "hidden" name = "com_ident" value = "<?php echo $com_ident; ?>">
+						<input type = "hidden" name = "custom" value = "<?php echo $com_ident; ?>">
 						<input type="image" src="https://www.sandbox.paypal.com/en_US/GB/i/btn/btn_subscribeCC_LG.gif" border="0" name="submit" alt="PayPal – The safer, easier way to pay online.">
 						<img alt="" border="0" src="https://www.sandbox.paypal.com/en_GB/i/scr/pixel.gif" width="1" height="1">
 					</form>
