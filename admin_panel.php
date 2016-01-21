@@ -416,8 +416,16 @@ if(loggedin_as_admin()){
 				}
 				
 				if(isset($_GET['actc'])){
-					$com_ident = htmlentities($_GET['actc']);
-					activate_com($com_ident);
+					$com_id = htmlentities($_GET['actc']);
+					$db->query("UPDATE com_act SET act = 1 WHERE com_id = ".$db->quote($com_id));
+					$leadername = $db->query("SELECT user_firstname FROM users WHERE user_com = ".$db->quote($com_id)." AND user_rank = 3 LIMIT 1");
+					$email = $db->query("SELECT user_email FROM users WHERE user_com = ".$db->quote($com_id)." AND user_rank = 3 LIMIT 1");;
+					$headers  = 'MIME-Version: 1.0' . "\r\n";
+					$headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
+					$headers .= "From: Administration@buzzzap.com" . "\r\n";
+					$com_name = $db->query("SELECT com_name FROM communities WHERE com_id = ".$db->quote($com_id))->fetchColumn();
+					$body = "Dear ".$leadername.", <br> BuzzZap has now recieved your successful payment and your community ".$com_name." has <br> been activated. To login, please visit http://www.buzzzap.com and login with your personal username, <br> password and then your community's passcode. <br><br> If you have any questions please contact us or study the <a href = 'http://buzzzap.com/ext/buzzzap_site_manual.pdf'>site manual</a>. <br><br> Thank you!";
+					mail($email,"BuzzZap Community Activation",$body,$headers);
 					header("Location: index.php?page=home&m=17Successfully activated.");
 				}
 	

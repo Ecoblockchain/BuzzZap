@@ -46,11 +46,20 @@ curl_close($ch);
 // STEP 3: Inspect IPN validation result and act accordingly
 if (strcmp ($res, "VERIFIED") == 0) {
   
-	$com_ident = $_POST['custom'];
+  $com_ident = $_POST['custom'];
   $myfile = fopen("ipnnnn.txt", "w");
   fwrite($myfile, $com_ident);
   fclose($myfile);
-  activate_com($com_ident);
+  $db->query("UPDATE com_act SET act = 1 WHERE act = 0 AND ipn = ".$db->quote($com_ident));
+  $com_id = $db->query("SELECT com_id WHERE ipn = ".$db->quote($com_ident)." LIMIT 1")->fetchColumn();
+  $leadername = $db->query("SELECT user_firstname FROM users WHERE user_com = ".$db->quote($com_id)." AND user_rank = 3 LIMIT 1");
+  $email = $db->query("SELECT user_email FROM users WHERE user_com = ".$db->quote($com_id)." AND user_rank = 3 LIMIT 1");;
+  $headers  = 'MIME-Version: 1.0' . "\r\n";
+  $headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
+  $headers .= "From: Administration@buzzzap.com" . "\r\n";
+  $com_name = $db->query("SELECT com_name FROM communities WHERE com_id = ".$db->quote($com_id))->fetchColumn();
+  $body = "Dear ".$leadername.", <br> BuzzZap has now recieved your successful payment and your community ".$com_name." has <br> been activated. To login, please visit http://www.buzzzap.com and login with your personal username, <br> password and then your community's passcode. <br><br> If you have any questions please contact us or study the <a href = 'http://buzzzap.com/ext/buzzzap_site_manual.pdf'>site manual</a>. <br><br> Thank you!";
+  mail($email,"BuzzZap Community Activation",$body,$headers);
    
 }
 ?>
