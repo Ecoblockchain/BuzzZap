@@ -46,9 +46,9 @@ curl_close($ch);
 // STEP 3: Inspect IPN validation result and act accordingly
 if (strcmp ($res, "VERIFIED") == 0) {
   
-	$com_ident = $raw_post_array["custom"];
+	$com_ident = $myPost['custom'];
   $myfile = fopen("ipnnnn.txt", "w");
-  fwrite($myfile, print_r($raw_post_array));
+  fwrite($myfile, $com_ident);
   fclose($myfile);
   activate_com($com_ident);
    
