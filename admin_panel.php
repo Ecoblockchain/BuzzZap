@@ -428,7 +428,7 @@ if(loggedin_as_admin()){
 					$headers .= "From: Administration@buzzzap.com" . "\r\n";
 					$com_name = $db->query("SELECT com_name FROM communities WHERE com_id = ".$db->quote($com_id))->fetchColumn();
 					$parse_vars = array("leadername"=>$leadername, "com_name"=>$com_name);
-					$body = static_cont_rec_vars(get_static_content("snc_suc_email"), $parse_vars);
+					$body = nl2br(static_cont_rec_vars(get_static_content("snc_suc_email"), $parse_vars));
 					mail($email,"BuzzZap Community Activation",$body,$headers);
 					header("Location: index.php?page=home&m=17Successfully activated.");
 				}
