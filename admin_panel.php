@@ -404,7 +404,7 @@ if(loggedin_as_admin()){
 						$leadername = $db->query("SELECT user_firstname FROM users WHERE user_com = ".$row['com_id']. " AND user_rank = 3")->fetchColumn();
 						$leadername = $leadername." ".$db->query("SELECT user_lastname FROM users WHERE user_com = ".$row['com_id']. " AND user_rank = 3")->fetchColumn();
 						$parse_vars = array("leadername"=>$leadername, "com_ident"=>$com_ident);
-						$body = static_cont_rec_vars(get_static_content("snc_suc_email"), $parse_vars);
+						$body = static_cont_rec_vars(get_static_content("waiting_payment_email"), $parse_vars);
 						$leaderemail = $db->query("SELECT user_email FROM users WHERE user_com = ".$row['com_id']. " AND user_rank = 3")->fetchColumn();
 						$default_msg = $body;
 						echo $name." - ".$leaderemail."-".$leadername."-  <a href = 'index.php?page=home&sp=7&actc=".$row['com_id']."'>Activate</a> or
