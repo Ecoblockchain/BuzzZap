@@ -699,7 +699,7 @@ if(!loggedin()){
 					?>
 					
 					
-					<?php echo get_static_content("paypal_button_form"); ?>
+					<?php echo static_cont_rec_vars(get_static_content("paypal_button_form"), array("com_ident"=>$com_ident)); ?>
 
 					<div style = "color: #62c9b2;" class = "contact-result-msg">
 					<?php echo $suc_msg; ?>
@@ -727,7 +727,7 @@ if(!loggedin()){
 			?>	
 				<div id = "more-pay-info-container">
 					<span style = 'color: #6082B6;font-size: 140%;'>Subscription Fee</span><span id = 'mpic-close' style = "cursor:pointer;float:right;">X</span>
-					<br><br><?php echo static_cont_rec_vars(get_static_content("subscription_fee_info"), array("com_ident"=>$com_ident)); ?>
+					<br><br><?php echo get_static_content("subscription_fee_info"); ?>
 				</div>
 				
 				<div class = "snc-error-container"></div>
