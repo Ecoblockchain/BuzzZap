@@ -449,7 +449,12 @@ if(loggedin_as_admin()){
 			<?php
 				$get_conts  = $db->query("SELECT * FROM static_content");
 				foreach($get_conts as $cont){
-					echo $cont['cont_name'].":<br> 
+					$body = $cont['cont_name'];
+					if($cont['cont_name']=='snc_suc_email'){
+						$parse_vars = array("$leadername"=>$leadername, "$com_name"=>$com_name);
+						$body = static_cont_rec_vars(get_static_contents("snc_suc_email"), $parse_vars);
+					}
+					echo $body.":<br> 
 					<form action = '' method = 'POST'>
 						<textarea style = 'height: 150px;width: 400px;' name = 'sc_".$cont['cont_name']."'>".$cont['cont']."</textarea>
 						<input type = 'submit' value = 'Update'>
