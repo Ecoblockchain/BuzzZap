@@ -669,8 +669,17 @@ if(!loggedin()){
 				
 				if(isset($_GET['snc_suc'])){
 					if(isset($_COOKIE['snc_made_suc'])){
-						$check = $db->query("SELECT act FROM com_act WHERE ipn = ".$db->quote($_COOKIE['snc_made_suc']))->fetchColumn();
-						if($check==1){
+						$com_id = $db->query("SELECT com_id FROM com_act WHERE act = 1 AND ipn = ".$db->quote($_COOKIE['snc_made_suc']))->fetchColumn();
+						if($com_id){
+							$leadername = $db->query("SELECT user_firstname FROM users WHERE user_com = ".$db->quote($com_id)." AND user_rank = 3 LIMIT 1")->fetchColumn();
+							$email = $db->query("SELECT user_email FROM users WHERE user_com = ".$db->quote($com_id)." AND user_rank = 3 LIMIT 1")->fetchColumn();
+							$headers  = 'MIME-Version: 1.0' . "\r\n";
+							$headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
+							$headers .= "From: Administration@buzzzap.com" . "\r\n";
+							$com_name = $db->query("SELECT com_name FROM communities WHERE com_id = ".$db->quote($com_id))->fetchColumn();
+							$parse_vars = array("leadername"=>$leadername, "com_name"=>$com_name);
+							$body = nl2br(static_cont_rec_vars(get_static_content("snc_suc_email"), $parse_vars));
+							mail($email,"BuzzZap Community Activation",$body,$headers);
 							?>
 							<div style = "color: #62c9b2;font-size: 240%;" class = "contact-result-msg">
 								<?php echo get_static_content("snc_suc_msg"); ?>
