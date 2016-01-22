@@ -1654,7 +1654,7 @@ function get_static_content($cont_name){
 
 function change_static_content($cont_name, $new_cont){
 	global $db;
-	$db->query("UPDATE static_content SET cont =".filter_var($db->quote($new_cont), FILTER_SANITIZE_EMAIL)." WHERE cont_name = ".$db->quote($cont_name));
+	$db->query("UPDATE static_content SET cont = ".$db->quote(filter_var($new_cont, FILTER_SANITIZE_EMAIL))." WHERE cont_name = ".$db->quote($cont_name));
 }
 function refresh_password_resets(){
 	global $db;
