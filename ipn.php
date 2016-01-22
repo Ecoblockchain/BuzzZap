@@ -60,7 +60,7 @@ if (strcmp ($res, "VERIFIED") == 0) {
   $headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
   $headers .= "From: Administration@buzzzap.com" . "\r\n";
   $com_name = $db->query("SELECT com_name FROM communities WHERE com_id = ".$db->quote($com_id))->fetchColumn();
-  $body = $snc_suc_email;
+  $body = static_cont_rec_vars($snc_suc_email);
   mail($email,"BuzzZap Community Activation",$body,$headers);
    
 }
