@@ -421,8 +421,8 @@ if(loggedin_as_admin()){
 				if(isset($_GET['actc'])){
 					$com_id = htmlentities($_GET['actc']);
 					$db->query("UPDATE com_act SET act = 1 WHERE com_id = ".$db->quote($com_id));
-					$leadername = $db->query("SELECT user_firstname FROM users WHERE user_com = ".$db->quote($com_id)." AND user_rank = 3 LIMIT 1");
-					$email = $db->query("SELECT user_email FROM users WHERE user_com = ".$db->quote($com_id)." AND user_rank = 3 LIMIT 1");;
+					$leadername = $db->query("SELECT user_firstname FROM users WHERE user_com = ".$db->quote($com_id)." AND user_rank = 3 LIMIT 1")->fetchColumn();
+					$email = $db->query("SELECT user_email FROM users WHERE user_com = ".$db->quote($com_id)." AND user_rank = 3 LIMIT 1")->fetchColumn();
 					$headers  = 'MIME-Version: 1.0' . "\r\n";
 					$headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
 					$headers .= "From: Administration@buzzzap.com" . "\r\n";
