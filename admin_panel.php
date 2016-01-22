@@ -449,10 +449,10 @@ if(loggedin_as_admin()){
 			<?php
 				$get_conts  = $db->query("SELECT * FROM static_content");
 				foreach($get_conts as $cont){
-					$body = $cont['cont_name'];
+					$body = $cont['cont'];
 					if($cont['cont_name']=='snc_suc_email'){
 						$parse_vars = array("$leadername"=>$leadername, "$com_name"=>$com_name);
-						$body = static_cont_rec_vars(get_static_contents("snc_suc_email"), $parse_vars);
+						$body = static_cont_rec_vars(get_static_content("snc_suc_email"), $parse_vars);
 					}
 					echo $body.":<br> 
 					<form action = '' method = 'POST'>
