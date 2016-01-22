@@ -727,7 +727,7 @@ if(!loggedin()){
 			?>	
 				<div id = "more-pay-info-container">
 					<span style = 'color: #6082B6;font-size: 140%;'>Subscription Fee</span><span id = 'mpic-close' style = "cursor:pointer;float:right;">X</span>
-					<br><br><?php echo get_static_content("subscription_fee_info"); ?>
+					<br><br><?php echo static_cont_rec_vars(get_static_content("subscription_fee_info"), array("com_ident"=>$com_ident)); ?>
 				</div>
 				
 				<div class = "snc-error-container"></div>
