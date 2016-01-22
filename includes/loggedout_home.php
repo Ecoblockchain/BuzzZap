@@ -682,7 +682,7 @@ if(!loggedin()){
 					$parse_vars = array("leadername"=>$leadername, "com_name"=>$com_name);
 					$body = nl2br(static_cont_rec_vars(get_static_content("snc_suc_email"), $parse_vars));
 					mail($email,"BuzzZap Community Activation",$body,$headers);
-					setcookie("snc-made-suc", "", time()-200));
+					setcookie("snc-made-suc", "", time()-200);
 	
 				}else if(isset($_GET['pay'], $_GET['com_ident'])){
 					$suc_msg = ($_GET['pay']=="true")? "Successfully registered your<br> community. " : "";
