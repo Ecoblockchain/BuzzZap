@@ -1675,7 +1675,7 @@ function send_admin_note($note){
 
 function static_cont_rec_vars($str, $replacements){
 	foreach($replacements as $key=>$value){
-		$str = str_replace($key, $value, $str);
+		$str = str_replace("$".$key, $value, $str);
 	}
 
 	return $str;

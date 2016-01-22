@@ -403,8 +403,10 @@ if(loggedin_as_admin()){
 						$com_ident = $row['ipn'];
 						$leadername = $db->query("SELECT user_firstname FROM users WHERE user_com = ".$row['com_id']. " AND user_rank = 3")->fetchColumn();
 						$leadername = $leadername." ".$db->query("SELECT user_lastname FROM users WHERE user_com = ".$row['com_id']. " AND user_rank = 3")->fetchColumn();
+						$parse_vars = array("leadername"=>$leadername, "com_ident"=>$com_ident);
+						$body = static_cont_rec_vars(get_static_contents("snc_suc_email"), $parse_vars);
 						$leaderemail = $db->query("SELECT user_email FROM users WHERE user_com = ".$row['com_id']. " AND user_rank = 3")->fetchColumn();
-						$default_msg = "Dear ".$leadername.", \r\n \r\nBuzzZap is still waiting for your payment before your community can be accessed. \r\nTo pay now, please visit: \r\n\r\nhttp://www.buzzzap.com?page=home&go_to=4&pay=true&com_ident=".$com_ident." \r\n\r\nOnce you have paid, it may take up to 48 hours for your community to be accessible.\r\n \r\n Thank you!";
+						$default_msg = $body;
 						echo $name." - ".$leaderemail."-".$leadername."-  <a href = 'index.php?page=home&sp=7&actc=".$row['com_id']."'>Activate</a> or
 						email:<form method = 'POST'>
 							<textarea name = 'emailc' style = 'height: 150px;width: 400px;'>".$default_msg."</textarea>
@@ -425,7 +427,7 @@ if(loggedin_as_admin()){
 					$headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
 					$headers .= "From: Administration@buzzzap.com" . "\r\n";
 					$com_name = $db->query("SELECT com_name FROM communities WHERE com_id = ".$db->quote($com_id))->fetchColumn();
-					$parse_vars = array("$leadername"=>$leadername, "$com_name"=>$com_name);
+					$parse_vars = array("leadername"=>$leadername, "com_name"=>$com_name);
 					$body = static_cont_rec_vars(get_static_contents("snc_suc_email"), $parse_vars);
 					mail($email,"BuzzZap Community Activation",$body,$headers);
 					header("Location: index.php?page=home&m=17Successfully activated.");
@@ -450,13 +452,10 @@ if(loggedin_as_admin()){
 				$get_conts  = $db->query("SELECT * FROM static_content");
 				foreach($get_conts as $cont){
 					$body = $cont['cont'];
-					if($cont['cont_name']=='snc_suc_email'){
-						$parse_vars = array("$leadername"=>$leadername, "$com_name"=>$com_name);
-						$body = static_cont_rec_vars(get_static_content("snc_suc_email"), $parse_vars);
-					}
-					echo $body.":<br> 
+					
+					echo $cont['cont_name'].":<br> 
 					<form action = '' method = 'POST'>
-						<textarea style = 'height: 150px;width: 400px;' name = 'sc_".$cont['cont_name']."'>".$cont['cont']."</textarea>
+						<textarea style = 'height: 150px;width: 400px;' name = 'sc_".$cont['cont_name']."'>".$body."</textarea>
 						<input type = 'submit' value = 'Update'>
 					</form>
 					";
