@@ -1,6 +1,6 @@
 <?php
 require("requires.php");
-$snc_suc_email = get_static_contents("snc_suc_email");
+$snc_suc_email = get_static_content("snc_suc_email");
 $raw_post_data = file_get_contents('php://input');
 $raw_post_array = explode('&', $raw_post_data);
 $myPost = array();
