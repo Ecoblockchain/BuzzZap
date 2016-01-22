@@ -1654,7 +1654,7 @@ function get_static_content($cont_name){
 
 function change_static_content($cont_name, $new_cont){
 	global $db;
-	$db->query("UPDATE static_content SET cont ='".$new_cont."' WHERE cont_name = '".$cont_name."'"));
+	$db->query("UPDATE static_content SET cont ='".$new_cont."' WHERE cont_name = '".$cont_name."'");
 }
 function refresh_password_resets(){
 	global $db;
