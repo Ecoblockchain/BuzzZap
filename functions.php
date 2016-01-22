@@ -978,6 +978,7 @@ function snc($com_name, $com_pass, $l_username, $l_password, $l_vpassword, $l_fi
 			$update_com_id = $db->prepare("UPDATE users SET user_com = :com_id, user_rank = 3 WHERE user_username = :username");
 			$update_com_id->execute(array("com_id"=>$com_id, "username"=>$l_username));
 			$true = 1;
+
 			return array("true",$com_ipn_ident);
 			
 		}else{

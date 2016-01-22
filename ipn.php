@@ -47,9 +47,8 @@ curl_close($ch);
 // STEP 3: Inspect IPN validation result and act accordingly
 if (strcmp ($res, "VERIFIED") == 0) {
   
-  $com_ident = htmlentities($_POST['custom']);
+  $com_ident = $_POST['custom'];
   $db->query("UPDATE com_act SET act = 1 WHERE act = 0 AND ipn = ".$db->quote($com_ident));
 
-  setcookie("snc-made-suc", "cid:"$db->query("SELECT com_id FROM com_act WHERE ipn = ".$db->quote($com_ident), time()+200));
 }
 ?>
