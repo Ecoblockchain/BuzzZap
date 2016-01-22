@@ -51,7 +51,7 @@ if (strcmp ($res, "VERIFIED") == 0) {
   fwrite($myfile, $com_ident);
   fclose($myfile);
   $db->query("UPDATE com_act SET act = 1 WHERE act = 0 AND ipn = ".$db->quote($com_ident));
-  $com_id = $db->query("SELECT com_id WHERE ipn = ".$db->quote($com_ident)." LIMIT 1")->fetchColumn();
+  $com_id = $db->query("SELECT com_id FROM com_act WHERE ipn = ".$db->quote($com_ident)." LIMIT 1")->fetchColumn();
   $leadername = $db->query("SELECT user_firstname FROM users WHERE user_com = ".$db->quote($com_id)." AND user_rank = 3 LIMIT 1");
   $email = $db->query("SELECT user_email FROM users WHERE user_com = ".$db->quote($com_id)." AND user_rank = 3 LIMIT 1");;
   $headers  = 'MIME-Version: 1.0' . "\r\n";
