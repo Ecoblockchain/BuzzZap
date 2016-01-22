@@ -1,5 +1,6 @@
 <?php
 require("requires.php");
+$snc_suc_email = get_static_contents("snc_suc_email");
 $raw_post_data = file_get_contents('php://input');
 $raw_post_array = explode('&', $raw_post_data);
 $myPost = array();
@@ -43,10 +44,11 @@ if( !($res = curl_exec($ch)) ) {
 }
 curl_close($ch);
 
+
 // STEP 3: Inspect IPN validation result and act accordingly
 if (strcmp ($res, "VERIFIED") == 0) {
   
-  $com_ident = $_POST['custom'];
+  $com_ident = htmlentities($_POST['custom']);
   $myfile = fopen("ipnnnn.txt", "w");
   fwrite($myfile, $com_ident);
   fclose($myfile);
@@ -58,7 +60,7 @@ if (strcmp ($res, "VERIFIED") == 0) {
   $headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
   $headers .= "From: Administration@buzzzap.com" . "\r\n";
   $com_name = $db->query("SELECT com_name FROM communities WHERE com_id = ".$db->quote($com_id))->fetchColumn();
-  $body = "Dear ".$leadername.", <br> BuzzZap has now recieved your successful payment and your community ".$com_name." has <br> been activated. To login, please visit http://www.buzzzap.com and login with your personal username, <br> password and then your community's passcode. <br><br> If you have any questions please contact us or study the <a href = 'http://buzzzap.com/ext/buzzzap_site_manual.pdf'>site manual</a>. <br><br> Thank you!";
+  $body = $snc_suc_email;
   mail($email,"BuzzZap Community Activation",$body,$headers);
    
 }

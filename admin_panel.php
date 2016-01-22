@@ -425,7 +425,7 @@ if(loggedin_as_admin()){
 					$headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
 					$headers .= "From: Administration@buzzzap.com" . "\r\n";
 					$com_name = $db->query("SELECT com_name FROM communities WHERE com_id = ".$db->quote($com_id))->fetchColumn();
-					$body = "Dear ".$leadername.", <br> BuzzZap has now recieved your successful payment and your community ".$com_name." has <br> been activated. To login, please visit http://www.buzzzap.com and login with your personal username, <br> password and then your community's passcode. <br><br> If you have any questions please contact us or study the <a href = 'http://buzzzap.com/ext/buzzzap_site_manual.pdf'>site manual</a>. <br><br> Thank you!";
+					$body = get_static_contents("snc_suc_email");
 					mail($email,"BuzzZap Community Activation",$body,$headers);
 					header("Location: index.php?page=home&m=17Successfully activated.");
 				}

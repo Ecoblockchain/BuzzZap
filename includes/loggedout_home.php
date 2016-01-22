@@ -669,7 +669,7 @@ if(!loggedin()){
 				if(isset($_GET['snc_suc'])){
 					?>
 					<div style = "color: #62c9b2;font-size: 240%;" class = "contact-result-msg">
-						Your community has been<br> successfully registered, and <br>your payment is being processed. <br>You will be able to access your <br>community within the next <br>48 hours!
+						<?php echo get_static_content("snc_suc_msg"); ?>
 					</div>
 					<?php
 				}else if(isset($_GET['pay'], $_GET['com_ident'])){
@@ -677,13 +677,8 @@ if(!loggedin()){
 					$com_ident = htmlentities($_GET['com_ident']);
 					?>
 					
-					<form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top" id = "subscribe-form" style = 'display:none;'>
-						<input type="hidden" name="cmd" value="_s-xclick">
-						<input type="hidden" name="hosted_button_id" value="AC8KH6JANA92E">
-						<input type = "hidden" name = "custom" value = "<?php echo $com_ident; ?>">
-						<input type="image" src="https://www.paypalobjects.com/en_US/GB/i/btn/btn_subscribeCC_LG.gif" border="0" name="submit" alt="PayPal – The safer, easier way to pay online.">
-						<img alt="" border="0" src="https://www.paypalobjects.com/en_GB/i/scr/pixel.gif" width="1" height="1">
-					</form>
+					
+					<?php echo get_static_content("paypal_button_form"); ?>
 
 					<div style = "color: #62c9b2;" class = "contact-result-msg">
 					<?php echo $suc_msg; ?>
