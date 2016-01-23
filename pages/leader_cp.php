@@ -108,8 +108,33 @@ if(loggedin()){
 					<input type = "submit" value = "Change" class = "leader-cp-fields">
 				</form>
 				<br><br>
+				<hr size = "1">
+				<b><u>Invite Communities You Know To BuzzZap</u></b>
+				<br><br> 
+
+
+				Community Emails
+				<form action = '' method = 'POST'>
+					<input type = 'text' class = 'loggedout-form-fields-snc' name = 'invite_coms' placeholder = 'e.g email1, email2, email3'>
+					<input type = 'submit' value = 'Invite' class = "leader-cp-fields" style = 'width: 100px;'>
+				</form>
 
 				<?php
+
+					if(isset($_POST['invite_coms'])){
+						$com_emails = htmlentities($_POST['invite_coms']);
+						$com_emails = strlist_to_array($com_emails, false);
+						$headers  = 'MIME-Version: 1.0' . "\r\n";
+						$headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
+						$headers .= "From: Administration@buzzzap.com" . "\r\n";
+						foreach($com_emails as $e){
+							$parse_vars = array("ename"=>$e, "com_name"=>get_user_community($user_id, "com_name"));
+							$body = nl2br(static_cont_rec_vars(get_static_content("invite_coms_email"), $parse_vars));
+							mail($e,"BuzzZap Invitation",$body,$headers);
+
+						}
+					}
+
 					if(isset($_POST['new_passcode'], $_POST['vnew_passcode'])){
 						$passcode = htmlentities($_POST['new_passcode']);
 						$vpasscode = htmlentities($_POST['vnew_passcode']);

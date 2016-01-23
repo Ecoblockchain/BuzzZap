@@ -268,7 +268,7 @@ if(substr($_SERVER['PHP_SELF'], 0,3)=="/pr"){
 						&middot;
 						<a href = 'index.php?page=logout&sub_p=3' class = "footer-links">About Us</a>
 						&middot;
-						<a href = 'index.php?page=logout&sub_p=7' class = "footer-links">Terms of Use</a>
+						<a href = 'index.php?page=logout&sub_p=6' class = "footer-links">Terms of Use</a>
 						&middot;
 						<a href = 'index.php?page=logout&sub_p=1' class = "footer-links">BuzzZap News</a>
 					</div>
