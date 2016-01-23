@@ -133,6 +133,8 @@ if(loggedin()){
 							mail($e,"BuzzZap Invitation",$body,$headers);
 
 						}
+						setcookie("success", "1Successfully sent.", time()+10);
+						header("Location: index.php?page=leader_cp&go_to=3");
 					}
 
 					if(isset($_POST['new_passcode'], $_POST['vnew_passcode'])){
