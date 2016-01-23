@@ -683,7 +683,11 @@ if(!loggedin()){
 							send_admin_note("A new community has successfully registered: ".$com_name);
 							?>
 							<div style = "color: #62c9b2;font-size: 240%;" class = "contact-result-msg">
-								<?php echo get_static_content("snc_suc_msg"); ?>
+
+								<?php
+									$parse_vars = array("com_name"=>$com_name);
+									echo static_cont_rec_vars(get_static_content("snc_suc_msg"), $parse_vars);
+								?>
 							</div>
 							<?php
 							if(isset($_POST['invite_coms'], $_POST['com_name'])){
