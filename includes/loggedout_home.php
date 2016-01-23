@@ -630,7 +630,7 @@ if(!loggedin()){
 					if($snc[0]=="true"){
 						$com_ipn_ident = $snc[1];
 						setcookie("snc_made_suc", $com_ipn_ident, time()+10000);
-						send_admin_note("This new community is awaiting payment approval: ".$_POST['snc_com_name']);
+						
 						header("Location: index.php?page=home&go_to=4&pay=true&com_ident=".$com_ipn_ident);
 					}else{
 				
@@ -669,18 +669,18 @@ if(!loggedin()){
 				
 				if(isset($_GET['snc_suc'])){
 					if(isset($_COOKIE['snc_made_suc'])){
-						echo $com_id = $db->query("SELECT com_id FROM com_act WHERE act = 1 AND ipn = ".$db->quote($_COOKIE['snc_made_suc']))->fetchColumn();
-						echo "f";
+						$com_id = $db->query("SELECT com_id FROM com_act WHERE act = 1 AND ipn = ".$db->quote($_COOKIE['snc_made_suc']))->fetchColumn();
 						if($com_id){
-							echo $leadername = $db->query("SELECT user_firstname FROM users WHERE user_com = ".$db->quote($com_id)." AND user_rank = 3 LIMIT 1")->fetchColumn();
-							echo $email = $db->query("SELECT user_email FROM users WHERE user_com = ".$db->quote($com_id)." AND user_rank = 3 LIMIT 1")->fetchColumn();
+							$leadername = $db->query("SELECT user_firstname FROM users WHERE user_com = ".$db->quote($com_id)." AND user_rank = 3 LIMIT 1")->fetchColumn();
+							$email = $db->query("SELECT user_email FROM users WHERE user_com = ".$db->quote($com_id)." AND user_rank = 3 LIMIT 1")->fetchColumn();
 							$headers  = 'MIME-Version: 1.0' . "\r\n";
 							$headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
 							$headers .= "From: Administration@buzzzap.com" . "\r\n";
-							echo $com_name = $db->query("SELECT com_name FROM communities WHERE com_id = ".$db->quote($com_id))->fetchColumn();
+							$com_name = $db->query("SELECT com_name FROM communities WHERE com_id = ".$db->quote($com_id))->fetchColumn();
 							$parse_vars = array("leadername"=>$leadername, "com_name"=>$com_name);
-							echo $body = nl2br(static_cont_rec_vars(get_static_content("snc_suc_email"), $parse_vars));
+							$body = nl2br(static_cont_rec_vars(get_static_content("snc_suc_email"), $parse_vars));
 							mail($email,"BuzzZap Community Activation",$body,$headers);
+							send_admin_note("A new community has successfully registered: ".$com_name);
 							?>
 							<div style = "color: #62c9b2;font-size: 240%;" class = "contact-result-msg">
 								<?php echo get_static_content("snc_suc_msg"); ?>
@@ -697,6 +697,9 @@ if(!loggedin()){
 				}else if(isset($_GET['pay'], $_GET['com_ident'])){
 					$suc_msg = ($_GET['pay']=="true")? "Successfully registered your<br> community. " : "";
 					$com_ident = htmlentities($_GET['com_ident']);
+					if(isset($_GET['revisit'])&&$_GET['revisit']==substr($com_ident, 8)){
+						setcookie("snc_made_suc", $com_ipn_ident, time()+10000);
+					}
 					?>
 					
 					

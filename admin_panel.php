@@ -403,7 +403,7 @@ if(loggedin_as_admin()){
 						$com_ident = $row['ipn'];
 						$leadername = $db->query("SELECT user_firstname FROM users WHERE user_com = ".$row['com_id']. " AND user_rank = 3")->fetchColumn();
 						$leadername = $leadername." ".$db->query("SELECT user_lastname FROM users WHERE user_com = ".$row['com_id']. " AND user_rank = 3")->fetchColumn();
-						$parse_vars = array("leadername"=>$leadername, "com_ident"=>$com_ident);
+						$parse_vars = array("leadername"=>$leadername, "com_ident"=>$com_ident, "revisit_code"=>substr($com_ident, 8));
 						$body = static_cont_rec_vars(get_static_content("waiting_payment_email"), $parse_vars);
 						$leaderemail = $db->query("SELECT user_email FROM users WHERE user_com = ".$row['com_id']. " AND user_rank = 3")->fetchColumn();
 						$default_msg = $body;
