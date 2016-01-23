@@ -1737,21 +1737,21 @@ li:hover a {
 
 #footer{
 	text-align: center;
-	color: #ff3378;
+	color: #006965;
 	letter-spacing: 2px;
 	font-size: 70%;
 	padding-top: 10px;
+	height: 20px;
 	width: 100%;
 	position: fixed;
-	background-color: lightgrey;
+	background-color: #62b1cf;
 	z-index:10000;
-	border-top: 1px solid grey;
     bottom: 0;
     left: 0;
 }
 
 .footer-links{
-	color: #ed98ee;
+	color: #009d98;
 }
 
 .bn-f-title{
@@ -1833,4 +1833,18 @@ li:hover a {
 	box-shadow: 0px 0px 30px grey;
 	width:200px;
 
+}
+
+#report-problem-form{
+	background-color: #62b1cf;
+	width: 400px;
+	height: 200px;
+	position: fixed;
+	display: none;
+	margin-left: calc(50% - 400px);
+	box-shadow: 0px 0px 30px grey;
+	padding: 10px;
+	padding-bottom: 50px;
+	padding-top: 0px;
+	z-index: 10000;
 }

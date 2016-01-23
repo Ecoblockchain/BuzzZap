@@ -59,7 +59,13 @@ if(substr($_SERVER['PHP_SELF'], 0,3)=="/pr"){
 								}).mouseleave(function(){
 									$("#note-bubble").css("display", "inline");
 								});
-		
+								
+								$("#report-problem-link").click(function(){
+									$("#report-problem-form").fadeIn();
+								});
+								$("#close-report-p").click(function(){
+									$("#report-problem-form").fadeOut();
+								});
 							});
 							</script>
 					<div class = 'loggedin-body'>
@@ -145,7 +151,30 @@ if(substr($_SERVER['PHP_SELF'], 0,3)=="/pr"){
 				
 			
 					<div class = "loggedin-inner-container">
+
+						<form id = "report-problem-form" method = 'POST'>
+							<span id = 'close-report-p' style = 'float:right;color: salmon;cursor: pointer;'>x</span> 
+							<textarea placeholder = "Explain problem in as much detail as possible..." name = "problem" id = "about-me-textarea" style = 'width:100%;height:100%;'></textarea>
+							<input type = "submit" value="Report"  class = "leader-cp-submit">
+						</form>
+
+						<?php 
+							if(isset($_POST['problem'])){
+								$txt = htmlentities($_POST['problem']);
+								if(strlen($txt)>5){
+									$errorfile = fopen("php-error.log", "a+");
+									fwrite($errorfile, date("Y-m-d", time()).": Manual Report: ".$txt."\n\n");
+									fclose($errorfile);
+									setcookie("success", "1Successfully reported problem. Thank you for your feedback.",time()+10);
+								}else{
+									setcookie("success", "0You have not supplied enough detail.", time()+10);
+								}
+								header("Location: index.php?page=".$_GET['page']);
+							}
+						?>
+
 				<?php
+
 
 
 
@@ -260,6 +289,8 @@ if(substr($_SERVER['PHP_SELF'], 0,3)=="/pr"){
 					?>
 					</div>
 					<div id = "footer">
+						<span class = "footer-links" id = "report-problem-link" style = 'cursor: pointer;'>Report Problem</span>
+						&middot;
 						<a href = 'index.php?page=home&tour=true' class = "footer-links">Take Site Tour </a>
 						&middot;
 						<a href = 'ext/buzzzap_site_manual.pdf' class = "footer-links">Read Site Manual</a>
