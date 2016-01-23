@@ -681,26 +681,8 @@ if(!loggedin()){
 							$body = nl2br(static_cont_rec_vars(get_static_content("snc_suc_email"), $parse_vars));
 							mail($email,"BuzzZap Community Activation",$body,$headers);
 							send_admin_note("A new community has successfully registered: ".$com_name);
-							?>
-							<div style = "color: #62c9b2;font-size: 240%;" class = "contact-result-msg">
-								<?php echo get_static_content("snc_suc_msg"); ?>
-							</div>
-							<?php
-							if(isset($_POST['invite_coms'])){
-								$com_emails = htmlentities($_POST['invite_coms']);
-								$com_emails = strlist_to_array($com_emails, false);
-								$headers  = 'MIME-Version: 1.0' . "\r\n";
-								$headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
-								$headers .= "From: Administration@buzzzap.com" . "\r\n";
-								foreach($com_emails as $e){
-									$parse_vars = array("ename"=>$e, "com_name"=>$com_name);
-									$body = nl2br(static_cont_rec_vars(get_static_content("invite_coms_email"), $parse_vars));
-									mail($e,"BuzzZap Invitation",$body,$headers);
-
-								}
-
-
-							}
+							
+							
 							setcookie("snc_made_suc", "", time()-10000);
 
 						}else{
@@ -749,7 +731,28 @@ if(!loggedin()){
 					<span style = 'color: #6082B6;font-size: 140%;'>Subscription Fee</span><span id = 'mpic-close' style = "cursor:pointer;float:right;">X</span>
 					<br><br><?php echo get_static_content("subscription_fee_info"); ?>
 				</div>
-				
+
+				<div style = "color: #62c9b2;font-size: 240%;" class = "contact-result-msg">
+								<?php echo get_static_content("snc_suc_msg"); ?>
+							</div>
+							<?php
+							if(isset($_POST['invite_coms'])){
+								$com_emails = htmlentities($_POST['invite_coms']);
+								$com_emails = strlist_to_array($com_emails, false);
+								$headers  = 'MIME-Version: 1.0' . "\r\n";
+								$headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
+								$headers .= "From: Administration@buzzzap.com" . "\r\n";
+								foreach($com_emails as $e){
+									$parse_vars = array("ename"=>$e, "com_name"=>$com_name);
+									$body = nl2br(static_cont_rec_vars(get_static_content("invite_coms_email"), $parse_vars));
+									mail($e,"BuzzZap Invitation",$body,$headers);
+
+								}
+
+
+							}
+							?>
+							
 				<div class = "snc-error-container"></div>
 				<div class = "snc-form" style = "">
 					<form action = "index.php?page=home&go_to=4" method = "POST" id = "snc-form-in">
