@@ -697,7 +697,7 @@ if(!loggedin()){
 				}else if(isset($_GET['pay'], $_GET['com_ident'])){
 					$suc_msg = ($_GET['pay']=="true")? "Successfully registered your<br> community. " : "";
 					$com_ident = htmlentities($_GET['com_ident']);
-					if(isset($_GET['revisit'])&&$_GET['revisit']==substr($com_ident, 8)){
+					if(isset($_GET['revisit'])&&$_GET['revisit']==substr($com_ident, 0,8)){
 						setcookie("snc_made_suc", $com_ipn_ident, time()+10000);
 					}
 					?>
