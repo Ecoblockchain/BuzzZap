@@ -117,3 +117,4 @@
 [23-Jan-2016 11:42:11 Europe/Berlin] PHP Notice:  Undefined index: snc_made_suc in /Applications/XAMPP/xamppfiles/htdocs/projects/buzzzap/includes/loggedout_home.php on line 672
 [23-Jan-2016 11:42:11 Europe/Berlin] PHP Notice:  Undefined index: snc_made_suc in /Applications/XAMPP/xamppfiles/htdocs/projects/buzzzap/includes/loggedout_home.php on line 672
 [23-Jan-2016 13:01:51 Europe/Berlin] PHP Notice:  Undefined variable: e in /Applications/XAMPP/xamppfiles/htdocs/projects/buzzzap/pages/logout.php on line 6
+[23-Jan-2016 14:17:51 Europe/Berlin] PHP Notice:  Undefined variable: com_name in /Applications/XAMPP/xamppfiles/htdocs/projects/buzzzap/includes/loggedout_home.php on line 746
