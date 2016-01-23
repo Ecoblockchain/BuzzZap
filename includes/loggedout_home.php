@@ -666,7 +666,7 @@ if(!loggedin()){
 				
 					}
 				}
-				
+			
 				if(isset($_GET['snc_suc'])){
 					if(isset($_COOKIE['snc_made_suc'])){
 						$com_id = $db->query("SELECT com_id FROM com_act WHERE act = 1 AND ipn = ".$db->quote($_COOKIE['snc_made_suc']))->fetchColumn();
@@ -689,19 +689,6 @@ if(!loggedin()){
 								?>
 							</div>
 							<?php
-							if(isset($_POST['invite_coms'])){
-								$com_emails = htmlentities($_POST['invite_coms']);
-								$com_emails = strlist_to_array($com_emails, false);
-								$headers  = 'MIME-Version: 1.0' . "\r\n";
-								$headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
-								$headers .= "From: Administration@buzzzap.com" . "\r\n";
-								foreach($com_emails as $e){
-									$parse_vars = array("ename"=>$e, "com_name"=>$com_name);
-									$body = nl2br(static_cont_rec_vars(get_static_content("invite_coms_email"), $parse_vars));
-									mail($e,"BuzzZap Invitation",$body,$headers);
-
-								}
-							}
 							setcookie("snc_made_suc", "", time()-10000);
 
 						}else{
