@@ -686,7 +686,23 @@ if(!loggedin()){
 								<?php echo get_static_content("snc_suc_msg"); ?>
 							</div>
 							<?php
+							if(isset($_POST['invite_coms'])){
+								$com_emails = htmlentities($_POST['invite_coms']);
+								$com_emails = strlist_to_array($com_emails, false);
+								foreach($com_emails as $e){
+									$ename = substr($e, strpos($e, "@")+1);
+									$headers  = 'MIME-Version: 1.0' . "\r\n";
+									$headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
+									$headers .= "From: Administration@buzzzap.com" . "\r\n";
+									$parse_vars = array("ename"=>$ename, "com_name"=>$com_name);
+									$body = nl2br(static_cont_rec_vars(get_static_content("invite_coms_email"), $parse_vars));
+									mail($e,"BuzzZap Invitation",$body,$headers);
+
+								}
+
+							}
 							setcookie("snc_made_suc", "", time()-10000);
+
 						}else{
 							header("Location: index.php?page=home");
 						}
