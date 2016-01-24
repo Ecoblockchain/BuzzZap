@@ -331,14 +331,26 @@ if(loggedin()){
 						$reply_id = $row['reply_id'];
 						$size = "mini";
 						$reply_status="na";
+						$report_header = "";
+						$check_abuse = contains_blocked_word($reply_text);
+						if($check_abuse[0]==true){
+							$reply_text = $check_abuse[1];
+							$report_header = true;
+						}
 			
 						if(strlen($reply_text)>2){
 							$reply_to  = $row['user_replied'];
 							$link = "index.php?page=view_private_thread.php?thread_id=".$thread_id;
 							$active = (user_moderation_status($_SESSION['user_id'])>1)? 0:1;
-							$msge = reply_debate($reply_text, $user_replied, $reply_id, $size, $reply_status);
+
+							$reply = reply_debate($reply_text, $user_replied, $reply_id, $size, $reply_status);
+							$msge=$reply[1];
+							$rid = $reply[0];
+							if($report_header==true){
+								$report_header = "&repo-c=".$rid."-";
+							}
 							setcookie("success", "1".$msge, time()+10);
-							header("Location: index.php?page=view_private_thread&thread_id=".$_GET['thread_id']);
+							header("Location: index.php?page=view_private_thread&thread_id=".$_GET['thread_id'].$report_header);
 						}else{
 							setcookie("success", "0".$msge, time()+10);
 							header("Location: index.php?page=view_private_thread&thread_id=".$_GET['thread_id']);
@@ -370,13 +382,25 @@ if(loggedin()){
 				$user_replied = get_user_field($_SESSION['user_id'], "user_username");
 				$thread_id = $_GET['thread_id'];
 				$size="";
+				$report_header = "";
+				$check_abuse = contains_blocked_word($reply_text);
+				if($check_abuse[0]==true){
+					$reply_text = $check_abuse[1];
+					$report_header = true;
+				}
 				if(strlen($reply_text)>50){
 					
-					$msg = reply_debate($reply_text, $user_replied, $thread_id, $size, $reply_status);
+					$reply = reply_debate($reply_text, $user_replied, $thread_id, $size, $reply_status);
+					$msg = $reply[1];
+					$rid = $reply[0];
+					if($report_header==true){
+						$report_header = "&repo-c=".$rid."-";
+					}
 					add_note($db->query("SELECT user_id FROM users WHERE user_username = ".$db->quote($header_info['thread_starter']))->fetchColumn(), $user_replied." has replied to your debate '".$header_info['thread_title']."'.", "index.php?page=view_private_thread&thread_id=".$thread_id);
 					
 					setcookie("success", "1".$msg, time()+10);
-					header("Location: index.php?page=view_private_thread&thread_id=".$_GET['thread_id']);
+					
+					header("Location: index.php?page=view_private_thread&thread_id=".$_GET['thread_id'].$report_header);
 				}else{
 					setcookie("success", "0Your post must be longer.", time()+10);
 					header("Location: index.php?page=view_private_thread&thread_id=".$_GET['thread_id']);
@@ -445,10 +469,15 @@ if(loggedin()){
 			
 			if(isset($_GET['repo-c'])){
 				$reply_id = htmlentities($_GET['repo-c']);
+				$reported_by = get_user_field($_SESSION['user_id'], "user_username");
+				if(substr($reply_id, strlen($reply_id)-1, strlen($reply_id))=="-"){
+					$reply_id = substr($reply_id, 0, strlen($reply_id)-1);
+					$reported_by = "BuzzZap Filtering";
+				}
 				$reported_user = $db->query("SELECT user_replied FROM thread_replies WHERE reply_id = ".$db->quote($reply_id))->fetchColumn();
 				$reason = "--This content posted by ".$reported_user." is abusive: ". $db->query("SELECT reply_text FROM thread_replies WHERE reply_id = ".$db->quote($reply_id))->fetchColumn();
 				if(!check_c_reported($reply_id, "reply_id", "thread_replies")){
-					report_user(get_user_field($_SESSION['user_id'], "user_username"),$reported_user, $reason, array(true,$reply_id,"reply_id", "thread_replies"));
+					report_user($reported_by,$reported_user, $reason, array(true,$reply_id,"reply_id", "thread_replies"));
 					setcookie("success", "1Successfully reported content.", time()+10);
 				}else{
 					setcookie("success", "1This post has already been reported.", time()+10);

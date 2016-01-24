@@ -291,10 +291,15 @@ if(loggedin()){
 	}
 	if(isset($_GET['repo-c'])){
 		$reply_id = htmlentities($_GET['repo-c']);
+		$reported_by = get_user_field($_SESSION['user_id'], "user_username");
+		if(substr($reply_id, strlen($reply_id)-1, strlen($reply_id))=="-"){
+			$reply_id = substr($reply_id, 0, strlen($reply_id)-1);
+			$reported_by = "BuzzZap Filtering";
+		}
 		$reported_user = $db->query("SELECT user_replied FROM iwonder_replies WHERE reply_id = ".$db->quote($reply_id))->fetchColumn();
 		$reason = "--This content posted by ".$reported_user." is abusive: ". $db->query("SELECT reply_text FROM iwonder_replies WHERE reply_id = ".$db->quote($reply_id))->fetchColumn();
 		if(!check_c_reported($reply_id, "reply_id", "iwonder_replies")){
-			report_user(get_user_field($_SESSION['user_id'], "user_username"),$reported_user, $reason, array(true,$reply_id,"reply_id", "iwonder_replies"));
+			report_user($reported_by,$reported_user, $reason, array(true,$reply_id,"reply_id", "iwonder_replies"));
 			setcookie("success", "1Successfully reported content.", time()+10);
 		}else{
 			setcookie("success", "1This post has already been reported.", time()+10);
@@ -304,7 +309,12 @@ if(loggedin()){
 	if(isset($_POST['reply_thread'])){
 		$reply_text = htmlentities($_POST['reply_thread']);
 		$thread_id = htmlentities($_POST['thread_id']);
-		echo $thread_id;
+		$report_header = "";
+		$check_abuse = contains_blocked_word($reply_text);
+		if($check_abuse[0]==true){
+			$reply_text = $check_abuse[1];
+			$report_header = true;
+		}
 		if(strlen($reply_text)>10){
 			$active = (user_moderation_status($_SESSION['user_id'])==3)? 0:1;	
 			if(user_not_posted(get_user_field($_SESSION['user_id'], "user_username"))){
@@ -313,7 +323,9 @@ if(loggedin()){
 			re_for_p_count_on_post(get_user_field($_SESSION['user_id'], "user_username"));	
 			$insert = $db->prepare("INSERT INTO iwonder_replies VALUES('', :thread_id, :reply, :user, UNIX_TIMESTAMP(), :visible)");
 			$insert->execute(array("thread_id"=>$thread_id, "reply"=>$reply_text, "user"=>$username, "visible"=>$active));
-			
+			if($report_header==true){
+				$report_header = "&repo-c=".$db->lastInsertId()."-";
+			}
 			$thread_starter = $db->query("SELECT thread_starter FROM iwonder_threads WHERE thread_id=".$db->quote($thread_id))->fetchColumn();
 			$starter_id =$db->query("SELECT user_id FROM users WHERE user_username=".$db->quote($thread_starter))->fetchColumn();
 			$link = "index.php?page=iwonder&keep_o=".$thread_id;
@@ -331,7 +343,7 @@ if(loggedin()){
 			setcookie("success", $message, time()+10);
 		}
 		
-		header("Location: index.php?page=iwonder&keep_o=".$thread_id);
+		header("Location: index.php?page=iwonder&keep_o=".$thread_id.$report_header);
 	}
 }else{
 	header("Location: index.php?page=home");	

@@ -630,8 +630,11 @@ if(!loggedin()){
 					if($snc[0]=="true"){
 						$com_ipn_ident = $snc[1];
 						setcookie("snc_made_suc", $com_ipn_ident, time()+10000);
-						
-						header("Location: index.php?page=home&go_to=4&pay=true&com_ident=".$com_ipn_ident);
+						if(get_feature_status("payments")=="0"){
+							header("Location: index.php?page=home&go_to=4&pay=true&com_ident=".$com_ipn_ident);
+						}else{
+							header("Location: index.php?page=home&go_to=4&snc_free=".$com_ipn_ident);
+						}
 					}else{
 				
 						?>
@@ -684,8 +687,11 @@ if(!loggedin()){
 							?>
 							<div style = "color: #62c9b2;font-size: 240%;" class = "contact-result-msg">
 								<?php
-
-									echo get_static_content("snc_suc_msg");
+									if($_GET['snc_suc']!="no_pay"){
+										echo get_static_content("snc_suc_msg");
+									}else{
+										echo get_static_content("snc_suc_msg_no_pay");
+									}
 								?>
 							</div>
 							<?php
@@ -730,6 +736,10 @@ if(!loggedin()){
 				
 					</script>
 					<?php
+				}else if(isset($_GET['snc_free'])&&get_feature_status("payments")=="1"){
+					$com_ident = htmlentities($_GET['snc_free']);
+					$db->query("UPDATE com_act SET act = 1 WHERE act = 0 AND ipn = ".$db->quote($com_ident));
+					header("Location: index.php?page=home&go_to=4&snc_suc=no_pay");
 				}else{
 				
 			?>	

@@ -219,17 +219,21 @@ if(loggedin_as_admin()){
 				<form action = "" method = "POST">
 					<?php
 						$action_dis = array();
-						$action_dis[0]= (get_feature_status("site")=="1")? "Enable":"Disable";
-						$action_dis[1]= (get_feature_status("login")=="1")? "Enable":"Disable";
-						$action_dis[2]= (get_feature_status("new_coms")=="1")? "Enable":"Disable";
-						$action_dis[3]= (get_feature_status("new_users")=="1")? "Enable":"Disable";
+						$get_acts = $db->query("SELECT * FROM feature_activation");
+						$count = 0;
+						foreach($get_acts as $row){
+							$action_dis[$row['feature']] = ($row['activation']==1)? "Enable":"Disable";
+							$count++;
+						}
+						
 					?>
 					<select class = "leader-cp-fields" name = "sf_control">
 							<option value = "na">Select feature</option>
-							<option value = "site"><?php echo $action_dis[0]; ?> site</option>
-							<option value = "login"><?php echo $action_dis[1]; ?> login (this will not apply to admins)</option>
-							<option value = "new_coms"><?php echo $action_dis[2]; ?> new communities</option>
-							<option value = "new_users"><?php echo $action_dis[3]; ?> new users</option>
+							<?php
+								foreach($action_dis as $feature=>$opt){
+									echo "<option value ='".$feature."'>".$opt." ".$feature."</option>";
+								}
+							?>
 					</select>
 					<input type = "submit" values = "Submit" class = "leader-cp-submit">
 				</form>
@@ -267,25 +271,26 @@ if(loggedin_as_admin()){
 				<i>What the public will read when confronted with a disabled feature</i><br>
 				<i>*Note: XSS works.</i><br><br>
 				<form action = "" method = "POST" style = "font-size:80%;">
-				
-					Site disabled:<br><textarea style = "resize:none;background-color:grey;border:1px solid black;height:100px;width:600px;" name = "m_site"><?php echo get_disabled_message('site'); ?></textarea><br>
-					Login disabled:<br><textarea style = "resize:none;background-color:grey;border:1px solid black;height:100px;width:600px;" name = "m_login"><?php echo get_disabled_message('login'); ?></textarea><br>
-					New community disabled:<br><textarea style = "resize:none;background-color:grey;border:1px solid black;height:100px;width:600px;"name = "m_new_coms"><?php echo get_disabled_message('new_coms'); ?></textarea><br>
-					New user disabled:<br><textarea style = "resize:none;background-color:grey;border:1px solid black;height:100px;width:600px;" name = "m_new_users"><?php echo get_disabled_message('new_users'); ?></textarea><br>
+					<?php
+						foreach($action_dis as $feature=>$opt){
+							echo "when ".$feature." is disabled:
+							<br>
+							<textarea style = '' name = 'm_".$feature."' class = 'admin-fa-textareas'>".get_disabled_message($feature)."</textarea><br>";
+						}
+					?>
 					<br><br><input type = "submit" class = "leader-cp-submit" value = "Save">
 				</form>
 			<?php
-				if(isset($_POST['m_site'], $_POST['m_login'], $_POST['m_new_coms'], $_POST['m_new_users'])){
-					$array = array("site", "login", "new_coms", "new_users");
-					foreach($array as $element){
+				if(isset($_POST['m_site'])){
+					foreach($action_dis as $key=>$value){
 						$update= $db->prepare("UPDATE feature_activation SET message = :message WHERE feature = :feature");
-						$update->execute(array("message"=>$_POST['m_'.$element], "feature"=>$element));	
+						$update->execute(array("message"=>$_POST['m_'.$key], "feature"=>$key));	
 					}
 					
 					header("Location: index.php?page=home&sp=4&m=14Successfully saved messages.");
 				}
 				if(isset($_POST['sf_control'])){
-					$valid = array("site", "login", "new_coms", "new_users");
+					$valid = array_keys($action_dis);
 					if(in_array($_POST['sf_control'], $valid)){
 						$new_act = e_d_feature($_POST['sf_control']);
 						if($new_act==1){

@@ -6,16 +6,29 @@ if($check_valid!="true"){
 if(loggedin()){
 	if(first_login($_SESSION['user_id'])){
 		add_badge("Becoming a member on BuzzZap", $_SESSION['user_id'], " you have logged in for the first time!");
+		$quant_msg = $db->query("SELECT * FROM static_content WHERE cont_name LIKE 'first_login_greet%'")->rowCount();
+		$greets = array();
+		for($i = 1;$i<=$quant_msg;$i++){
+			if($i!=1){
+				$greets[] = get_static_content('first_login_greet'.$i);
+			}else{
+				$parse_vars = array("firstname"=>get_user_field($_SESSION['user_id'], 'user_firstname'));
+				$greets[] = static_cont_rec_vars(get_static_content('first_login_greet'.$i), $parse_vars);
+			}
+		}
+		$greets = json_encode($greets);
 		?>
 			<script>
 			$(document).ready(function(){
+				var greets = eval(<?php echo $greets; ?>);
 				$("#fl-intro-box").typed({
-					strings: ["Hello <?php echo get_user_field($_SESSION['user_id'], 'user_firstname'); ?>, and welcome to BuzzZap.", "As this is your first time using BuzzZap there will be a lot to get used to.", "Would you like to take the site tour?"],
-					typeSpeed: 50
+					strings: greets,
+					typeSpeed: 10,
+					callback: function() {
+						$("#fl-tour-opt").fadeIn();
+					}
 				});
-				setTimeout(function(){
-					$("#fl-tour-opt").fadeIn();
-				}, 20000);
+					
 			});
 			</script>
 			<div id = "fl-intro-box"></div>

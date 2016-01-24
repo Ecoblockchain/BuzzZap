@@ -1848,3 +1848,11 @@ li:hover a {
 	padding-top: 0px;
 	z-index: 10000;
 }
+
+.admin-fa-textareas{
+	resize:none;
+	background-color:grey;
+	border:1px solid black;
+	height:100px;
+	width:600px;
+}

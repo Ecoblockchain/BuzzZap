@@ -370,7 +370,7 @@ function user_own_reply($reply_id, $user_id){
 
 function post_action($user_id, $reply_id, $action, $editval){
 	global $db;
-	//action = "edit" || "delete" || "report"
+	//action = "edit" || "delete"
 	if($action!=="report"){
 		if((user_own_reply($reply_id, $user_id))||(user_rank($user_id, 2, "up"))){
 			if($action == "edit"){
@@ -385,8 +385,6 @@ function post_action($user_id, $reply_id, $action, $editval){
 		}else{
 			return false;	
 		}
-	}else{
-	 //action = "report"*************	
 	}	
 }
 
@@ -428,13 +426,14 @@ function reply_debate($reply_text, $user_replied, $reply_id, $size, $reply_statu
 	$insert = $db->prepare("INSERT INTO thread_replies VALUES('', :reply_id, :reply_text, :time, :user_replied, 0, 0, :reply_status, :visible, 0, :size )");
 	$insert->execute(array("reply_id"=>$reply_id, "reply_text"=>$reply_text, "time"=>time(), "user_replied"=>$user_replied, 
 							"visible"=>$active, "size"=>$size, "reply_status"=>$reply_status));	
-							
+		
+	$rid = $db->lastInsertId();
 	if($size==""){
 		add_rep(3, $_SESSION['user_id']);
 	}else{
 		add_rep(1, $_SESSION['user_id']);
 	}																	
-	return $msg;
+	return array($rid,$msg);
 }
 function valid_debate_like($thread_id, $user_id){
 	global $db;
@@ -999,7 +998,7 @@ function report_user($by, $reported, $reason, $for_c = array(false)){
 	$time = time();
 	$fc = 0;
 	if($for_c[0]==true){
-		//for_c = if for content, id_c_name, c_table
+		//for_c = if for content, cid ,id_c_name, c_table
 		$fc = 1;
 		$db->query("INSERT INTO reported_content VALUES(".$db->quote($for_c[1]).",".$db->quote($for_c[2]).", ".$db->quote($for_c[3]).", ".$db->quote($by).", ".$db->quote($reported).", ".$time.")");
 	}
@@ -1680,6 +1679,26 @@ function static_cont_rec_vars($str, $replacements){
 	}
 
 	return $str;
+}
+
+function contains_blocked_word($txt){
+	global $db;
+	$blocked_words= explode(",",get_static_content("blocked_words"));
+	$result = false;
+	foreach($blocked_words as $word){
+
+		if($pos = preg_match("/".$word."/", $txt)){
+			$repval = substr($word, 0,1);
+			for($i=0;$i<strlen($word)-2;$i++){
+				$repval.="*";
+			}
+			$repval.=substr($word, strlen($word)-1,strlen($word));
+			$txt = str_replace($word, $repval, $txt);
+
+			$result = true;
+		}
+	}
+	return array($result, $txt);
 }
 
 ?>
