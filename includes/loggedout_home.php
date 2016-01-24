@@ -751,7 +751,7 @@ if(!loggedin()){
 				<div class = "snc-error-container"></div>
 				<div class = "snc-form" style = "">
 					<form action = "index.php?page=home&go_to=4" method = "POST" id = "snc-form-in">
-						<span style = 'line-height: 20px;letter-spacing: 1px;'><?php echo get_static_content("snc_header"); ?></span><br><br>
+						<span style = 'line-height: 20px;letter-spacing: 1px;'><?php echo (get_feature_status("payments")=="0")? get_static_content("snc_header"): get_disabled_message("payments"); ?></span><br><br>
 						<input placeholder = "Community Name" type = "text" name = "snc_com_name" class = "loggedout-form-fields-snc" style = "width:500px;" id = "sf1"><div class = "snc-field-note" id = "sfn1">This is the name of your community.</div>
 						<input placeholder = "Community Pass Code" type = "password" name = "snc_com_pass" class = "loggedout-form-fields-snc" style = "width:400px;" id = "sf2"><div class = "snc-field-note" id = "sfn2">This is the passcode used to access the community by all members.</div>
 						<input placeholder = "Your Username" type = "text" name = "snc_leader_username" class = "loggedout-form-fields-snc" style = "width:500px;" id = "sf3"><div class = "snc-field-note" id = "sfn3">This is the community leaders username, you.</div>
