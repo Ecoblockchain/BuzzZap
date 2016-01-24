@@ -1,6 +1,4 @@
 <?php ob_start(); 
-ini_set("log_errors", 1);
-ini_set("error_log", "php-error.log");
 if(substr($_SERVER['PHP_SELF'], 0,3)=="/pr"){
 	//DEV 
 	$ajax_script_loc = "/projects/buzzzap/ajax_script.php";
@@ -9,6 +7,8 @@ if(substr($_SERVER['PHP_SELF'], 0,3)=="/pr"){
 	//PROD
 	$ajax_script_loc = "../ajax_script.php";
 	ini_set('display_errors', 'Off');
+	ini_set("log_errors", 1);
+	ini_set("error_log", "php-error.log");
 	$spec_judge_email_link= "http://buzzzap.com/";
 }
 ?>
