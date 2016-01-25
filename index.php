@@ -10,13 +10,14 @@ if(substr($_SERVER['PHP_SELF'], 0,3)=="/pr"){
 	ini_set("log_errors", 1);
 	ini_set("error_log", "php-error.log");
 	$spec_judge_email_link= "http://buzzzap.com/";
+
 }
 ?>
 <DOCTYPE html>
 	<html>
 		<head>
 			<title> BuzzZap Online Debating</title>
-			<meta name="viewport" content="width=1300, initial-scale=1">
+			<meta name="viewport" content="width=device-width, initial-scale=1">
 			<meta name="description" content="Online debating">
 			<meta name="keywords" content="BuzzZap, debating, debate, schools, community, forum, online">
 			<link rel="shortcut icon" type="image/png" href="/favicon.ico"/>
