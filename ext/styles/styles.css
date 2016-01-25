@@ -670,15 +670,25 @@ li:hover a {
 }
 .thread-end{
 	background-color: #E3E3E3;
-	width:250px;
+	width:300px;
 	height:100%;
 	border-left:3px dashed lightgrey;
 	float:right;
 	padding:10px;
+	color: #457EA4;
 	padding-top: 30px;
 	text-align: center;
-	font-size:85%;
+	font-size: 75%;
+	text-align: center;
 	margin-top:-60px;
+}
+
+.thread-end-sec{
+	width: 32%;
+	height: 60px;
+	float: left;
+	text-align: center;
+	margin-top: 10px;
 }
 
 .thread-title{
@@ -690,7 +700,6 @@ li:hover a {
 .voter-amount{
 	font-size:60%;
 	color:#616161;
-	margin-top:10px;
 }
 
 .thread-title-header{

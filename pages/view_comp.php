@@ -365,11 +365,20 @@ if(loggedin()||!empty($out_judge_key)){
 								break;
 						}
 					
+
+						if(get_question_type($comp_info['comp_title'], 1)=="state"){
+							$side = (get_cand_side($comp_id, $cand_id)=="1")? "FOR" : "AGAINST";
+							$argue_side_txt = "Must argue <u>".$side."</u> notion";
+						}else{
+							$side = (get_cand_side($comp_id, $cand_id)=="1")? "YES" : "NO";
+							$argue_side_txt = "Must argue <u>".$side."</u> to question";
+						}
+
 						echo "
 						<div class = 'comp-view-cand-box'>
 							<div id = 'cvcb-sec1'>
 								<span style = 'color:".cand_color($cand_id).";'><b>".$name."'s</b></span>
-								Section ".$your_host_str." <span id = 'comp-side-dis'>Must argue <u>".get_cand_side($comp_id, $cand_id)."</u> question</span>
+								Section ".$your_host_str." <span id = 'comp-side-dis'>".$argue_side_txt."</span>
 							</div>
 							<div id = 'cvcb-sec2'>
 								".$options_str."

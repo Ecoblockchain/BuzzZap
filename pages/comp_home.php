@@ -118,7 +118,7 @@ if(loggedin()){
 								 <div id = "pred_results"></div>
 							 
 								<span id = 'comp_field_labels'>
-									Enter the <?php echo $gc_string; ?>(s) you want to compete agaisnt in this debate.
+									Enter the <?php echo $gc_string; ?>(s) you want to compete against in this debate.
 									<?php if($type=="0"){ ?> As it is a private competition, the groups must be within this community.<?php } ?>
 								</span>	<br>
 								<span id = 'c-deb-sub-sec'>

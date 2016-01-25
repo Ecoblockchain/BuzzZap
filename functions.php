@@ -388,9 +388,11 @@ function post_action($user_id, $reply_id, $action, $editval){
 	}	
 }
 
-function vote_debate($vote){
+function vote_debate($vote, $d_id){
 	global $db;
-	$update = $db->prepare("UPDATE debating_threads SET `vote_".$vote."` = `vote_".$vote."` + 1");
+	$vote = strtolower($vote);
+	$assoc_vtypes = array("yes"=>"vote_yes", "no"=>"vote_no", "maybe"=>"vote_maybe", "agree"=>"vote_yes", "disagree"=>"vote_no");
+	$update = $db->prepare("UPDATE debating_threads SET `".$assoc_vtypes[$vote]."` = `".$assoc_vtypes[$vote]."` + 1 WHERE thread_id = ".$db->quote($d_id));
 	$update->execute();
 }
 
@@ -402,7 +404,7 @@ function re_for_p_count_on_post($username){
 		}
 	}	
 }
-function reply_debate($reply_text, $user_replied, $reply_id, $size, $reply_status){
+function reply_debate($reply_text, $user_replied, $thread_id, $size, $reply_status){
 	global $db;
 	$reply_text = nl2br(htmlentities($reply_text));
 	$active = (user_moderation_status($_SESSION['user_id'])>1)? 0:1;
@@ -415,7 +417,7 @@ function reply_debate($reply_text, $user_replied, $reply_id, $size, $reply_statu
 	if($reply_status=="na"){
 		$reply_status="";
 	}else{
-		vote_debate($reply_status);
+		vote_debate($reply_status, $thread_id);
 	}	
 	$b_cont = "";
 	if(user_not_posted($user_replied)){
@@ -423,8 +425,8 @@ function reply_debate($reply_text, $user_replied, $reply_id, $size, $reply_statu
 	}
 	
 	re_for_p_count_on_post($user_replied);	
-	$insert = $db->prepare("INSERT INTO thread_replies VALUES('', :reply_id, :reply_text, :time, :user_replied, 0, 0, :reply_status, :visible, 0, :size )");
-	$insert->execute(array("reply_id"=>$reply_id, "reply_text"=>$reply_text, "time"=>time(), "user_replied"=>$user_replied, 
+	$insert = $db->prepare("INSERT INTO thread_replies VALUES('', :thread_id, :reply_text, :time, :user_replied, 0, 0, :reply_status, :visible, 0, :size )");
+	$insert->execute(array("thread_id"=>$thread_id, "reply_text"=>$reply_text, "time"=>time(), "user_replied"=>$user_replied, 
 							"visible"=>$active, "size"=>$size, "reply_status"=>$reply_status));	
 		
 	$rid = $db->lastInsertId();
@@ -1381,13 +1383,9 @@ function get_comp_starter_by_type($comp_id, $type){
 	}
 }
 
-function get_cand_side($comp_id, $cand_id, $dis = true){
+function get_cand_side($comp_id, $cand_id){
 	global $db;
 	$side = $db->query("SELECT side FROM comp_sides WHERE comp_id = ".$db->quote($comp_id)." AND cand_id = ".$db->quote($cand_id))->fetchColumn();
-	if($dis==true){
-		$side = ($side=="1")? "FOR": "AGAINST";
-	}
-	
 	return $side;
 }
 
@@ -1699,6 +1697,59 @@ function contains_blocked_word($txt){
 		}
 	}
 	return array($result, $txt);
+}
+
+function get_question_type($q, $return_type){
+	global $db;
+
+	/* return type = 1
+	func return values = "closed", "open", "state"
+
+		return type = 2
+
+	func returns array of corresponding response types	
+	*/
+
+	$possibility = array("closed"=>0, "open"=>0, "state"=>0);
+	$q = trim($q);
+	$closed_ident_words = explode(",",get_static_content("closed_q_ident_words"));
+	
+	$first_word_q = explode(" ", $q)[0];
+	$all_chars = str_split($q);
+	$has_word = false;
+	foreach($closed_ident_words as $word){
+		if(strtolower($first_word_q)==strtolower($word)){
+			$possibility["closed"] ++;
+			$has_word = true;
+			break;
+		}
+	}
+	if($has_word==false){
+		$possibility["state"] ++;
+		$possibility["open"] ++;
+	}
+	if(in_array("?", $all_chars)){
+		$possibility["closed"] ++;
+		$possibility["open"] ++;
+	}else{
+		$possibility["state"] ++;
+	}
+
+	$qtype = array_keys($possibility,max($possibility))[0];
+	if($return_type==1){
+		return $qtype;
+	}else if($return_type==2){
+		switch($qtype){
+			case "open":
+				return array();
+			case "closed":
+				return array("Yes", "No", "Maybe");
+			case "state":
+				return array("Agree", "Disagree", "Maybe");
+		}
+	}
+
+
 }
 
 ?>

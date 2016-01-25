@@ -124,7 +124,7 @@ if(loggedin()){
 							$value = round($value);
 						}
 					}
-
+					$dis_vote_opts = get_question_type($row['thread_title'], 2);
 					echo "<a href = 'index.php?page=view_private_thread&thread_id=".$row['thread_id']."'><div class = 'thread-container' style= 'padding-top:10px;'>";
 					echo "<div class = 'thread-title' style = 'color:".$color.";'>".$row['thread_title']."<br>";
 					if($color=="#FF6A6A"){
@@ -132,13 +132,30 @@ if(loggedin()){
 						 activated/approved<br> by a leader, only you can see it.</span>";
 					}	
 					echo "</div><br><br>";
+					if(count($dis_vote_opts)!=0){
 					echo "<div class = 'thread-end'>
-						<span style = 'color:#8FBC8F;'>Yes</span>&ensp;&ensp;&ensp;<span style = 'color:dimgrey;'>Maybe</span>&ensp;&ensp;&ensp;<span style = 'color:#CD9B9B'>No</span>
-						<br>
-						<span style = 'color:#457EA4'>".$votes['yes']."%&ensp;&ensp;&ensp;&ensp;".$votes['maybe']."%&ensp;&ensp;&ensp;&ensp;".$votes['no']."%</span>
+							<div class = 'voter-amount'>".$total." vote(s)</div>
 
-						<div class = 'voter-amount'>".$total." vote(s)</div>
+							<div class = 'thread-end-sec'>
+								<span style = 'color:#8FBC8F;'>".$dis_vote_opts[0]."</span><br>
+								".$votes['yes']."%
+							</div>
+							<div class = 'thread-end-sec'>
+								<span style = 'color:#CD9B9B'>".$dis_vote_opts[1]."</span><br>
+								".$votes['no']."%
+							</div>
+							<div  class = 'thread-end-sec'>
+							<span style = 'color:dimgrey;'>".$dis_vote_opts[2]."</span><br>
+							".$votes['maybe']."%
+
+							
+							</div>
 						</div>";
+					}else{
+						echo "<div class = 'thread-end'>
+							<br>This question is not votable.
+						</div>";
+					}	
 				
 					echo "<div class = 'thread-des'>".$description."</div>";
 					echo "</div></a><br>";

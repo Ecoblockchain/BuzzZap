@@ -363,12 +363,18 @@ if(loggedin()){
 				<hr size = "1"><br>
 				<div class = "thread-title-repeat"><?php echo $header_info['thread_title']; ?></div>
 				<br>
+
+				<?php
+					$vote_opts = get_question_type($header_info['thread_title'], 2);
+				?>
 				<form action = "" method = "POST">
-					<select name = "reply_status" class = "reply-status-select">
+					<span style = 'color:grey;'>Vote:</span> <select name = "reply_status" class = "reply-status-select">
 						<option value = "na">(optional)</option>
-						<option value = "Yes">Yes</option>
-						<option value = "Maybe">Maybe</option>
-						<option value = "No">No</option>
+						<?php
+							foreach($vote_opts as $opt){
+								echo "<option value = '".$opt."'>".$opt."</option>";
+							}
+						?>
 					</select>
 					<br><br>
 					<textarea placeholder = "Explanation/Argument..."class = "textarea-type1" style = "width:84%;" name = "reply_text"></textarea><br>
@@ -383,28 +389,34 @@ if(loggedin()){
 				$thread_id = $_GET['thread_id'];
 				$size="";
 				$report_header = "";
+				$vote_opts[] = "na";
 				$check_abuse = contains_blocked_word($reply_text);
 				if($check_abuse[0]==true){
 					$reply_text = $check_abuse[1];
 					$report_header = true;
 				}
-				if(strlen($reply_text)>50){
-					
-					$reply = reply_debate($reply_text, $user_replied, $thread_id, $size, $reply_status);
-					$msg = $reply[1];
-					$rid = $reply[0];
-					if($report_header==true){
-						$report_header = "&repo-c=".$rid."-";
+				if(in_array($reply_status, $vote_opts)){
+					if(strlen($reply_text)>50){
+						
+						$reply = reply_debate($reply_text, $user_replied, $thread_id, $size, $reply_status);
+						$msg = $reply[1];
+						$rid = $reply[0];
+						if($report_header==true){
+							$report_header = "&repo-c=".$rid."-";
+						}
+						add_note($db->query("SELECT user_id FROM users WHERE user_username = ".$db->quote($header_info['thread_starter']))->fetchColumn(), $user_replied." has replied to your debate '".$header_info['thread_title']."'.", "index.php?page=view_private_thread&thread_id=".$thread_id);
+						
+						setcookie("success", "1".$msg, time()+10);
+						
+						header("Location: index.php?page=view_private_thread&thread_id=".$_GET['thread_id'].$report_header);
+					}else{
+						setcookie("success", "0Your post must be longer.", time()+10);
+						
 					}
-					add_note($db->query("SELECT user_id FROM users WHERE user_username = ".$db->quote($header_info['thread_starter']))->fetchColumn(), $user_replied." has replied to your debate '".$header_info['thread_title']."'.", "index.php?page=view_private_thread&thread_id=".$thread_id);
-					
-					setcookie("success", "1".$msg, time()+10);
-					
-					header("Location: index.php?page=view_private_thread&thread_id=".$_GET['thread_id'].$report_header);
 				}else{
-					setcookie("success", "0Your post must be longer.", time()+10);
-					header("Location: index.php?page=view_private_thread&thread_id=".$_GET['thread_id']);
-				}
+					setcookie("success", "0Invalid vote.", time()+10);
+				}	
+				header("Location: index.php?page=view_private_thread&thread_id=".$_GET['thread_id']);
 			}
 			if(isset($_GET['vote'])){
 				
