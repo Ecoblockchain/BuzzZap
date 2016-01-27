@@ -36,6 +36,7 @@ if(loggedin()){
 		}
 
 		?>
+
 		<div id = 'all-boxes' style = "">
 			
 			<span class = "profile-title"><?php echo $title. "Profile"; ?></span>
@@ -143,15 +144,6 @@ if(loggedin()){
 											}
 										});
 										
-										var old_val_ = $("#about-me-textarea").val();
-										$("#about-me-textarea").blur(function(){
-											if(old_val_!==$(this).val()){
-												window.location="index.php?page=profile&user=<?php echo $view_user_id; ?>&edit_aboutme=" + $(this).val();
-											}
-										});
-										$("#p_f_close").click(function(){
-											$("#quick-msg").fadeOut();
-										});
 									});
 								</script>
 							<?php
@@ -216,33 +208,48 @@ if(loggedin()){
 							
 						}
 						
-						$textarea_content = "Where are you from? What do you do? What do you like to do? Which subjects do you study?";
+						$textarea_content = "";
 					}else{
 						$textarea_content = "This user has not written anything about him/herself yet.";
 						?>
 						<script>
 						$(document).ready(function(){
-							$("#about-me-textarea").attr("disabled", "disabled");
+							$(".amtxt").attr("disabled", "disabled");
 						});
 						</script>
 						<?php
 					}
 					
 					$get_about_user = $db->query("SELECT general FROM about_user WHERE user_id=".$db->quote($view_user_id))->fetchColumn();
-						if(!empty($get_about_user)&&substr($get_about_user, 0, 29)!="Where are you from? What do y"){
-							$textarea_content = $get_about_user;
-						}
-					
-						if($view_user_id != $user_id){	
-							echo "<br><br>";
-							$a_m_text_height = "200px";
-						}else{
-							$a_m_text_height = "260px";
-						}
-						?>
-							<div id = "profile-about-me">
-								<textarea id = "about-me-textarea" style = 'height:<?php echo $a_m_text_height; ?>;'><?php echo $textarea_content; ?></textarea>
-							</div>
+					if(!empty($get_about_user)){
+						$textarea_content = $get_about_user;
+					}
+				
+					if($view_user_id != $user_id){	
+						echo "<br><br>";
+						$a_m_text_height = "200px";
+					}else{
+						$a_m_text_height = "260px";
+					}
+					?>
+					<div id = "profile-about-me">
+						<textarea id = "about-me-textarea" class = "amtxt" placeholder = "Where are you from? What do you do? What do you like to do? Which subjects do you study?" style = 'height:<?php echo $a_m_text_height; ?>;'><?php echo $textarea_content; ?></textarea>
+					</div>
+
+					<script>
+						$(document).ready(function(){
+							var old_val_ = $(".amtxt").val();
+							$(".amtxt").blur(function(){
+								var new_val = $(this).val();
+								if(old_val_!==new_val){
+									window.location="index.php?page=profile&user=<?php echo $view_user_id; ?>&edit_aboutme=" + $(this).val();
+								}
+							});
+							$("#p_f_close").click(function(){
+								$("#quick-msg").fadeOut();
+							});
+						});
+					</script>
 					<br>
 					
 				</div> 

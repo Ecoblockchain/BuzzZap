@@ -36,7 +36,7 @@ function on_cm($user_id){
 function user_moderation_status($user_id){
 	global $db;
 	$state = 1;
-	if((get_user_field($_SESSION['user_id'], "user_rep")<30)&&(user_rank($user_id, "1", "just")==true)){
+	if((get_user_field($_SESSION['user_id'], "user_rep")<15)&&(user_rank($user_id, "1", "just")==true)){
 		$state = 2;
 	}
 	
@@ -406,6 +406,7 @@ function re_for_p_count_on_post($username){
 }
 function reply_debate($reply_text, $user_replied, $thread_id, $size, $reply_status){
 	global $db;
+	//$thread_id = parent content id
 	$reply_text = nl2br(htmlentities($reply_text));
 	$active = (user_moderation_status($_SESSION['user_id'])>1)? 0:1;
 	if($active==0){
@@ -422,6 +423,16 @@ function reply_debate($reply_text, $user_replied, $thread_id, $size, $reply_stat
 	$b_cont = "";
 	if(user_not_posted($user_replied)){
 		add_badge("Posting for the first time", $_SESSION['user_id'], "you posted for the first time!");
+	}
+
+	
+	if($size=="mini"){
+
+		$starter = $db->query("SELECT user_replied FROM thread_replies WHERE reply_id = ".$db->quote($thread_id))->fetchColumn();
+		$deb_id = $db->query("SELECT thread_id FROM thread_replies WHERE reply_id = ".$db->quote($thread_id))->fetchColumn();
+		$starter = $db->query("SELECT user_id FROM users WHERE user_username=".$db->quote($starter))->fetchColumn();
+		$deb_title = $db->query("SELECT thread_title FROM debating_threads WHERE thread_id = ".$db->quote($deb_id))->fetchColumn();
+		add_note($starter, $user_replied." has replied to your argument in the debate '".$deb_title."'.", "index.php?page=view_private_thread&thread_id=".$deb_id);
 	}
 	
 	re_for_p_count_on_post($user_replied);	
@@ -1685,7 +1696,7 @@ function contains_blocked_word($txt){
 	$result = false;
 	foreach($blocked_words as $word){
 
-		if($pos = preg_match("/".$word."/", $txt)){
+		if(preg_match("/".$word."/", $txt)){
 			$repval = substr($word, 0,1);
 			for($i=0;$i<strlen($word)-2;$i++){
 				$repval.="*";
@@ -1748,8 +1759,17 @@ function get_question_type($q, $return_type){
 				return array("Agree", "Disagree", "Maybe");
 		}
 	}
-
-
 }
 
+function user_browser(){
+	if(strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE') !== FALSE){
+ 		return "IE";
+	}else if(strpos($_SERVER['HTTP_USER_AGENT'], 'Trident') !== FALSE){ //For Supporting IE 11
+    	return 'IE';
+	}else if(strpos($_SERVER['HTTP_USER_AGENT'], 'Firefox') !== FALSE){
+   		return 'firefox';
+	}else{
+		return "supported";
+	}
+}	
 ?>

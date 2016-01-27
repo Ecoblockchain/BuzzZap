@@ -12,6 +12,10 @@ REPUTATION INCREMENTS
 3 - receiving a like on a debate you publish.
 2 - a profile view.
 
+to add:
+5 - main argument in comp
+2 - comp in comp
+
 BADGE REASONS
 
  - "Being a member on BuzzZap".

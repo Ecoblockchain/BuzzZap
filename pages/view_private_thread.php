@@ -224,7 +224,20 @@ if(loggedin()){
 							?>
 						</div>
 					</div>
+					
+					<div id = "mreply_form<?php echo $row['reply_id']; ?>" class = "mreply-form-container">
+						<form action = "" method = "POST">
+							<textarea placeholder= "Reply" name = "mreply_text<?php echo $row['reply_id']; ?>" class = "textarea-type2"></textarea>
+							<input type = "submit" class = "mreply-submit" value = "Submit">
+						</form>
+					</div>
+		
 			
+					<script>
+						$("#show-mreply-form<?php echo $row['reply_id']; ?>").click(function(){
+							$("#mreply_form<?php echo $row['reply_id']; ?>").slideDown(300);
+						});				
+					</script>
 					<?php
 					$get_mreplies = $db->prepare("SELECT * FROM thread_replies WHERE thread_id = ".$row['reply_id']." AND size = 'mini' ORDER BY time_replied ASC");
 					$get_mreplies->execute();
@@ -307,24 +320,8 @@ if(loggedin()){
 							echo"</div>";
 						}	
 					}
-		
-					?>
-					<div id = "mreply_form<?php echo $row['reply_id']; ?>" class = "mreply-form-container">
-						<form action = "" method = "POST">
-							<textarea placeholder= "Reply" name = "mreply_text<?php echo $row['reply_id']; ?>" class = "textarea-type2"></textarea>
-							<input type = "submit" class = "mreply-submit" value = "Submit">
-						</form>
-					</div>
-					<br><br>
-		
-			
-					<script>
-						$("#show-mreply-form<?php echo $row['reply_id']; ?>").click(function(){
-							$("#mreply_form<?php echo $row['reply_id']; ?>").slideDown(300);
-						});				
-					</script>
-					<?php
-		
+					echo "<br><br>";
+
 					if(isset($_POST['mreply_text'.$row['reply_id']])){
 						$reply_text = $_POST['mreply_text'.$row['reply_id']];
 						$user_replied = get_user_field($_SESSION['user_id'], "user_username");
@@ -404,8 +401,10 @@ if(loggedin()){
 						if($report_header==true){
 							$report_header = "&repo-c=".$rid."-";
 						}
-						add_note($db->query("SELECT user_id FROM users WHERE user_username = ".$db->quote($header_info['thread_starter']))->fetchColumn(), $user_replied." has replied to your debate '".$header_info['thread_title']."'.", "index.php?page=view_private_thread&thread_id=".$thread_id);
-						
+						$starter = $db->query("SELECT user_id FROM users WHERE user_username = ".$db->quote($header_info['thread_starter']))->fetchColumn();
+						if($starter!=$_SESSION['user_id']){
+							add_note($starter, $user_replied." has replied to your debate '".$header_info['thread_title']."'.", "index.php?page=view_private_thread&thread_id=".$thread_id);
+						}
 						setcookie("success", "1".$msg, time()+10);
 						
 						header("Location: index.php?page=view_private_thread&thread_id=".$_GET['thread_id'].$report_header);
@@ -436,12 +435,19 @@ if(loggedin()){
 			if(isset($_POST['editp'])){
 				$reply_id = $_GET['editp'];
 				$new_text = htmlentities($_POST['editp']);
+				$check_abuse = contains_blocked_word($new_text);
+				$report_header = "";
+				if($check_abuse[0]==true){
+					$new_text = $check_abuse[1];
+					$report_header = "&repo-c=".$reply_id."-";
+				}
+			
 				if(post_action($_SESSION['user_id'], $reply_id, "edit", $new_text)){
 					setcookie("success", "1Successfully edited post!", time()+10);
 				}else{
 					setcookie("success", "0There was an error.", time()+10);
 				}
-				header("Location: index.php?page=view_private_thread&thread_id=".$_GET['thread_id']);
+				header("Location: index.php?page=view_private_thread&thread_id=".$_GET['thread_id'].$report_header);
 			}
 			if(isset($_GET['d_like'])){
 				$thread_id = (int) htmlentities($_GET['d_like']);	

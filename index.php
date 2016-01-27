@@ -25,7 +25,6 @@ if(substr($_SERVER['PHP_SELF'], 0,3)=="/pr"){
 		<body>
 			<?php
 			require("requires.php");
-
 			if( (get_feature_status("site")=="1") && (!isset($_SESSION['pass_site_d'])) && (isset($_SESSION['admin_key'])==false) ){
 				header("Location: site_disabled.php");
 				exit();
