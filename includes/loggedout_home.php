@@ -787,7 +787,7 @@ if(!loggedin()){
 			}else{
 			?>
 
-				<div class = "loggedout-error" style = "margin-top:200px;margin-left:450px;position:absolute;">
+				<div class = "loggedout-error" style = "margin-top:200px;margin-left: 20px;">
 					<span class = "loggedout-error-content">
 						<center><?php echo  get_disabled_message('new_coms'); ?>
 								<br><br>To bypass this please enter the passcode.

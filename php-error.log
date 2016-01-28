@@ -1,6 +1,1 @@
- [24-Jan-2016 18:39:48 Europe/Berlin] PHP Fatal error:  Uncaught Error: Call to undefined function get_feature_message() in /Applications/XAMPP/xamppfiles/htdocs/projects/buzzzap/includes/loggedout_home.php:754
-Stack trace:
-#0 /Applications/XAMPP/xamppfiles/htdocs/projects/buzzzap/pages/home.php(5): include()
-#1 /Applications/XAMPP/xamppfiles/htdocs/projects/buzzzap/index.php(278): include('/Applications/X...')
-#2 {main}
-  thrown in /Applications/XAMPP/xamppfiles/htdocs/projects/buzzzap/includes/loggedout_home.php on line 754
+ 
