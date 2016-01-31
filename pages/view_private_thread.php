@@ -522,12 +522,12 @@ if(loggedin()){
 			}	
 		
 		}else{
-			//header("Location: index.php?page=home");
+			header("Location: index.php?page=home");
 		}	
 	}else{
-		//header("Location: index.php?page=home");
+		header("Location: index.php?page=home");
 	}
 }else{
-	//header("Location: index.php?page=home");
+	header("Location: index.php?page=home");
 }
 ?>
