@@ -30,7 +30,7 @@
 	$comp_body = (strlen($gcf)>0)? "<br><br>By judging competitions you can build your reputation, so here are some competitions that you can judge...<br>".$gcf : "";
 	$deb_body = (strlen($pgd)>0)? "<br><br>Here are some of the most popular global debates at the moment, take a look!<br>".$pgd : "";
 	$ebody = "Hello from BuzzZap!";
-	if($comp_body.$deb_body!="d"){
+	if($comp_body.$deb_body!=""){
 		$ebody.=$deb_body.$comp_body."<br><br>BuzzZap";
 		foreach($users as $row){
 			$email = $row['user_email'];
