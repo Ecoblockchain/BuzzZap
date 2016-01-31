@@ -1,4 +1,5 @@
 <?php
+	ob_start();
 	require("requires.php");
 
 	//link format = index.php?page=home&login_error=lheader-index.php..get variables use ~ not &...
@@ -25,16 +26,16 @@
 
 	$headers  = 'MIME-Version: 1.0' . "\r\n";
 	$headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
-	$headers .= "From: Auto" . "\r\n";
+	$headers .= "From: auto@buzzzap.com" . "\r\n";
 	$comp_body = (strlen($gcf)>0)? "<br><br>By judging competitions you can build your reputation, so here are some competitions that you can judge...<br>".$gcf : "";
 	$deb_body = (strlen($pgd)>0)? "<br><br>Here are some of the most popular global debates at the moment, take a look!<br>".$pgd : "";
-	$body = "Hello from BuzzZap!";
-	if($comp_body.$deb_body!=""){
-		$body.=$deb_body.$comp_body."<br><br>BuzzZap";
+	$ebody = "Hello from BuzzZap!";
+	if($comp_body.$deb_body!="d"){
+		$ebody.=$deb_body.$comp_body."<br><br>BuzzZap";
 		foreach($users as $row){
 			$email = $row['user_email'];
 			$name = $row['user_username'];
-			mail($email,"BuzzZap Weekly Update",$body,$headers);
+			mail($email,"BuzzZap Weekly Update",$ebody,$headers);
 		}
 
 	}
