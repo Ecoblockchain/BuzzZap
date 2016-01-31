@@ -44,7 +44,7 @@ if(loggedin()||!empty($out_judge_key)){
 			?>
 			<script>
 			$(document).ready(function(){
-				dothe();
+				
 				$("#sa-show-form").click(function(){
 					$("#add-arg-comp-form").fadeIn();
 				});
