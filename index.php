@@ -39,7 +39,13 @@ if(substr($_SERVER['PHP_SELF'], 0,3)=="/pr"){
 				$page = "pages/".htmlentities($_GET['page']).".php";
 				
 					if((loggedin())&&(loggedin_as_admin()==false)){
-						
+						if(isset($_GET['login_error'])){
+							
+							if(substr($_GET['login_error'], 0, 8)=='lheader-'){
+								$h = str_replace("~", "&", $_GET['login_error']);
+								header("Location: ".substr($h,8));
+							}	
+						}
 						$user_id = $_SESSION['user_id'];
 						?>
 		

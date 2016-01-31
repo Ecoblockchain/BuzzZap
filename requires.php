@@ -15,5 +15,7 @@
 <?php
 require("functions.php"); 
 require("connect_db.php");
-require("ext/predtextjs.php");
+if(isset($_GET['page'])){
+	require("ext/predtextjs.php");
+}
 ?>

@@ -6,7 +6,11 @@ if(loggedin()){
 	
 
 	if(isset($_POST['username'], $_POST['password'], $_POST['com_pass'])){
-		
+		$lheader = "index.php?page=home";
+		if(isset($_POST['lheader_post'])&&$_POST['lheader_post']!=""){
+			$lheader = htmlentities($_POST['lheader_post']);
+			$lheader = str_replace("~", "&", $lheader);
+		}
 		if(login_user($_POST['username'], $_POST['password'], $_POST['com_pass'])===false){
 			header("location: index.php?page=home&login_error=true");
 
@@ -17,7 +21,7 @@ if(loggedin()){
 		}else if(login_user($_POST['username'], $_POST['password'], $_POST['com_pass'])==="discom"){
 			header("location: index.php?page=home&login_error=discom");
 		}else{
-			$link = (user_rank($_SESSION['user_id'], "4"))? "index.php?page=home&sp=0":"index.php?page=home";
+			$link = (user_rank($_SESSION['user_id'], "4"))? "index.php?page=home&sp=0":$lheader;
 			header("Location: ".$link);
 		}
 	}

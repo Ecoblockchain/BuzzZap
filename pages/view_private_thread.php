@@ -83,7 +83,7 @@ if(loggedin()){
 					}
 					?>	
 				<div class = "thread-title-header"><?php echo $header_info['thread_title']; ?></div>
-				<div class = "sub-info-thread">
+				<div class = "sub-info-thread" style = 'text-align: left'>
 					<?php
 						if($perm_to_delete){
 							?>
@@ -93,8 +93,24 @@ if(loggedin()){
 					?>
 					Started By <?php echo $header_info['thread_starter']; ?> &middot; <?php echo $header_info['thread_likes']; ?> Debate Like(s)
 				</div>
+
+
+				
 				<br>
 			<?php
+
+			if(isset($_GET['scr_to'])){
+				$scr_pos = htmlentities($_GET['scr_to']);
+				?>
+				<script>
+				$(document).ready(function(){
+					
+						$('html, body').animate({scrollTop: "<?php echo $scr_pos; ?>"}, 0);
+				
+				});	
+				</script>
+				<?php
+			}
 			
 			$get_replies = $db->prepare("SELECT * FROM thread_replies WHERE thread_id= :thread_id AND size = '' ORDER BY time_replied ASC");
 			$get_replies->execute(array("thread_id"=>$thread_id));
@@ -289,6 +305,7 @@ if(loggedin()){
 												<a href = "index.php?page=view_private_thread&thread_id=<?php echo $_GET['thread_id']; ?>&deletep=<?php echo $mrow['reply_id']; ?>">
 													Delete
 												</a>
+												
 											</div>	
 											<?php
 										}	
@@ -447,6 +464,7 @@ if(loggedin()){
 				}else{
 					setcookie("success", "0There was an error.", time()+10);
 				}
+
 				header("Location: index.php?page=view_private_thread&thread_id=".$_GET['thread_id'].$report_header);
 			}
 			if(isset($_GET['d_like'])){
@@ -504,12 +522,12 @@ if(loggedin()){
 			}	
 		
 		}else{
-			header("Location: index.php?page=home");
+			//header("Location: index.php?page=home");
 		}	
 	}else{
-		header("Location: index.php?page=home");
+		//header("Location: index.php?page=home");
 	}
 }else{
-	header("Location: index.php?page=home");
+	//header("Location: index.php?page=home");
 }
 ?>

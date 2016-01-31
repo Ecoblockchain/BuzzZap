@@ -1098,7 +1098,7 @@ function trim_commas($string){
 	return $string;
 	
 }
-function start_comp($type, $opps_array, $end_time, $judges, $topic, $starter_id, $deb_question){
+function start_comp($type, $opps_array, $end_time, $judges, $topic, $starter_id, $deb_question, $info){
 	global $db;
 
 	$acceptance_str = "";
@@ -1116,7 +1116,7 @@ function start_comp($type, $opps_array, $end_time, $judges, $topic, $starter_id,
 
 	
 	$opps = implode(",",$opps_array);
-	$insert = $db->prepare("INSERT INTO competitions VALUES('', :title, :type, :starter, :opps, UNIX_TIMESTAMP(), :end, :judges, :com, :acceptance)");
+	$insert = $db->prepare("INSERT INTO competitions VALUES('', :title, :type, :starter, :opps, UNIX_TIMESTAMP(), :end, :judges, :com, :acceptance, :info)");
 	$insert->execute(array(
 			"title"=>$deb_question,
 			"type"=>$type,
@@ -1125,7 +1125,8 @@ function start_comp($type, $opps_array, $end_time, $judges, $topic, $starter_id,
 			"end"=>$end_time,
 			"judges"=>$judges,
 			"com"=>$comp_com_id,
-			"acceptance"=>$acceptance_str
+			"acceptance"=>$acceptance_str,
+			"info"=>$info
 			
 	));
 	return $db->lastInsertId();
@@ -1338,9 +1339,15 @@ function check_comp_ready($comp_id, $type){
 		}else{
 			// start comp.
 			$jacceptance=get_judge_acceptance($comp_id);
-			if((!in_array("1",$jacceptance)||$jacceptance==array("empty"))&&($jacceptance!="norm")){
+			if(($jacceptance!="norm")&&(!in_array("1",$jacceptance)||$jacceptance==array("empty"))){
 				$db->query("UPDATE competitions SET judges = 'norm' WHERE comp_id = ".$db->quote($comp_id));
 				add_note(get_comp_user_starter_id($comp_id, $type), "All the judges you requested to judge your newly started competition either declined or have not responded to the invite in time. This means anyone who is not participating can judge the competiton.","");
+				if($jacceptance!=array("empty")&&$jacceptance!="norm"){
+					foreach($jacceptance as $jid=>$acc){
+						add_note($jid, "A competition you were previously invited to judge has now started and you are now too late to accept the invitation.","");
+					}
+				}
+				
 			}else{
 				foreach(get_judge_list($comp_id) as $jid){
 					add_note($jid,"A competition you are meant to be judging has just started. Click here to view it!", "index.php?page=view_comp&comp=".$type.$comp_id);
@@ -1356,6 +1363,11 @@ function check_comp_ready($comp_id, $type){
 				foreach($all_users_to_note as $user_id){
 					echo $user_id;
 					add_note($user_id, "A competition you are involved in has just started. Click here to start debating!", "index.php?page=view_comp&comp=".$type.$comp_id);
+				}
+				$jval = $db->query("SELECT judges FROM competitions WHERE comp_id = ".$db->quote($comp_id)." LIMIT 1")->fetchColumn();
+				$comp_c_id = $db->query("SELECT comp_com_id FROM competitions WHERE comp_id = ".$db->quote($comp_id)." LIMIT 1")->fetchColumn();
+				if($jval=="norm"){
+					add_com_feed($comp_c_id, "A new private competition has started and everyone not involved is welcome to judge it which will add to your reputation! <a href = 'index.php?page=view_comp&comp=0".$comp_id."' >Click here</a> to see!");
 				}
 			}else{
 				
@@ -1373,7 +1385,6 @@ function check_comp_ready($comp_id, $type){
 					add_com_feed($cid, "A global competition we are all involved in has just started! <a href = 'index.php?page=view_comp&comp=1".$comp_id."' >Click here</a> to get involved.");
 				
 				}
-				
 				
 			}
 			return true;

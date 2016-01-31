@@ -44,6 +44,7 @@ if(loggedin()||!empty($out_judge_key)){
 			?>
 			<script>
 			$(document).ready(function(){
+				dothe();
 				$("#sa-show-form").click(function(){
 					$("#add-arg-comp-form").fadeIn();
 				});
@@ -122,9 +123,20 @@ if(loggedin()||!empty($out_judge_key)){
 				$perm_to_delete = false;
 				if(($type=="0")&&(get_user_community($user_id, "com_id")==$comp_info["comp_com_id"])&&(user_rank($user_id, "3")&&empty($out_judge_key))){
 					$perm_to_delete = true;
-					echo "<a style = 'font-size: 100%;color:salmon;' href = 'index.php?page=view_comp&delc=true&comp=".$type.$comp_id."'>Delete Competition</a><br>";
+					echo "<a style = 'font-size: 100%;color:salmon;' href = 'index.php?page=view_comp&delcomp=true&comp=".$type.$comp_id."'>Delete Competition</a><br>";
 				}
-				if(isset($_GET['delc'])&&$perm_to_delete == true){
+				if(isset($_GET['delcomp'])&&$perm_to_delete == true){
+					if($type=="0"){
+						$ids = get_all_users_in_p_comp($comp_id);
+						foreach($ids as $id){
+							add_note($id, get_user_field($_SESSION['user_id'],"user_username")." cancelled the competition '".$comp_info['comp_title']."' that you were involved in. ","");
+						}
+					}else{
+						$cids = array_keys(get_comp_acceptance_info($comp_id, $type));
+						foreach($cids as $id){
+							add_com_feed($id, get_user_field($_SESSION['user_id'],"user_username")." cancelled the competition '".$comp_info['comp_title']." that we were involved in.");
+						}
+					}
 					$db->query("DELETE FROM competitions WHERE comp_id = ".$comp_id);
 					$db->query("DELETE FROM comp_arguments WHERE comp_id = ".$comp_id);
 					$db->query("DELETE FROM comp_arg_replies WHERE comp_id = ".$comp_id);
@@ -150,7 +162,7 @@ if(loggedin()||!empty($out_judge_key)){
 					$time_left_str = "";
 				}
 			?>
-			<div class = "thread-title-header"><?php echo $comp_info["comp_title"]; ?></div>
+			<div class = "thread-title-header" style = 'text-align: center;'><?php echo $comp_info["comp_title"]; ?></div>
 			<div class = "sub-info-thread">
 				Started By <?php 
 				echo get_comp_starter_by_type($comp_id, $type); 
@@ -170,15 +182,15 @@ if(loggedin()||!empty($out_judge_key)){
 				echo "<br>Judges: ".$judge_dis;
 				echo "<br><span id = 'time_info'>".$time_left_str."</span><br>";
 				?>
-				NOTE: All teams are colour coded. Their content is displayed in their colour.
+				NOTE: All teams are colour coded. Their content is displayed in their colour.<br>
 				<?php
 				if(comp_started($comp_id)){
 					if($judges!="norm"){
 						if(in_array($user_id, $judges)){
-							echo "As a judge, you must read through the different arguments and comments, and simply vote up or down to which comments you are or aren't persuaded by. It is important you vote as many comments as possible.";
+							echo "As a judge, you must read through the different arguments and comments, and simply vote up or down to<br> which comments you are or aren't persuaded by. It is important you vote as many comments as possible.";
 						}
 					}else if(!user_in_comp($user_id, $comp_id, $type)){
-						echo "As a reader, you can read through the different arguments and comments, and simply vote up or down to which comments you are or aren't persuaded by. This will help towards your reputation!";
+						echo "As a reader, you can read through the different arguments and comments, and simply vote up or down to<br> which comments you are or aren't persuaded by. This will help towards your reputation!";
 					}else{
 						echo "As you are involved in this competition, make sure to submit your main argument in your section, and argue against arguments in other sections.";
 					}
@@ -188,7 +200,10 @@ if(loggedin()||!empty($out_judge_key)){
 						}
 					}
 				}
+
+				echo (strlen($comp_info['comp_note'])>0) ? "<br><span style = 'color: #59c3d8;'>NOTE from competition starter: <span style = 'color: #4d95f2;'>".$comp_info['comp_note']."<br></span></span>":"";
 				?>
+
 			</div>	
 			
 			
@@ -402,7 +417,7 @@ if(loggedin()||!empty($out_judge_key)){
 							if(empty($out_judge_key)){
 								if((user_rank($user_id, "3")==true)&&(get_user_community($user_id, "com_id")==get_user_community($row['user_id'], "com_id"))){
 								
-									echo "<a style = 'float:right;color:black;text-decoration:none;cursor:pointer;' href = 'index.php?page=view_comp&comp=".$_GET['comp']."&delc=1".$row['arg_id']."&uid=".$row['user_id']."' >&ensp;&ensp;Delete&ensp;&ensp;</a>";
+									echo "<a style = 'float:right;color:black;text-decoration:none;cursor:pointer;' href = 'index.php?page=view_comp&comp=".$_GET['comp']."&delc=1".$row['arg_id']."&uid=".$row['user_id']."' >&ensp;&ensp;Delete&ensp;&ensp;&ensp;&ensp;</a>";
 
 								}
 							}		
@@ -416,13 +431,13 @@ if(loggedin()||!empty($out_judge_key)){
 								<span style = 'color:#ffffff;'>By <a style = 'color:grey;' href = 'index.php?page=profile&user=".$row_['user_id']."'>".get_user_field($row_['user_id'], "user_username")."</a>";
 							
 								if(($rel_to_sec==3)&&(user_already_voted_comp_arg("comp_arg_replies", $user_id, $row_['reply_id'])==false)&&(($judges=="norm")||($judges!="norm"&&in_array($user_id, $judges)))){
-									echo "<span style = 'float:right;color:grey;text-decoration:underline;cursor:pointer;' arg_id = '1m-".$row_['reply_id']."' class = 'vote-opt mcid".$row_['reply_id']." msuccess-msg".$row_['reply_id']."'> Vote Up</span>
+									echo "<span style = 'float:right;color:grey;cursor:pointer;' arg_id = '1m-".$row_['reply_id']."' class = 'vote-opt mcid".$row_['reply_id']." msuccess-msg".$row_['reply_id']."'> Vote Up</span>
 									<span style = 'float:right;color:grey;cursor:pointer;' arg_id = '0m-".$row_['reply_id']."' class = 'vote-opt mcid".$row_['reply_id']."'>Vote Down &middot; </span>";
 								}
 								if(empty($out_judge_key)){
 									if((user_rank($user_id, "3")==true)&&(get_user_community($user_id, "com_id")==get_user_community($row_['user_id'], "com_id"))){
 									
-										echo "<a style = 'float:right;color:black;text-decoration:none;cursor:pointer;' href = 'index.php?page=view_comp&comp=".$_GET['comp']."&delc=0".$row_['reply_id']."&uid=".$row_['user_id']."' >&ensp;&ensp;Delete&ensp;&ensp; </a>";
+										echo "<a style = 'float:right;color:black;text-decoration:none;cursor:pointer;' href = 'index.php?page=view_comp&comp=".$_GET['comp']."&delc=0".$row_['reply_id']."&uid=".$row_['user_id']."' >&ensp;&ensp;Delete&ensp;&ensp;&ensp;&ensp; </a>";
 
 									}
 								}

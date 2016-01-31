@@ -18,7 +18,7 @@ if(loggedin()){
 						if(start_comp_opened==0){
 							start_comp_opened=1;
 							
-							$(this).animate({height:"600px"}, 500).animate({marginLeft:"28%"})
+							$(this).animate({height:"700px"}, 500).animate({marginLeft:"28%"})
 							.animate({width:"40%"}, 500).css("color", "#ffffff")
 							.css("box-shadow", "0px 0px 40px dimgrey").css("border", "1px solid grey");
 					
@@ -85,7 +85,7 @@ if(loggedin()){
 						}else if(val=="jspec"){
 							$(".tjudge-info").html("This means you can choose any specific and trustworthy user(s) to judge the competition, however they cannot be in any of the involved <?php echo $gc_string.'\'s'; ?>: <input type = 'text' placeholder = 'usernames... e.g user1,user2,user3' class = 'tjudge-spec-users-field' name = 'jspec_users'><br>");
 						}else if(val=="jout"){
-							$(".tjudge-info").html("This means you would like someone who is not on BuzzZap at all to judge the competition, a link will be sent to them. Please supply their email(s) here: <input type = 'text' placeholder = 'emails... e.g email1,email2,email3' id = 'tjudge-out-email-field' name = 'jout_emails' class = 'tjudge-spec-users-field'>");
+							$(".tjudge-info").html("This means you would like someone who is not on BuzzZap at all to judge the competition, a link will be sent to them. Please supply their email(s) here: <input type = 'text' placeholder = 'emails... e.g email1,email2,email3' id = 'tjudge-out-email-field' name = 'jout_emails' class = 'tjudge-spec-users-field'><br>");
 						}
 					});	
 
@@ -158,9 +158,12 @@ if(loggedin()){
 									<option value = "jspec">Choose specific judge(s)</option>
 									<option value = "jout">Invite special judge (outside BuzzZap)</option>
 								</select><br><span style = "" id = "comp_field_labels" class = 'tjudge-info'></span>
+								<br>
+								<span style = 'font-size:80%;'>Display note:</span><br>
+								<textarea name = "comp_note" id = "sncomp-txtarea" placeholder= "A note that will be displayed to everyone involved (optional)"></textarea>
 								<span id = 'comp_field_labels'>
 									<hr size = '1'>
-									Each <?php echo $gc_string; ?> will be randomly chosen to be either FOR or AGAISNT (argue yes or no to) the debate question/notion. Groups are judged on how well they have argued their point, baring in mind it may not be their actual opinion.
+									Each <?php echo $gc_string; ?> will be randomly chosen to be either FOR or AGAINST (argue yes or no to) the debate question/notion. Groups are judged on how well they have argued their point, baring in mind it may not be their actual opinion.
 								</span>	<br><br>
 								<input type = "submit" class = "loggedout-form-submit" style = "font-size:80%;box-shadow:none;width:200px;padding:10px;" value = "Start Competition">
 							</span>
@@ -179,7 +182,8 @@ if(loggedin()){
 								$comp_topic_id = htmlentities($_POST['comp_topic']);
 								$comp_dur = htmlentities($_POST['comp_dur']);
 								$deb_question = htmlentities($_POST['deb_question']);
-								
+								$comp_note = htmlentities($_POST['comp_note']);
+
 								$errors = array();
 								
 								$jtype = htmlentities($_POST['comp_judge']);
@@ -318,7 +322,7 @@ if(loggedin()){
 
 								if(count($errors)==0){
 									setcookie("success", "1Successfully started competition", time()+10);
-									$comp_id = start_comp($type, $opps, $end_time, $judges, $comp_topic_id, $starter_id, $deb_question);
+									$comp_id = start_comp($type, $opps, $end_time, $judges, $comp_topic_id, $starter_id, $deb_question,$comp_note);
 									add_note($_SESSION['user_id'], "You have successfully started a competition. Please wait while your opponents accept or decline to take part.", "");
 									
 									if($jtype=="jspec"){

@@ -710,6 +710,7 @@ li:hover a {
 
 .sub-info-thread{
 	color: darkgrey;	
+	text-align: center;
 }
 
 .thread-reply-container{
@@ -1865,4 +1866,11 @@ li:hover a {
 	border:1px solid black;
 	height:100px;
 	width:600px;
+}
+
+#sncomp-txtarea{
+	width: 305px;
+	resize: none;
+	margin-left: 20px;
+	border: none;
 }

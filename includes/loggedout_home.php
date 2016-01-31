@@ -215,6 +215,17 @@ if(!loggedin()){
 							<span id = 'forml1'><span id = 'login-label-3'>Community Code:</span></span><br><br>
 							<input type= "password" autocomplete="off" spellcheck="false" name = "com_pass"  id = "t3" class = "loggedout-form-fields"><br><br>	
 
+							<input type = 'hidden' name = 'lheader_post' value = "<?php 
+							if(isset($_GET['login_error'])){
+								if(substr($_GET['login_error'], 0, 8)=='lheader-'){
+									echo substr($_GET['login_error'],8);
+								}else{
+									echo '';
+								}
+							}else{
+								echo '';
+							}
+							?>">
 							<input type = "submit" value = "Login" class = "loggedout-form-submit" id = 'login-submit'><span id = 'forgot-pass-link'>Forgot Password?</span>
 
 							<?php
@@ -225,6 +236,8 @@ if(!loggedin()){
 									$loggin_error_text = "Your account has been suspended.";
 								}else if($_GET['login_error']=="discom"){
 									$loggin_error_text = "The community you are trying to login to is <br>deactivated. Please contact your community <br>leader or BuzzZap administration.";
+								}else if(substr($_GET['login_error'], 0, 8)=="lheader-"){
+									$loggin_error_text = "You must login to see your requested page.";
 								}else if($_GET['login_error']=="disabled"){
 									
 									$message = $db->query("SELECT message FROM feature_activation WHERE feature='login'")->fetchColumn();
@@ -235,21 +248,21 @@ if(!loggedin()){
 									</form>
 									";
 								
-								if(isset($_POST['pass_dl'])){
-									$pass = htmlentities($_POST['pass_dl']);
-									$get_true_pass = $db->query("SELECT pass FROM feature_activation WHERE feature='login'")->fetchColumn();
-									if($pass===$get_true_pass){
-										$_SESSION['pass_dl']="true";
-										header("Location: index.php?page=home&login_error=disabled");
-									}else{
-										echo "error";
+									if(isset($_POST['pass_dl'])){
+										$pass = htmlentities($_POST['pass_dl']);
+										$get_true_pass = $db->query("SELECT pass FROM feature_activation WHERE feature='login'")->fetchColumn();
+										if($pass===$get_true_pass){
+											$_SESSION['pass_dl']="true";
+											header("Location: index.php?page=home&login_error=disabled");
+										}else{
+											echo "error";
+										}
+									}	
+								
+									if(isset($_SESSION['pass_dl'])){
+										$loggin_error_text = "Correct code. Try to login again.";
 									}
-								}	
-							
-								if(isset($_SESSION['pass_dl'])){
-									$loggin_error_text = "Correct code. Try to login again.";
 								}
-							}
 								
 							?>
 								<script type="text/javascript">
