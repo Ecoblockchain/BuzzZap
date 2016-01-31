@@ -55,7 +55,7 @@ if(substr($_SERVER['PHP_SELF'], 0,3)=="/pr"){
 							foreach($leaders as $row){
 								$leaders_str.=",".$row['user_username'];
 							}
-							$insert = $db->prepare("INSERT INTO com_profile VALUES('',:com_id, :name, '','','','0,0',:leader, '')");
+							$insert = $db->prepare("INSERT INTO com_profile VALUES('',:com_id, :name, '','','','0,0',:leader, '', '')");
 							$insert->execute(array("com_id"=>$com_id, "name"=>get_user_community($user_id, "com_name"),"leader"=>trim_commas($leaders_str)));
 						}
 

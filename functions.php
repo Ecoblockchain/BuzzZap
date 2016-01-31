@@ -987,7 +987,7 @@ function snc($com_name, $com_pass, $l_username, $l_password, $l_vpassword, $l_fi
 			$insert1 = $db->prepare("INSERT INTO com_act VALUES(:com_id, :act, :ipn)");
 			$insert1->execute(array("com_id"=>$com_id, "act"=>0, "ipn"=>$com_ipn_ident));
 
-			$insert2 = $db->prepare("INSERT INTO com_profile VALUES('',:com_id, :name, '','','','0,0',:leader, '')");
+			$insert2 = $db->prepare("INSERT INTO com_profile VALUES('',:com_id, :name, '','','','0,0',:leader, '', '')");
 			$insert2->execute(array("com_id"=>$com_id, "name"=>$com_name,"leader"=>$l_username));
 			
 			$update_com_id = $db->prepare("UPDATE users SET user_com = :com_id, user_rank = 3 WHERE user_username = :username");
