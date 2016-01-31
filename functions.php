@@ -986,6 +986,9 @@ function snc($com_name, $com_pass, $l_username, $l_password, $l_vpassword, $l_fi
 			$com_ipn_ident = encrypt($_POST['snc_leader_email'].$_POST['snc_com_name']);
 			$insert1 = $db->prepare("INSERT INTO com_act VALUES(:com_id, :act, :ipn)");
 			$insert1->execute(array("com_id"=>$com_id, "act"=>0, "ipn"=>$com_ipn_ident));
+
+			$insert2 = $db->prepare("INSERT INTO com_profile VALUES('',:com_id, :name, '','','','0,0',:leader, '')");
+			$insert2->execute(array("com_id"=>$com_id, "name"=>$com_name,"leader"=>$l_username));
 			
 			$update_com_id = $db->prepare("UPDATE users SET user_com = :com_id, user_rank = 3 WHERE user_username = :username");
 			$update_com_id->execute(array("com_id"=>$com_id, "username"=>$l_username));
@@ -1540,7 +1543,7 @@ function end_comp($comp_id){
 				
 				$opp_ids[] = $comp_info["starter_id"];
 				foreach($opp_ids as $cid){
-				
+		
 					add_com_feed($cid, "A global competition we are all involved in has just ended! <a href = 'index.php?page=view_comp&comp=1".$comp_id."' >Click here</a> to see the results.");
 			
 				}
@@ -1553,12 +1556,37 @@ function end_comp($comp_id){
 			if(count($winner_ids)==1){
 				$winner = $winner_ids[0];
 				$gc_string = ($comp_info['comp_type']=="0")? "group":"community";
+				if($gc_string=="community"){
+					foreach($opp_ids as $cid){
+						
+						$cur_val = $db->query("SELECT com_comp_stat FROM com_profile WHERE com_id = ".$db->quote($cid))->fetchColumn();
+						$cur_val = explode(",",$cur_val);
+						if($winner==$cid){
+							$new0 = $cur_val[0] + 1;
+						}else{
+							$new0 = $cur_val[0];
+						}
+						$new1 = $cur_val[1]+1;
+						$newval = $new0.",".$new1;
+						update_com_profile($cid,"com_comp_stat", $newval);
+					}
+					
+				}
 				$rew_users = get_users_contributed_comp($comp_id, $winner);
 				foreach($rew_users as $uid){
 					add_rep(10, $uid, " you contributed to your ".$gc_string."'s victory in the competition '".$comp_info['comp_title']."'");
 					add_badge("Being on the winning side of a competition.", $uid, "you contributed to your ".$gc_string."'s victory in the competition '".$comp_info['comp_title']."'");
 				}
 				
+			}else{
+				foreach($opp_ids as $cid){
+					$cur_val = $db->query("SELECT com_comp_stat FROM com_profile WHERE com_id = ".$db->quote($cid))->fetchColumn();
+					$cur_val = explode(",",$cur_val);
+					$new0 = $cur_val[0];
+					$new1 = $cur_val[1]+1;
+					$newval = $new0.",".$new1;
+					update_com_profile($cid,"com_comp_stat", $newval);
+				}
 			}
 			return true;
 		}else{
@@ -1783,4 +1811,36 @@ function user_browser(){
 		return "supported";
 	}
 }	
+
+function update_com_profile($com_id,$col, $newval){
+	global $db;
+	$query = $db->prepare("UPDATE com_profile SET ".$col." = :val WHERE com_id = :com_id");
+	$query->execute(array("com_id"=>$com_id, "val"=>$newval));
+	return true;
+}
+
+function add_profile_link($name, $type, $style=""){
+	global $db;
+	//type 0 = user
+	//type 1 = com
+	if($type==0){
+		$link = "index.php?page=profile&user=".$db->query("SELECT user_id FROM users WHERE user_username = ".$db->quote($name))->fetchColumn();
+	}else{
+		$link = "index.php?page=private_groups&com=".$db->query("SELECT com_id FROM communities WHERE com_name = ".$db->quote($name))->fetchColumn();
+	}
+
+	$html = "<a href = '".$link."' style = '".$style."'>".$name."</a>";
+	return $html;
+}
+
+function get_com_rep($com_id){
+	global $db;
+	$rep = 0;
+	$get_reps = $db->query("SELECT user_rep FROM users WHERE user_com = ".$db->quote($com_id));
+	foreach($get_reps as $urep){
+		$rep = $rep + intval($urep['user_rep']);
+	}
+
+	return $rep;
+}
 ?>
