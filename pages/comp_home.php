@@ -517,7 +517,7 @@ if(loggedin()){
 					
 				}else{
 					?>
-						<div id = "no-threads-message">There are no private competitions yet.</div>
+						<div id = "no-threads-message">There are no competitions yet.</div>
 					<?php
 				}
 				

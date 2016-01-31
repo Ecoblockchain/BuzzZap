@@ -121,7 +121,7 @@ if(loggedin()){
 					echo "<span style = 'font-size: 80%;color: #0e6eb8;float: right;'>(user rep)</span>";
 					echo "<br>";
 					while($row = $get->fetch(PDO::FETCH_ASSOC)){
-						echo "<div class = 'hib-c-row'>".$count.".<a style = 'color: white;' href = 'index.php?page=profile&user=".$row['user_id']."'>".$row['user_username']."</a><span style = 'float: right;font-size: 80%;color: #9ec5e2;'>".$row['user_rep']."</span></div>";
+						echo "<div class = 'hib-c-row'>".$count.".".add_profile_link($row['user_username'], 0, 'color:white')."<span style = 'float: right;font-size: 80%;color: #9ec5e2;'>".$row['user_rep']."</span></div>";
 						$count++;
 					}
 				?>

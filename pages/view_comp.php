@@ -390,7 +390,7 @@ if(loggedin()||!empty($out_judge_key)){
 						echo "
 						<div class = 'comp-view-cand-box'>
 							<div id = 'cvcb-sec1'>
-								<span style = 'color:".cand_color($cand_id).";'><b>".$name."'s</b></span>
+								<span style = 'color:".cand_color($cand_id).";'><b>".add_profile_link($name, 1, $style="color:".cand_color($cand_id))."'s</b></span>
 								Section ".$your_host_str." <span id = 'comp-side-dis'>".$argue_side_txt."</span>
 							</div>
 							<div id = 'cvcb-sec2'>

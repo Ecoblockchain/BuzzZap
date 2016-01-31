@@ -124,7 +124,7 @@ if(loggedin()){
 						if(($view_user_id == $user_id)&&(in_array("edit_".$column, $valid_edit))){
 							
 						
-							echo $label.": <input type = 'text' style='".$width."' value = '".$value."' name = 'edit_".$column."' 
+							echo $label.": <input type = 'text' style='".$width."color:lightgreen;' value = '".$value."' name = 'edit_".$column."' 
 							class = 'profile-edit-textfield'  autocomplete='off' spellcheck='false' maxlength='40' id = '".$column."'><br>";
 							
 							
@@ -148,7 +148,7 @@ if(loggedin()){
 								</script>
 							<?php
 						}else{
-							echo $label.": ".$value."<br>";
+							echo $label.": <span style = 'color:lightgreen;'>".$value."</span><br>";
 						}
 					}
 					?>

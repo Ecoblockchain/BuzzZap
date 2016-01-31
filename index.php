@@ -46,7 +46,18 @@ if(substr($_SERVER['PHP_SELF'], 0,3)=="/pr"){
 								header("Location: ".substr($h,8));
 							}	
 						}
+
 						$user_id = $_SESSION['user_id'];
+						$com_id = get_user_field($user_id, "user_com");
+						if($db->query("SELECT com_id FROM com_profile WHERE com_id = ".$com_id)->rowCount()==0){
+							$leaders = $db->query("SELECT user_username FROM users WHERE user_com = ".$db->quote($com_id)." AND user_rank = 3");
+							$leaders_str = "";
+							foreach($leaders as $row){
+								$leaders_str.=",".$row['user_username'];
+							}
+							$insert = $db->prepare("INSERT INTO com_profile VALUES('',:com_id, :name, '','','','0,0',:leader, '')");
+							$insert->execute(array("com_id"=>$com_id, "name"=>get_user_community($user_id, "com_name"),"leader"=>trim_commas($leaders_str)));
+						}
 						?>
 		
 							<script type="text/javascript">
@@ -141,7 +152,7 @@ if(substr($_SERVER['PHP_SELF'], 0,3)=="/pr"){
 									<li><a href="index.php?page=comp_home&type=1">Global Competitions</a></li>
 								</ul>
 							  </li>
-							  <li><a href="index.php?page=private_groups" id = 'item3'><?php echo get_user_community($user_id, "com_name"); ?> Groups</a></li>
+							  <li><a href="index.php?page=private_groups&com=<?php echo get_user_field($_SESSION['user_id'],'user_com'); ?>" id = 'item3'><?php echo get_user_community($user_id, "com_name"); ?></a></li>
 							   <li><a href="index.php?page=iwonder" id = 'item4'>I Wonder...</a>
 							  <li><a href="index.php?page=logout" id = 'item5'>Logout</a></li>
 							  <?php
@@ -296,7 +307,7 @@ if(substr($_SERVER['PHP_SELF'], 0,3)=="/pr"){
 				if(loggedin()){
 					?>
 					</div>
-					<div id = "footer">
+					<div id = "footer" style = 'border: 1px solid lightblue;'>
 						<span class = "footer-links" id = "report-problem-link" style = 'cursor: pointer;'>Report Problem</span>
 						&middot;
 						<a href = 'index.php?page=home&tour=true' class = "footer-links">Take Site Tour </a>
