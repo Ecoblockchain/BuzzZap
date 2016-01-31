@@ -504,6 +504,7 @@ if(loggedin()){
 			}
 			
 			if(isset($_GET['repo-c'])){
+				//developement
 				$reply_id = htmlentities($_GET['repo-c']);
 				$reported_by = get_user_field($_SESSION['user_id'], "user_username");
 				if(substr($reply_id, strlen($reply_id)-1, strlen($reply_id))=="-"){
