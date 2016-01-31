@@ -171,7 +171,7 @@ if(loggedin()){
 						?>
 						<br><br>
 						<span style = "color:dimgrey;">
-							Argued By <?php echo "<a style = 'color:grey;' href = 'index.php?page=profile&user=".$db->query("SELECT user_id FROM users WHERE user_username = ".$db->quote($row['user_replied']))->fetchColumn()."'>".$row['user_replied']."</a>"; ?> on <?php echo date("d/M/Y H:i", $row['time_replied']);?>
+							Argued By <?php echo add_profile_link($row['user_replied'], 0, $style="color:grey"); ?> on <?php echo date("d/M/Y H:i", $row['time_replied']);?>
 							<br><span style = "color:#8FBC8F;"><?php echo $agrees_p; ?>% Agreed</span> and <span style = "color:#CD9B9B;"><?php echo $disagrees_p; ?>% Disagreed</span> with this argument (<?php echo $total;?> voter<?php echo $plur; ?>)
 						</span>
 		
@@ -288,7 +288,7 @@ if(loggedin()){
 								}
 								?>
 								<br><span style = "color:dimgrey;">
-									Replied By <?php echo "<a style = 'color:grey;' href = 'index.php?page=profile&user=".$db->query("SELECT user_id FROM users WHERE user_username = ".$db->quote($mrow['user_replied']))->fetchColumn()."'>".$mrow['user_replied']."</a>"; ?> on <?php echo date("d/M/Y H:i", $mrow['time_replied']);
+									Replied By <?php echo add_profile_link($mrow['user_replied'], 0, $style="color:grey"); ?> on <?php echo date("d/M/Y H:i", $mrow['time_replied']);
 									?>
 									<div class = "thread-reply-info">
 									<?php
@@ -504,6 +504,7 @@ if(loggedin()){
 			}
 			
 			if(isset($_GET['repo-c'])){
+				//developement
 				$reply_id = htmlentities($_GET['repo-c']);
 				$reported_by = get_user_field($_SESSION['user_id'], "user_username");
 				if(substr($reply_id, strlen($reply_id)-1, strlen($reply_id))=="-"){
