@@ -602,6 +602,7 @@ if(!loggedin()){
 		<div class = "sec-title">HAPPENING</div>
 		<div class = "loggedout-main-container1" style = "">
 			<?php
+			
 			$get = $db->prepare("SELECT * FROM site_news ORDER BY time DESC");
 			$get->execute();
 			if($get->rowCount()>0){
