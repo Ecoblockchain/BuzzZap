@@ -185,10 +185,8 @@ if(loggedin()||!empty($out_judge_key)){
 				NOTE: All teams are colour coded. Their content is displayed in their colour.<br>
 				<?php
 				if(comp_started($comp_id)){
-					if($judges!="norm"){
-						if(in_array($user_id, $judges)){
-							echo "As a judge, you must read through the different arguments and comments, and simply vote up or down to<br> which comments you are or aren't persuaded by. It is important you vote as many comments as possible.";
-						}
+					if($judges!="norm"&&in_array($user_id, $judges)){
+						echo "As a judge, you must read through the different arguments and comments, and simply vote up or down to<br> which comments you are or aren't persuaded by. It is important you vote as many comments as possible.";
 					}else if(!user_in_comp($user_id, $comp_id, $type)){
 						echo "As a reader, you can read through the different arguments and comments, and simply vote up or down to<br> which comments you are or aren't persuaded by. This will help towards your reputation!";
 					}else{
