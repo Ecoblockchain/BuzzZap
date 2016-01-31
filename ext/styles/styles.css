@@ -1874,3 +1874,18 @@ li:hover a {
 	margin-left: 20px;
 	border: none;
 }
+
+.wof-container{
+	background-color: lightgrey;
+	width:45%;
+	min-height: 100%;
+	height: auto;
+	text-align: center;
+	padding:10px;
+	font-size: 150%;
+}
+
+.wof-cont-title{
+	font-size: 130%;
+	color: salmon;
+}

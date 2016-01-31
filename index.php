@@ -58,6 +58,12 @@ if(substr($_SERVER['PHP_SELF'], 0,3)=="/pr"){
 							$insert = $db->prepare("INSERT INTO com_profile VALUES('',:com_id, :name, '','','','0,0',:leader, '')");
 							$insert->execute(array("com_id"=>$com_id, "name"=>get_user_community($user_id, "com_name"),"leader"=>trim_commas($leaders_str)));
 						}
+
+						$pos_rep = $db->query("SELECT com_rep FROM com_profile WHERE com_id = ".$db->quote($com_id))->fetchColumn();
+						$acc_rep = get_com_rep($com_id);
+						if($acc_rep!=$pos_rep){
+							update_com_profile($com_id, "com_rep",$acc_rep );
+						}
 						?>
 		
 							<script type="text/javascript">
@@ -150,6 +156,7 @@ if(substr($_SERVER['PHP_SELF'], 0,3)=="/pr"){
 									<li><a href="index.php?page=comp_home&type=0">Private Competitions</a></li>
 									<li><a href="index.php?page=private_debating&d=g">Global Debating</a></li>
 									<li><a href="index.php?page=comp_home&type=1">Global Competitions</a></li>
+									<li><a href="index.php?page=wof">Wall Of Fame</a></li>
 								</ul>
 							  </li>
 							  <li><a href="index.php?page=private_groups&com=<?php echo get_user_field($_SESSION['user_id'],'user_com'); ?>" id = 'item3'><?php echo get_user_community($user_id, "com_name"); ?></a></li>
@@ -279,7 +286,7 @@ if(substr($_SERVER['PHP_SELF'], 0,3)=="/pr"){
 							$next_page = $next_page."&tour=true";
 						}
 						if($_GET['tour']=="true"){
-							$text = $db->query("SELECT text FROM tour_content WHERE page_name=".$db->quote($page_name))->fetchColumn();
+							$text = get_static_content($db->query("SELECT text FROM tour_content WHERE page_name=".$db->quote($page_name))->fetchColumn());
 							$link = "<a href = 'index.php?page=".$next_page."'>Next >> </a>";
 						}else if($_GET['tour']=="end"){
 							$text = "That is the end of the tour. For more information you can read the site manual, which contains great detail into every feature.";
