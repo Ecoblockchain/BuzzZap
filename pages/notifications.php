@@ -87,7 +87,7 @@ if(loggedin()){
 			header("Location: index.php?page=notifications");
 		}
 		if((isset($_GET['cleara']))&&($_GET['cleara']=="true")){
-			clear_notes($_SESSION['user_id'], $all=true);
+			clear_notes($_SESSION['user_id'], true, array());
 			header("Location: index.php?page=notifications");
 		}
 		mark_all_notes_read($_SESSION['user_id']);

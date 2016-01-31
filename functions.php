@@ -956,8 +956,8 @@ function clear_notes($user_id, $all=false, $to_del){
 			$delete->execute(array("user_id"=>$user_id, "id"=>$id));
 		}	
 	}else{
-	$delete = $db->prepare("DELETE FROM notifications WHERE `to` = :user_id");
-	$delete->execute(array("user_id"=>$user_id));
+		$delete = $db->prepare("DELETE FROM notifications WHERE `to` = :user_id");
+		$delete->execute(array("user_id"=>$user_id));
 	}
 }
 
