@@ -21,6 +21,7 @@ if(loggedin()){
 		foreach($ele_array as $value){
 			$value = trim($value);
 			if(strlen($value)>0){
+
 				$get_pred = $db->prepare("SELECT `".$col."` FROM `".$table."` WHERE `".$col."` LIKE :v ".$ex_query." LIMIT ".$limit);
 				$get_pred->execute(array("v"=>"%".$value."%"));
 				$pred_str = "";

@@ -516,12 +516,12 @@ if(loggedin()||!empty($out_judge_key)){
 				}
 				
 		}else{
-			header("Location: index.php?page=home");
+			//header("Location: index.php?page=home");
 		}
 	}else{
-		header("Location: index.php?page=home");
+		//header("Location: index.php?page=home");
 	}	
 }else{
-	header("Location: index.php?page=home");
+	//header("Location: index.php?page=home");
 }
 ?>	

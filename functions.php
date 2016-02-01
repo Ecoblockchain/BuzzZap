@@ -1543,9 +1543,9 @@ function end_comp($comp_id){
 				
 				$opp_ids[] = $comp_info["starter_id"];
 				foreach($opp_ids as $cid){
-		
-					add_com_feed($cid, "A global competition we are all involved in has just ended! <a href = 'index.php?page=view_comp&comp=1".$comp_id."' >Click here</a> to see the results.");
-			
+					if($cid!=null){
+						add_com_feed($cid, "A global competition we are all involved in has just ended! <a href = 'index.php?page=view_comp&comp=1".$comp_id."' >Click here</a> to see the results.");
+					}
 				}
 			}
 	
