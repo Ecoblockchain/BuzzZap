@@ -1856,7 +1856,7 @@ function send_mail($to,$subject,$body,$from){
 	}
 	$mail_style = get_static_content("mail_style");
 	mail($to, $subject, "<div style = '".$mail_style."'>".$body."</div>
-		<span style = 'font-size:80%;color:grey;text-align: center;'><br><hr size = '1'>".$sig."</span>", $headers);
+		<div style = 'font-size:80%;color:grey;text-align: center;'><br><hr size = '1'>".$sig."</div>", $headers);
 	return true;
 }
 ?>
