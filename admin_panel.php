@@ -561,6 +561,7 @@ if(loggedin_as_admin()){
 						send_mail($e, $subject, $body, "admin@buzzzap.com");
 						echo $e."<br>";
 					}
+					echo "<br><br>";
 				}
 			?>
 			<form action = "" method = "POST">
@@ -570,7 +571,7 @@ if(loggedin_as_admin()){
 				</select> or custom(sql):<input type = "text" name = "newsl_tocus" style = 'width: 300px;' class = "leader-cp-fields" placeholder=  "SELECT user_email FROM users..."><br><br>
 				Subject:<input type = "text" name = "newsl_sub" style = 'width: 300px;' class = "leader-cp-fields"><br><br>
 				Body:<br><textarea name = "newsl_body" style ="width:300px;height:200px;text-align: center;"></textarea><br>
-				<input type = "submit" value = "Change" class = "leader-cp-submit">	
+				<input type = "submit" value = "Send" class = "leader-cp-submit">	
 			</form>	
 		</div>
 	</div>	
