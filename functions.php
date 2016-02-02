@@ -1353,7 +1353,9 @@ function check_comp_ready($comp_id, $type){
 				
 			}else{
 				foreach(get_judge_list($comp_id) as $jid){
-					add_note($jid,"A competition you are meant to be judging has just started. Click here to view it!", "index.php?page=view_comp&comp=".$type.$comp_id);
+					if($jid!="norm"&&substr($jid,0,1)!="o"){
+						add_note($jid,"A competition you are meant to be judging has just started. Click here to view it!", "index.php?page=view_comp&comp=".$type.$comp_id);
+					}
 				}
 			}
 			$comp_dur = substr($db->query("SELECT end FROM competitions WHERE comp_id = ".$db->quote($comp_id))->fetchColumn(), 1);
@@ -1842,5 +1844,18 @@ function get_com_rep($com_id){
 	}
 
 	return $rep;
+}
+
+function send_mail($to,$subject,$body,$from){
+	$headers  = 'MIME-Version: 1.0' . "\r\n";
+	$headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
+	$headers .= "From: ".$from. "\r\n";
+	$sig = get_static_content("mail_signature");
+	if($from == "auto@buzzzap.com"){
+		$sig = "This is an automatically sent email. Please do not try to respond here. <br>".$sig;
+	}
+
+	mail($to, $subject, $body."<span style = 'font-size:80%;color:grey'><br><hr size = '1'>".$sig."</span>", $headers);
+	return true;
 }
 ?>

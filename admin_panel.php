@@ -430,11 +430,11 @@ if(loggedin_as_admin()){
 					$email = $db->query("SELECT user_email FROM users WHERE user_com = ".$db->quote($com_id)." AND user_rank = 3 LIMIT 1")->fetchColumn();
 					$headers  = 'MIME-Version: 1.0' . "\r\n";
 					$headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
-					$headers .= "From: Administration@buzzzap.com" . "\r\n";
+					$headers .= "From: auto@buzzzap.com" . "\r\n";
 					$com_name = $db->query("SELECT com_name FROM communities WHERE com_id = ".$db->quote($com_id))->fetchColumn();
 					$parse_vars = array("leadername"=>$leadername, "com_name"=>$com_name);
 					$body = nl2br(static_cont_rec_vars(get_static_content("snc_suc_email"), $parse_vars));
-					mail($email,"BuzzZap Community Activation",$body,$headers);
+					send_mail($email,"BuzzZap Community Activation",$body,"auto@buzzzap.com");
 					header("Location: index.php?page=home&m=17Successfully activated.");
 				}
 	
@@ -445,7 +445,7 @@ if(loggedin_as_admin()){
 					$headers  = 'MIME-Version: 1.0' . "\r\n";
 					$headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
 					$headers .= "From: Billing@buzzzap.com" . "\r\n";
-					mail($email,"BuzzZap payments",$body,$headers);
+					send_mail($email,"BuzzZap Payments",$body,"billing@buzzzap.com");
 					header("Location: index.php?page=home&m=17Successfully emailed.");
 				}
 			?>

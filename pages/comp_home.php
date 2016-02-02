@@ -330,15 +330,11 @@ if(loggedin()){
 											add_note($judgeid, "You have been invited to judge a competition. Please click here to view the competition and respond to the invitation.", "index.php?page=view_comp&comp=".$type.$comp_id);
 										}
 									}else if($jtype=="jout"){
-										$headers  = 'MIME-Version: 1.0' . "\r\n";
-										$headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
-										$headers .= "From: Administration@buzzzap.com" . "\r\n";
-
 										foreach($judges_emails as $key=>$email){
 											$link = $spec_judge_email_link."index.php?page=view_comp&comp=".$type.$comp_id."&out_judge_key=".substr($judges[$key],5);
 											$body = "Dear ".$email.", <br> The user ".get_user_field("user_username", $_SESSION['user_id'])." at BuzzZap Online
 											Debating would like you to judge a competition. Please view it <a href = '".$link."'>here</a>. Simply vote up/down on the comments and arguments that are or are not particularly persuasive and agreeable.<br>Thank you!";
-											mail($email,"BuzzZap Judge request",$body,$headers);
+											send_mail($email,"BuzzZap Judge Request",$body,"auto@buzzzap.com");
 										}
 									}
 									

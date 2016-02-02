@@ -1,4 +1,5 @@
 <?php
+	//weekly global debate & comp updates
 	ob_start();
 	require("requires.php");
 
@@ -35,7 +36,7 @@
 		foreach($users as $row){
 			$email = $row['user_email'];
 			$name = $row['user_username'];
-			mail($email,"BuzzZap Weekly Update",$ebody,$headers);
+			send_mail($email,"BuzzZap Weekly Update",$ebody,"auto@buzzzap.com");
 		}
 
 	}
