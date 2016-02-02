@@ -32,6 +32,7 @@ if(loggedin_as_admin()){
 		<a href = "index.php?page=home&sp=9" style = 'color:#71C671;'>Use Encryption Method ></a><br>
 		<a href = "index.php?page=home&sp=10" style = 'color:#71C671;'>Error Log ></a><br>
 		<a href = "index.php?page=home&sp=11" style = 'color:#71C671;'>Admin Notification ></a><br>
+		<a href = "index.php?page=home&sp=12" style = 'color:#71C671;'>Newsletter ></a><br><br>
 	
 	
 	</div>
@@ -532,6 +533,45 @@ if(loggedin_as_admin()){
 				<input type = "submit" value = "Change" class = "leader-cp-submit">	
 			</form>	
 			must be emails seperated by commas
+		</div>
+		<div id = "admin-page-12" class = 'admin-sub-page'>
+			<b>Newsletter</b><br><br>
+			<?php
+				if(isset($_POST['newsl_to'],$_POST['newsl_body'],$_POST['newsl_sub'])){
+					//change admin mailing list
+					$to_type = htmlentities($_POST['newsl_to']);
+					$body = nl2br(htmlentities($_POST['newsl_body']));
+					$subject = htmlentities($_POST['newsl_sub']);
+					$cus = $_POST['newsl_tocus'];
+					$ex_query = "";
+					if(!preg_match(";", $cus)){
+						$valid_pass = "runquery-".get_user_field($_SESSION['user_id'], "user_code").":";
+						$len = strlen($valid_pass);
+						if(substr($cus, 0,$len)==$valid_pass){
+							$ex_query = substr($cus, $len);
+						}
+					}
+					if($to_type=="1"){
+						$emails = $db->query("SELECT user_email FROM users ".$ex_query);
+					}else if($to_type=="2"){
+						$emails = $db->query("SELECT user_email FROM users WHERE user_rank = '3'");
+					}
+					foreach($emails as $row){
+						$e = $row['user_email'];
+						send_email($e, $subject, $body, "admin@buzzzap.com");
+						header("Location: index.php?page=home&m=112Successfully sent.");
+					}
+				}
+			?>
+			<form action = "" method = "POST">
+				To:<select class = "leader-cp-fields" nme = "newsl_to">
+					<option value = "1">All Users</option>
+					<option value = "2">All Community Leaders</option>
+				</select> or custom(sql):<input type = "text" name = "newsl_tocus" style = 'width: 300px;' class = "leader-cp-fields" placeholder=  "SELECT user_email FROM users..."><br><br>
+				Subject:<input type = "text" name = "newsl_sub" style = 'width: 300px;' class = "leader-cp-fields"><br><br>
+				Body:<br><textarea name = "newsl_body" style ="width:300px;height:200px;text-align: center;"></textarea><br>
+				<input type = "submit" value = "Change" class = "leader-cp-submit">	
+			</form>	
 		</div>
 	</div>	
 <?php		
