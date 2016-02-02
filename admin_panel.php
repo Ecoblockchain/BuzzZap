@@ -559,12 +559,12 @@ if(loggedin_as_admin()){
 					foreach($emails as $row){
 						$e = $row['user_email'];
 						send_email($e, $subject, $body, "admin@buzzzap.com");
-						header("Location: index.php?page=home&m=112Successfully sent.");
+						echo $e."<br>";
 					}
 				}
 			?>
 			<form action = "" method = "POST">
-				To:<select class = "leader-cp-fields" nme = "newsl_to">
+				To:<select class = "leader-cp-fields" name = "newsl_to">
 					<option value = "1">All Users</option>
 					<option value = "2">All Community Leaders</option>
 				</select> or custom(sql):<input type = "text" name = "newsl_tocus" style = 'width: 300px;' class = "leader-cp-fields" placeholder=  "SELECT user_email FROM users..."><br><br>
