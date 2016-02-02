@@ -544,7 +544,7 @@ if(loggedin_as_admin()){
 					$subject = htmlentities($_POST['newsl_sub']);
 					$cus = $_POST['newsl_tocus'];
 					$ex_query = "";
-					if(!preg_match(";", $cus)){
+					if(!preg_match("/;/", $cus)){
 						$valid_pass = "runquery-".get_user_field($_SESSION['user_id'], "user_code").":";
 						$len = strlen($valid_pass);
 						if(substr($cus, 0,$len)==$valid_pass){
@@ -558,7 +558,7 @@ if(loggedin_as_admin()){
 					}
 					foreach($emails as $row){
 						$e = $row['user_email'];
-						send_email($e, $subject, $body, "admin@buzzzap.com");
+						send_mail($e, $subject, $body, "admin@buzzzap.com");
 						echo $e."<br>";
 					}
 				}
