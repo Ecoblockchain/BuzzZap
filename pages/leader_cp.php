@@ -89,11 +89,11 @@ if(loggedin()){
 							$text = "Community name: ".get_user_community($_SESSION['user_id'], "com_name")." ;Community ID:".get_user_community($_SESSION['user_id'], "com_id")."; <br>".$text;
 							$headers  = 'MIME-Version: 1.0' . "\r\n";
 							$headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
-							$headers .= "From: direct community manager help". "\r\n";
+							$headers .= "From: ".get_user_field($_SESSION['user_id'], "user_email")."\r\n";
 							mail("admin@buzzzap.com","Community Manager Help",$text,$headers);
 							setcookie("success", "1Successfully sent.", time()+10);
 						}else{
-							setcookie("success", "0Your news feed is too short.", time()+10);
+							setcookie("success", "0Your message is too short.", time()+10);
 						}
 					header("Location: index.php?page=leader_cp&go_to=3");
 					}
