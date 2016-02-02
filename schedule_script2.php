@@ -28,7 +28,7 @@
 	foreach($ebodys as $uid=>$body){
 		$email = get_user_field($uid, "user_email");
 		$name = get_user_field($uid, "user_username");
-		echo $body = "Dear ".$name.", <br>You have new notification(s): <br>".$body;
+		$body = "Dear ".$name.", <br>You have new notification(s): <br>".$body;
 		send_mail($email,"BuzzZap Activity",$body,"auto@buzzzap.com");
 	}
 
