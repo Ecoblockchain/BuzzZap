@@ -18,9 +18,9 @@
 				$link = $pre_link."index.php?page=home&login_error=lheader-index.php?page=notifications";
 			}
 			if(!in_array($uid, array_keys($ebodys))){
-				$ebodys[$uid]=date("d/M/Y H:i",$user['time'])."<a href = '".$link."'>".$user['text']."</a>";
+				$ebodys[$uid]=date("d/M/Y H:i",$user['time'])."<a href = '".$link."'>".$user['text']."</a><br>";
 			}else{
-				$ebodys[$uid].="<br>".date("d/M/Y H:i",$user['time']).": <a href = '".$link."'>".$user['text']."</a>";
+				$ebodys[$uid].="<br>".date("d/M/Y H:i",$user['time']).": <a href = '".$link."'>".$user['text']."</a><br>";
 			}
 		}
 	}
