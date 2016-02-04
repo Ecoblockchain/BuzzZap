@@ -51,6 +51,7 @@ if(loggedin()){
 	});
 	
 	</script>
+	<div class = 'page-path'><?php echo get_user_field($_SESSION['user_id'], "user_username"); ?> > My Private Messages
 	<div class = "note_title">All Messages</div>
 	<br>
 	<div class = 'close-spm-form' id = 'close-form'>x</div>

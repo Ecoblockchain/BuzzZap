@@ -18,6 +18,7 @@ if(loggedin()){
 		$com_profile["com_comp_stat"] = str_replace(",", "/", $com_profile["com_comp_stat"]);
 		$can_edit = (get_user_field($_SESSION['user_id'], "user_rank")==3&&$own==true)? true:false;
 		?>
+		<div class = 'page-path'>Community Profile > <?php echo $com_profile['com_name'];?></div><br>
 		<div class = 'p-groups-title'><b>
 			<?php
 				echo $com_profile["com_name"]. "'s Profile";
@@ -32,7 +33,7 @@ if(loggedin()){
 					}
 			?>
 		</b></div>
-		<div class = "profile-info-container" style = "width: 96%;padding-top:10px;white-space:normal;">
+		<div class = "profile-info-container" style = "width: 97%;padding-top:10px;white-space:normal;">
 			<div id = 'profile-fields' style = "text-align: left;margin-left: 20%">
 			<?php
 			foreach($label_format as $col=>$dis){

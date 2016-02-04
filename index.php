@@ -72,13 +72,7 @@ if(substr($_SERVER['PHP_SELF'], 0,3)=="/pr"){
 									$("#nav-sub1").css("display", "block");
 								});
 			
-								$("#item1").mouseover(function(){
-									$("#note-bubble").hide();
-									$("#note-bubble1,#note-bubble2,#note-bubble3").css("display", "inline");
-								}).mouseleave(function(){
-									$("#note-bubble").css("display", "inline");
-								});
-								$("#mbox1").mouseover(function(){
+								$("#mitem1").mouseover(function(){
 									$("#note-bubble").hide();
 									$("#note-bubble1,#note-bubble2,#note-bubble3").css("display", "inline");
 								}).mouseleave(function(){
@@ -94,86 +88,131 @@ if(substr($_SERVER['PHP_SELF'], 0,3)=="/pr"){
 							});
 							</script>
 					<div class = 'loggedin-body'>
-						<nav class = "nav-container">
-				
-							<ul id="menu" class = "menu">
-						
-							  <li id = 'lilist1'>
-							  <a href="index.php?page=home" id = 'item1'>
-							  <?php echo get_user_field($user_id, "user_username"); ?>
-							  <?php 
-					  
-							 $total =get_unread_pm_quant($user_id) + count(get_pending_friends(get_user_field($user_id, "user_username")))+get_unread_notes($user_id, $quant=true);
-							 if($total>0){
-								 echo " <div class= 'note-bubble' id = 'note-bubble'>".$total."</div>";
-							 }
-							  ?></a>
-								<ul id = 'mbox1'>
-									<li>
-										<a href="index.php?page=profile&user=<?php echo $_SESSION['user_id']; ?>">My Profile
-											<div class= 'note-bubble' id = 'note-bubble3' style = ''>
-													<?php
-													 $friend_p_q = count(get_pending_friends(get_user_field($user_id, "user_username")));
-													 if($friend_p_q>0){
-														echo $friend_p_q;
-													 }
-													 ?>
-											</div>
-										</a>
-									</li>
-								
-									<li>
-										<a href="index.php?page=inbox">Inbox
-											<div class= 'note-bubble' id = 'note-bubble1'>
-												<?php if(get_unread_pm_quant($user_id)>0){echo get_unread_pm_quant($user_id);}?>
-											</div>
-										</a>
-									</li>
-							
-									<li>
-										<a href="index.php?page=notifications">
-											Notifications
-											<div class= 'note-bubble' id = 'note-bubble2'>
-												<?php
-											
-													$note_count = get_unread_notes($user_id, $quant=true);
-													 if($note_count>0){
-														echo $note_count;
-													 }
-												?>
-											</div>	
-										</a>
-									</li>
-							
+						<div class = "menu">
+							<div class = "mitem-container">
+								<div class = "mitem" id = "mitem1">
 
-								</ul>
-					  
-							  </li>
-					 
-							  <li><a href="" id = 'item2'>Debating</a>
-								<ul>
-									<li><a href="index.php?page=private_debating">Private Debating</a></li>
-									<li><a href="index.php?page=comp_home&type=0">Private Competitions</a></li>
-									<li><a href="index.php?page=private_debating&d=g">Global Debating</a></li>
-									<li><a href="index.php?page=comp_home&type=1">Global Competitions</a></li>
-									<li><a href="index.php?page=wof">Wall Of Fame</a></li>
-								</ul>
-							  </li>
-							  <li><a href="index.php?page=private_groups&com=<?php echo get_user_field($_SESSION['user_id'],'user_com'); ?>" id = 'item3'><?php echo get_user_community($user_id, "com_name"); ?></a></li>
-							   <li><a href="index.php?page=iwonder" id = 'item4'>I Wonder...</a>
-							  <li><a href="index.php?page=logout" id = 'item5'>Logout</a></li>
-							  <?php
+									<a href="index.php?page=home">
+										<?php
+										 	$total =get_unread_pm_quant($user_id) + count(get_pending_friends(get_user_field($user_id, "user_username")))+get_unread_notes($user_id, $quant=true);
+										 	if($total>0){
+												echo " <div class= 'note-bubble' id = 'note-bubble' style = 'margin-top:10px;margin-left:30px;'>".$total."</div>";
+											}
+										?>
+										<div id "mitem1sub1" class = "subitem" style = "padding-top:20px;"><?php echo get_user_field($user_id, "user_username"); ?></div>
+									</a>
+
+									<a href="index.php?page=profile&user=<?php echo $_SESSION['user_id']; ?>">
+										<div class= 'note-bubble' id = 'note-bubble3' style = 'margin-top:5px;margin-left:50px;'>
+											<?php
+											
+											$friend_p_q = count(get_pending_friends(get_user_field($user_id, "user_username")));
+											if($friend_p_q>0){
+												echo $friend_p_q;
+											}
+											?>
+										</div>
+										<div id "mitem1sub2" style = "padding-top:25px;" class = "subitem">My Profile</div>
+									</a>
+
+									<a href="index.php?page=inbox">
+										<div class= 'note-bubble' id = 'note-bubble1' style = "margin-left: 30px">
+											<?php if(get_unread_pm_quant($user_id)>0){echo get_unread_pm_quant($user_id);}?>
+										</div>
+										<div id "mitem1sub3" class = "subitem">Inbox</div>
+									</a>
+
+									<a href="index.php?page=notifications">
+										<div class= 'note-bubble' id = 'note-bubble2'>
+											<?php
+												$note_count = get_unread_notes($user_id, $quant=true);
+												 if($note_count>0){
+													echo $note_count;
+												 }
+											?>
+										</div>
+										<div id "mitem1sub4" class = "subitem">Notifications</div>
+									</a>
+
+								</div>
+							</div>
+							<div class = "mitem-container">
+								<div class = "mitem" id = "mitem2">
+									<a href="index.php?page=home">
+										<div id "mitem1sub1" class = "subitem" style = "padding-top:20px;">Debating</div>
+									</a>
+									<a href="index.php?page=private_debating">
+										<div id "mitem2sub2" class = "subitem" style = "padding-top:30px;">Private Debating</div>
+									</a>
+									<a href="index.php?page=private_debating&d=g">
+										<div id "mitem2sub3" class = "subitem">Global Debating</div>
+									</a>
+									<a href="index.php?page=comp_home&type=0">
+										<div id "mitem2sub4" class = "subitem">Private Competitions</div>
+									</a>
+									<a href="index.php?page=comp_home&type=1">
+										<div id "mitem2sub4" class = "subitem">Global Competitions</div>
+									</a>
+									<a href="index.php?page=wof">
+										<div id "mitem2sub4" class = "subitem">Wall Of Fame</div>
+									</a>
+								</div>
+							</div>
+							<div class = "mitem-container">	
+								<div class = "mitem" id = "mitem3">
+									<a href="index.php?page=private_groups&com=<?php echo get_user_field($_SESSION['user_id'],'user_com'); ?>">
+										<div id "mitem3sub1" class = "subitem"  style = "padding-top:20px;"><?php echo get_user_community($user_id, "com_name"); ?></div>
+									</a>
+								</div>
+							</div>
+							<div class = "mitem-container">
+								<div class = "mitem" id = "mitem4">
+									<a href="index.php?page=iwonder">
+										<div id "mitem4sub1" class = "subitem" style = "padding-top:20px;">I Wonder...</div>
+									</a>
+								</div>
+							</div>
+							<div class = "mitem-container">
+								<div class = "mitem" id = "mitem5">
+									<a href="index.php?page=logout">
+										<div id "mitem4sub1" class = "subitem" style = "padding-top:20px;">Logout</div>
+									</a>
+								</div>
+							</div>
+
+							<?php
 								if(user_rank($_SESSION['user_id'], 3,"just")){
 									?>
-										<div class = "admin-links">
-											<a href = "index.php?page=leader_cp">Community Manager</a>
+										<div class = "mitem-container" style = 'float:right'>
+											<div class = "mitem admin-links" id = "mitem6">
+												<a href="index.php?page=leader_cp">
+													<div id "mitem4sub1" class = "subitem" style = "padding-top:10px;">Community Manager</div>
+												</a>
+											</div>
 										</div>
 									<?php	
 								}
-								?>
-							</ul>
+							?>
 					
-						</nav>	
+						</div>
+						<br>
+
+						<script>
+						$(function(){
+							$("#mitem1").mouseover(function(){
+								$(this).animate({height:"210px"}, 200);
+
+							}).mouseleave(function(){
+								$(this).animate({height:"58px"}, 200);
+							});
+							$("#mitem2").mouseover(function(){
+								$(this).animate({height:"360px"}, 200);
+
+							}).mouseleave(function(){
+								$(this).animate({height:"58px"}, 200);
+							});
+						});
+						</script>	
 				
 			
 					<div class = "loggedin-inner-container">

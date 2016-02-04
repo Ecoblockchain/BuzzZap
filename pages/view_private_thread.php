@@ -13,12 +13,17 @@ if(loggedin()){
 
 	if(in_array($_GET['thread_id'], $valid_ids)){
 		$thread_id = $_GET['thread_id'];
-		$header_info = array("thread_title"=>"", "thread_starter"=>"","topic_id"=>"", "time_created"=>"", "vote_yes"=>"", "vote_maybe"=>"", "vote_no"=>"", "thread_likes"=>"", "visible"=>"");
+		$header_info = array("thread_title"=>"", "thread_starter"=>"","topic_id"=>"", "com_id"=>"","time_created"=>"", "vote_yes"=>"", "vote_maybe"=>"", "vote_no"=>"", "thread_likes"=>"", "visible"=>"");
 		foreach($header_info as $column => &$value){
 			$value = $db->query("SELECT ".$column." FROM debating_threads WHERE thread_id = ".$thread_id."")->fetchColumn();
 		}
+		$dtype = ($header_info['com_id']>0)? "Private" : "Global";
+		$path_link1 = ($dtype=="Private")? "index.php?page=private_debating":"index.php?page=private_debating&d=g";
+		$path_link2 = ($dtype=="Private")? "index.php?page=private_debating_topic&topic_id=".$header_info['topic_id']:"index.php?page=private_debating_topic&topic_id=".$header_info['topic_id']."&d=g";
+		$topic_name = $db->query("SELECT topic_name FROM debating_topics WHERE topic_id = ".$db->quote($header_info['topic_id']))->fetchColumn();
 		if(valid_view_thread($thread_id, $_SESSION['user_id'])){
 			?>
+			<div class = 'page-path'>Debating > <?php echo "<a style = 'color: #40e0d0;' href = '".$path_link1."'>".$dtype; ?> Debating </a> > <?php echo "<a style = 'color: #40e0d0;' href = '".$path_link2."'>".$topic_name." > ".$header_info['thread_title']; ?></div><br>
 				<?php
 					if($header_info["visible"]==0){
 						echo "<span style = 'color:salmon;'><i><u>*This debate is visible to only you untill it is approved by a leader.</u></i></span><br><br>";

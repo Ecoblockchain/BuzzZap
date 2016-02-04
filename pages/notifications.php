@@ -6,7 +6,7 @@ if($check_valid!="true"){
 if(loggedin()){
 	
 	?>
-
+		<div class = 'page-path'><?php echo get_user_field($_SESSION['user_id'], "user_username"); ?> > My Notifications
 		<div class = "note_title">Your Notifications</div>
 		<div id = "note-menu"><a class = "note-menu" href = "index.php?page=notifications&cleara=true">Clear All</a><span class ="note-menu" id = "ds-n">  &middot; Delete Selected</span></div>
 		<br><br>
@@ -17,6 +17,7 @@ if(loggedin()){
 		$get_notes->execute(array("user_id"=>$_SESSION['user_id']));
 		$quant = $get_notes->rowCount();
 		if($quant>0){
+			echo "<div class = 'profile-info-container' style = 'font-size: 90%;width:99%;padding:10px'>";
 			while($row = $get_notes->fetch(PDO::FETCH_ASSOC)){
 				$act_id[$counter]=$row['note_id'];
 				if($row['seen']=="0"){
@@ -27,11 +28,12 @@ if(loggedin()){
 					$b_ = "";
 				}
 				echo  $b."<span style = 'color:grey;'>".date("d/M/Y H:i", $row['time']).
-				"</span><a href = '".$row['link']."'><div id = 'note-line'>".$row['text']."</div></a>".$b_."
+				"</span><a href = '".$row['link']."'><div id = 'note-line' style = 'white-space:normal;'>".$row['text']."</div></a>".$b_."
 				<div class = 'note-sel-box' id = 'sel-box-".$counter."'></div>
 				<hr size = '1'>";
-				$counter++;
+				$counter++;	
 			}
+			echo "</div>";
 		}else{
 			echo "<div id = 'no-threads-message'>You have no notifications.</div> ";
 		}

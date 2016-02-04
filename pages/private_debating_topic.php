@@ -7,13 +7,19 @@ if(loggedin()){
 	$user_id = $_SESSION['user_id'];
 	$com_id = get_user_field($user_id, "user_com");
 	$topic_id = htmlentities($_GET['topic_id']);
+	$topic_name = $db->query("SELECT topic_name FROM debating_topics WHERE topic_id = ".$db->quote($topic_id))->fetchColumn();
 	$valid_topics = array();
-	
+	$dtype = "Private";
+
 	if(isset($_GET['d'])){
 		if($_GET['d']=="g"){
+			$dtype = "Global";
 			$com_id = 0;
 		}	
 	}
+
+	$path_link1 = ($dtype=="Private")? "index.php?page=private_debating":"index.php?page=private_debating&d=g";
+
 	$get_valid_topics = $db->query("SELECT topic_id FROM debating_topics");
 	foreach($get_valid_topics as $topicid){
 		$valid_topics[] = $topicid['topic_id'];
@@ -48,6 +54,7 @@ if(loggedin()){
 			
 		});
 		</script>
+		<div class = 'page-path'>Debating > <?php echo "<a style = 'color: #40e0d0' href = '".$path_link1."'>".$dtype; ?> Debating </a> > <?php echo $topic_name; ?></div><br>
 		<div class = 'start-debate-option'>Start Debate
 
 			<form method = "POST" id = "start-debate-form">

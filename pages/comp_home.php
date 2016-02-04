@@ -56,6 +56,7 @@ if(loggedin()){
 			</script>
 			<?php
 			if($type=="0"){
+				$ctype = "Private";
 				$p_title = "Private Competitions";
 				$des_opp_placeholder = "e.g group1, group2, group3";
 				$gc_string = "group";
@@ -64,6 +65,7 @@ if(loggedin()){
 				$col_name = "group_name";
 					
 			}else{
+				$ctype = "Global";
 				$p_title = "Global Competitions";
 				$des_opp_placeholder = "e.g community1, community2, community3";
 				$gc_string = "community";
@@ -71,6 +73,7 @@ if(loggedin()){
 				$table_search = "communities";
 				$col_name = "com_name";
 			}
+			echo "<div class = 'page-path'>Debating > ".$ctype." Competitions </div>";
 			echo "<div class = 'title-private-debate'>".$p_title."</div><br><br><br>";
 			if($type == "0" || $type == "1"){
 				if( (group_leader($_SESSION['user_id'])&&$type=="0")||($type=="1"&&user_rank($_SESSION['user_id'],3)) ){

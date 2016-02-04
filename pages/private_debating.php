@@ -8,9 +8,11 @@ if(loggedin()){
 	$com_id = get_user_field($user_id, "user_com");
 	if(isset($_GET['d'])){
 		$extra_get = "&d=g";	
-		$title = "Global debating categories <br>for all communities";
+		$dtype = "Global";
+		$title = "Global Debating Categories <br>For All Communities";
 	}else{
 		$extra_get = "";
+		$dtype = "Private";
 		$com_name = $db->query("SELECT com_name FROM communities WHERE com_id = '$com_id'")->fetchColumn();
 		$title = $com_name." Private Debating<br> Categories";
 	}
@@ -32,6 +34,7 @@ if(loggedin()){
 			?>
 		});
 		</script>
+		<div class = 'page-path'>Debating > <?php echo $dtype; ?> Debating</div>
 		<div class = "title-private-debate"><?php echo $title ;?></div><hr size = '1'><br><br>
 		<div class = "topic-container">
 	<?php

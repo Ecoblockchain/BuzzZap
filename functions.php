@@ -124,6 +124,9 @@ function register_user($username, $password, $vpassword, $firstname, $lastname, 
 	if(strlen($username)<=3){
 		$errors[]="Your username must be over 3 characters long.";
 	}
+	if(strlen($username)>3){
+		$errors[]="Your username must be shorter than 11 characters.";
+	}
 
 	if(strlen($password)<=3){
 		$errors[]="Your password must be over 3 characters long.";

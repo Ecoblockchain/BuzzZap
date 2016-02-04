@@ -5,6 +5,7 @@ if($check_valid!="true"){
 }
 if(loggedin()){
 	?>
+	<div class = 'page-path'>Debating > Wall Of Fame </div><br>
 	<div class = "wof-container" style = 'float: left;'>
 		<span class = 'wof-cont-title'>BuzzZap Community Leader Board</span><br>
 		<br>

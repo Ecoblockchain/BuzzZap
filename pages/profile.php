@@ -22,8 +22,10 @@ if(loggedin()){
 		if($view_user_id == $user_id){
 			$user_info["user_email"] = "";
 			$title = "My ";
+			$path_page_name = "Me";
 		}else{
 			$title = $views_firstname." ".$views_lastname."'s ";
+			$path_page_name = substr($title, 0,strlen($title)-3);
 			if(check_not_rep_inc($_SESSION['user_id']."-viewed_profile", $view_user_id)){
 				add_rep(2,$view_user_id);
 				$db->query("INSERT INTO only_once_rep_inc VALUES('".$_SESSION['user_id']."-viewed_profile', '$view_user_id', 1)");
@@ -36,7 +38,7 @@ if(loggedin()){
 		}
 
 		?>
-
+		<div class = 'page-path'>User Profile > <?php echo $path_page_name; ?> </div><br>
 		<div id = 'all-boxes' style = "">
 			
 			<span class = "profile-title"><?php echo $title. "Profile"; ?></span>
@@ -65,7 +67,7 @@ if(loggedin()){
 				}
 			}
 			?>	
-			<div class = "profile-info-container" style = "width: 96%;">
+			<div class = "profile-info-container" style = "width: 97%;">
 				<?php
 					if($user_id!==$view_user_id){
 				?>
@@ -361,7 +363,7 @@ if(loggedin()){
 			?>
 		
 		<br>
-			<div class = "profile-info-container" id = "badge-container">
+			<div class = "profile-info-container" id = "badge-container" style = "width: 47%;">
 				<div id = "sub-profile-title">Badge Collection</div>
 				<div id = "profile-info-container3" style = "width: 500px;height: 10px;position:absolute;">
 					<?php
@@ -375,7 +377,7 @@ if(loggedin()){
 					?>
 				
 			</div>
-			<div class = "profile-info-container" id = "friends-container">
+			<div class = "profile-info-container" id = "friends-container" style = "width: 47%;border-left:5px solid #eff9f9;padding-right:15px;">
 				<div id = "sub-profile-title">Friends</div>
 				
 				<?php

@@ -119,7 +119,17 @@ if(loggedin()||!empty($out_judge_key)){
 				}, 1000);
 			});
 			</script>
+
 			<?php
+
+				if($type=="0"){
+					$ctype = "Private";
+					$comp_home_path_link = "index.php?page=comp_home&type=0";
+				}else{
+					$ctype = "Global";
+					$comp_home_path_link = "index.php?page=comp_home&type=1";
+				}
+				echo "<div class = 'page-path'>Debating > <a style = 'color: #40e0d0' href= '".$comp_home_path_link."'>".$ctype." Competitions </a> > ".$comp_info['comp_title']."</div><br>";
 				$perm_to_delete = false;
 				if(($type=="0")&&(get_user_community($user_id, "com_id")==$comp_info["comp_com_id"])&&(user_rank($user_id, "3")&&empty($out_judge_key))){
 					$perm_to_delete = true;
