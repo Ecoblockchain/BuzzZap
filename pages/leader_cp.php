@@ -124,14 +124,10 @@ if(loggedin()){
 					if(isset($_POST['invite_coms'])){
 						$com_emails = htmlentities($_POST['invite_coms']);
 						$com_emails = strlist_to_array($com_emails, false);
-						$headers  = 'MIME-Version: 1.0' . "\r\n";
-						$headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
-						$headers .= "From: Administration@buzzzap.com" . "\r\n";
 						foreach($com_emails as $e){
 							$parse_vars = array("ename"=>$e, "com_name"=>get_user_community($user_id, "com_name"));
 							$body = nl2br(static_cont_rec_vars(get_static_content("invite_coms_email"), $parse_vars));
-							mail($e,"BuzzZap Invitation",$body,$headers);
-
+							send_mail($e,"BuzzZap Invitation",$body,get_user_field($_SESSION['user_id'], "user_email"));
 						}
 						setcookie("success", "1Successfully sent.", time()+10);
 						header("Location: index.php?page=leader_cp&go_to=3");
