@@ -43,7 +43,6 @@ $(document).ready(function(){
 			}
 			if(str_field.length>2){
 				$.post("<?php echo $ajax_script_loc; ?>", {ajax_search:true,str:str_field,table:table, column:col, ex_query:ex_query, res_limit:res_limit}, function(result,err){
-					
 					$("#pred_results").html($(result));
 					$("#pred_results").animate({color:"#62949b"}, 500).delay(200).animate({color:"#ffffff"}, 500);
 					setInterval(function(){
@@ -105,6 +104,10 @@ $(document).ready(function(){
 			}
 		}else if("<?php echo $page; ?>" === "leader_cp"){
 			pred_text("users", "user_username", "act-on-user", "c:AND user_com = '<?php echo $com_id; ?>' AND user_username != '<?php echo $username; ?>' ", 3);
+		}
+	}else{
+		if("<?php echo $page; ?>" === "home"){
+			pred_text("communities", "com_name", "com_name_search_j");
 		}
 	}
 });

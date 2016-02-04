@@ -99,7 +99,7 @@ function register_user($username, $password, $vpassword, $firstname, $lastname, 
 		$check_com = $db->query("SELECT com_id FROM communities WHERE com_name = ".$db->quote($com_name)." AND com_password = ".$db->quote($com_pass)."")->fetchColumn();
 		$com_id = $check_com;
 		if(empty($com_id)){
-			$errors[] = "You supplied the wrong password for the <br>community you want to join.";
+			$errors[] = "Your community name or community passcode <br>is incorrect.";
 		}
 	}else{
 		$com_id = $check_com_pass;
@@ -124,7 +124,7 @@ function register_user($username, $password, $vpassword, $firstname, $lastname, 
 	if(strlen($username)<=3){
 		$errors[]="Your username must be over 3 characters long.";
 	}
-	if(strlen($username)>3){
+	if(strlen($username)>11){
 		$errors[]="Your username must be shorter than 11 characters.";
 	}
 

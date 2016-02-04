@@ -1,42 +1,41 @@
 <?php
 require("connect_db.php");
 require("functions.php");
-if(loggedin()){
+
+if(isset($_POST['ajax_search'], $_POST['table'], $_POST['column'], $_POST['str'], $_POST['ex_query'], $_POST['res_limit'])){
+	$str = htmlentities($_POST['str']);
+	$col = htmlentities($_POST['column']);
+	$table = htmlentities($_POST['table']);
+	$ex_query = htmlentities($_POST['ex_query']);
+	$limit = htmlentities($_POST['res_limit']);
 	
-	if(isset($_POST['ajax_search'], $_POST['table'], $_POST['column'], $_POST['str'], $_POST['ex_query'], $_POST['res_limit'])){
-		$str = htmlentities($_POST['str']);
-		$col = htmlentities($_POST['column']);
-		$table = htmlentities($_POST['table']);
-		$ex_query = htmlentities($_POST['ex_query']);
-		$limit = htmlentities($_POST['res_limit']);
-		
-		if(substr($ex_query, 0,5)!="c:AND"){
-			$ex_query = "";
-		}else{
-			$ex_query = substr($ex_query, 2);
-		}
+	if(substr($ex_query, 0,5)!="c:AND"){
+		$ex_query = "";
+	}else{
+		$ex_query = substr($ex_query, 2);
+	}
 
-		$ele_array =explode(",",$str);
-		$preds = array();
-		foreach($ele_array as $value){
-			$value = trim($value);
-			if(strlen($value)>0){
+	$ele_array =explode(",",$str);
+	$preds = array();
+	foreach($ele_array as $value){
+		$value = trim($value);
+		if(strlen($value)>0){
 
-				$get_pred = $db->prepare("SELECT `".$col."` FROM `".$table."` WHERE `".$col."` LIKE :v ".$ex_query." LIMIT ".$limit);
-				$get_pred->execute(array("v"=>"%".$value."%"));
-				$pred_str = "";
-				$count = 0;
-				while($row = $get_pred->fetch(PDO::FETCH_ASSOC)){
-					$pred_str = $pred_str."<span class = '".$table."-".$col."' id = 'res".$count."' style = 'font-size:80%'>".$row[$col]."</span><br>";
-					$count++;
-				}
-				$preds[$value] = $pred_str;
-				echo implode(",",$preds);
+			$get_pred = $db->prepare("SELECT `".$col."` FROM `".$table."` WHERE `".$col."` LIKE :v ".$ex_query." LIMIT ".$limit);
+			$get_pred->execute(array("v"=>"%".$value."%"));
+			$pred_str = "";
+			$count = 0;
+			while($row = $get_pred->fetch(PDO::FETCH_ASSOC)){
+				$pred_str = $pred_str."<span class = '".$table."-".$col."' id = 'res".$count."' style = 'font-size:80%;cursor: pointer;'>".$row[$col]."</span><br>";
+				$count++;
 			}
+			$preds[$value] = $pred_str;
+			echo implode(",",$preds);
 		}
 	}
-	
 }
+	
+
 
 if(isset($_POST['vote'], $_POST['table'], $_POST['arg_id'], $_POST['comp_id'], $_POST['ctype'], $_POST['judges'], $_POST['user_id'])){
 

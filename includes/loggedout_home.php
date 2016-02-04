@@ -377,18 +377,11 @@ if(!loggedin()){
 								<input type= "password" autocomplete="off" spellcheck="false" name = "vpassword_"  class = "loggedout-form-fields"><br><br>
 
 
-								<span id = 'forml1'>Community Name:</span><br>
-								<select name = "com_name_" class = "loggedout-form-fields">
-									<?php
-										$get_coms = $db->query("SELECT com_name FROM communities ORDER BY com_name");
-										echo "<option value = ''></option>";
-										foreach($get_coms as $com){
-											echo "<option value = '".$com["com_name"]."'>".$com["com_name"]."</option>";
-										}
-									?>
-								</select>
-
-								<br><br>
+								<span id = 'forml1'>Find Community:</span><br>
+		
+								<input type= "text" autocomplete="off" spellcheck="false" name = "com_name_"  class = "loggedout-form-fields" id = "com_name_search_j"><br>
+								<div id = "pred_results"></div>
+								<br>
 
 								<span id = 'forml1'>Community Pass:</span><br>															
 								<input type= "password" autocomplete="off" spellcheck="false" name = "com_pass_" class = "loggedout-form-fields"><br><br>
@@ -483,7 +476,7 @@ if(!loggedin()){
 
 										<b>Any Questions?</b><br><br>
 
-										<a href="mailto:hello@buzzzap.com" class ="contact-email">administration@buzzzap.com</a><br> 
+										<a href="mailto:admin@buzzzap.com" class ="contact-email">admin@buzzzap.com</a><br> 
 										<span class = "contact-sub-info">Want to know something? have a <br>question? Need help?</span><br>
 										<a href="mailto:founder@buzzzap.com" class ="contact-email">technical@buzzzap.com</a><br> 
 										<span class = "contact-sub-info">Have you noticed any faults/bugs in the<br>site that we should know about?</span><br>
