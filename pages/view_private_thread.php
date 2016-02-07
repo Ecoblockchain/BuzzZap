@@ -551,10 +551,11 @@ if(loggedin()){
 							}, 100);
 						}, 200);
 						var request = new XMLHttpRequest();
-			            request.onreadystatechange = function () {
+			            request.onreadystatechange = function (err) {
 			                if (request.readyState == 4 && request.status == 200) {
 			                    console.log(location.href + request.responseText);
 			                }
+			                console.log(err);
 			            };
 			            $("#save-audio, #try-again-audio").fadeOut();
 			            request.open('POST', "<?php echo $ajax_script_loc; ?>");
