@@ -9,7 +9,7 @@ if(substr($_SERVER['PHP_SELF'], 0,3)=="/pr"){
 	ini_set('display_errors', 'Off');
 	ini_set("log_errors", 1);
 	ini_set("error_log", "php-error.log");
-	$spec_judge_email_link= "http://buzzzap.com/";
+	$spec_judge_email_link= "https://buzzzap.com/";
 
 }
 ?>
@@ -272,9 +272,9 @@ if(substr($_SERVER['PHP_SELF'], 0,3)=="/pr"){
 						$click_close= false;	
 					}
 					if($icon =="1"){
-						$icon = "<img src= 'https://i73.servimg.com/u/f73/17/40/86/18/tick10.png' height = '190' width = '215'><br>";
+						$icon = "<img src= 'http://i73.servimg.com/u/f73/17/40/86/18/tick10.png' height = '190' width = '215'><br>";
 					}else if($icon=="0"){
-						$icon = "<img src= 'https://i73.servimg.com/u/f73/17/40/86/18/error10.png' height = '120' width = '120'><br><br>";
+						$icon = "<img src= 'http://i73.servimg.com/u/f73/17/40/86/18/error10.png' height = '120' width = '120'><br><br>";
 					}else{
 						$icon = "";	
 					}
