@@ -826,11 +826,16 @@ if(!loggedin()){
 									if(isset($_POST['pass_snc'])){
 										$pass = htmlentities($_POST['pass_snc']);
 										$get_true_pass = $db->query("SELECT pass FROM feature_activation WHERE feature='new_coms'")->fetchColumn();
+										
 										if($pass===$get_true_pass){
 											$_SESSION['pass_snc']="true";
-										}else{
-											echo "<span style = 'color: red; '>Incorrect code.</span>";
 										}
+										
+										header("Location: index.php?page=home&go_to=4&ib=true");
+									}
+									if(isset($_GET['ib'])){
+										
+										echo "<span style = 'color: red; '>Incorrect code.</span>";
 									}
 														
 									?>	
