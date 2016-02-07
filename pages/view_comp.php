@@ -397,7 +397,7 @@ if(loggedin()||!empty($out_judge_key)){
 
 			<?php
 				$winner_id = get_comp_winner($comp_id, $type);
-				//print_r($winner_id);
+				
 				$cand_ids = array();
 				$all_cands = get_comp_acceptance_info($comp_id, $type);
 				foreach($all_cands as $key=>$value){
@@ -407,6 +407,7 @@ if(loggedin()||!empty($out_judge_key)){
 				}
 				$cand_ids[] = $comp_info["starter_id"];
 				$colors = array("blue"=>"#80b0fb", "green"=>"#8ed48e", "red"=>"salmon", "orange"=>"#ffc04d");
+				$sec_uid = array("a", "b", "c", "d");
 				$linked_colors = array();
 				$jnamecolors = array_keys($colors);
 				$count = 0;
@@ -420,8 +421,10 @@ if(loggedin()||!empty($out_judge_key)){
 					global $colors;
 					return $colors[$linked_colors[$cand_id]];
 				}
-			
+				$count = 0;
+				$rcounts = array();
 				foreach($cand_ids as $cand_id){
+					array_push($rcounts,$sec_uid[$count]."0");
 					$name = ($type=="0")? $db->query("SELECT group_name FROM private_groups WHERE group_id = ".$db->quote($cand_id))->fetchColumn():$db->query("SELECT com_name FROM communities WHERE com_id = ".$db->quote($cand_id))->fetchColumn();
 					if($name!=""){
 						$users_host_id = ($type=="0")? get_user_group($user_id, "group_id"):get_user_community($user_id, "com_id");
@@ -541,13 +544,17 @@ if(loggedin()||!empty($out_judge_key)){
 					
 						$get_m_args = $db->prepare("SELECT * FROM comp_arguments WHERE comp_id = :comp_id AND cand_id = :cand_id");
 						$get_m_args->execute(array("comp_id"=>$comp_id, "cand_id"=>$cand_id));
-						$rcount = 0;
 						while($row = $get_m_args->fetch(PDO::FETCH_ASSOC)){
+							$rcount = $rcounts[$count];
 							$distext = $row['arg_text'];
 							$check_audio = $db->query("SELECT audio_flocation FROM audio WHERE owner_id = ".$db->quote($row['arg_id'])." AND owner_table = 'comp_arguments'")->fetchColumn();
 							if($check_audio){
+								$bcolor = "";
+								if(cand_color($cand_id)=="salmon"){
+									$bcolor = "border: 1px solid grey";
+								}
 								$check_audio=$spec_judge_email_link."/audio/".$check_audio;
-								$play_button= "<div class = 'rec-audio play-audio' id = 'play-audio-".$rcount."' style = 'background-image: none;padding: 10px'>
+								$play_button= "<div class = 'rec-audio play-audio' id = 'play-audio-".$rcount."' style = 'background-image: none;padding: 10px;".$bcolor."'>
 											 <span id = 'play-button-cont".$rcount."' style = 'margin-left:1px;margin-top:-7px;font-size: 300%;color:dimgrey;'>&#9658;</span>
 										</div><audio src  = '".$check_audio."' id = 'audio-tag".$rcount."'></audio><br><br><br>
 										
@@ -600,7 +607,7 @@ if(loggedin()||!empty($out_judge_key)){
 							$get_replies->execute(array("arg_id"=>$row['arg_id'], "cand_id"=>$cand_id));
 						
 							while($row_= $get_replies->fetch(PDO::FETCH_ASSOC)){
-								echo "<div id = 'arg-text-body' style = 'float:right;width:70%;margin-top: 2px;background-color:".cand_color($row_['user_cand_id']).";'>".$row_['reply_text']."<br>
+								echo "<div id = 'arg-text-body' style = 'margin-left: 28%;width:70%;margin-top: 2px;background-color:".cand_color($row_['user_cand_id']).";'>".$row_['reply_text']."<br>
 								<span style = 'color:#ffffff;'>By <a style = 'color:grey;' href = 'index.php?page=profile&user=".$row_['user_id']."'>".get_user_field($row_['user_id'], "user_username")."</a>";
 							
 								if(($rel_to_sec==3)&&(user_already_voted_comp_arg("comp_arg_replies", $user_id, $row_['reply_id'])==false)&&(($judges=="norm")||($judges!="norm"&&in_array($user_id, $judges)))){
@@ -616,7 +623,10 @@ if(loggedin()||!empty($out_judge_key)){
 								}
 								echo "</div>";
 							}
-							$rcount++;	
+							$newval = substr($rcounts[$count], 1);
+							$newval++;
+
+							$rcounts[$count] = substr($rcounts[$count], 0,1).$newval;	
 						}	
 							
 						echo"
@@ -627,8 +637,9 @@ if(loggedin()||!empty($out_judge_key)){
 						
 						</div>";
 					}
+					$count++;
 				}
-
+				
 				if(isset($_GET['delc'], $_GET['uid'])){
 					$del_c = htmlentities($_GET['delc']);
 					$ctype = substr($del_c, 0,1);

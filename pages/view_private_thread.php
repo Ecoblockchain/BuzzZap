@@ -74,9 +74,9 @@ if(loggedin()){
 							});
 
 							$("#add-arg-div-link").click(function(){
-								
+
 								$("#give-arg-text,#thread-title-repeat").css({"color":"#15a9ce", "font-weight":"bold"});
-								var flash_txtarea_border = setInterval(function(){
+								var flash_txt_border = setInterval(function(){
 									$("#give-arg-text,#thread-title-repeat").css({"color":"#15a9ce", "font-weight":"bold"});
 									setTimeout(function(){
 										$("#give-arg-text,#thread-title-repeat").css({"color":"grey", "font-weight":"normal"});
@@ -84,7 +84,6 @@ if(loggedin()){
 								}, 400);
 								
 								setTimeout(function(){
-									clearInterval(flash_txtarea_border);
 									clearInterval(flash_txt_border);
 								}, 5000);
 							});
