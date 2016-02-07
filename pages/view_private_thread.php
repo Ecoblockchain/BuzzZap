@@ -74,11 +74,11 @@ if(loggedin()){
 							});
 
 							$("#add-arg-div-link").click(function(){
-								$("#new-arg-textarea,#thread-title-repeat").css({"border-color":"#15a9ce","color":"#15a9ce", "font-weight":"bold"});
+								$("#give-arg-text,#thread-title-repeat").css({"color":"#15a9ce", "font-weight":"bold"});
 								var flash_txtarea_border = setInterval(function(){
-									$("#new-arg-textarea,#thread-title-repeat").css({"border-color":"#15a9ce","color":"#15a9ce", "font-weight":"bold"});
+									$("#give-arg-text,#thread-title-repeat").css({"color":"#15a9ce", "font-weight":"bold"});
 									setTimeout(function(){
-										$("#new-arg-textarea,#thread-title-repeat").css({"border-color":"grey","color":"grey", "font-weight":"normal"});
+										$("#give-arg-text,#thread-title-repeat").css({"color":"grey", "font-weight":"normal"});
 									}, 200);
 								}, 400);
 								
@@ -211,6 +211,39 @@ if(loggedin()){
 						$reply_red_style = "";
 						$red_text = "";
 					}
+					$check_audio = $db->query("SELECT audio_flocation FROM audio WHERE owner_id = ".$db->quote($row['reply_id'])." AND owner_table = 'thread_replies'")->fetchColumn();
+					if($check_audio){
+						$check_audio=$spec_judge_email_link."/audio/".$check_audio;
+						$play_button= "<div class = 'rec-audio play-audio' id = 'play-audio-".$rcount."' style = 'background-image: none;'>
+									 <span id = 'play-button-cont".$rcount."' style = 'margin-left:-5px;margin-top:-12px;position: absolute;font-size: 300%;color:dimgrey;'>&#9658;</span>
+								</div><audio src  = '".$check_audio."' id = 'audio-tag".$rcount."'></audio><br><br><br>
+								
+								<script>
+								var pclicks = 0;
+								$('#play-audio-".$rcount."').click(function(){
+									
+									var audio = document.getElementById('audio-tag".$rcount."');
+									if(pclicks%2==0){
+										audio.play();
+										$('#play-button-cont".$rcount."').html('&#10074;&#10074;');
+									}else{
+										audio.pause();	
+										$('#play-button-cont".$rcount."').html('&#9658;');
+									}
+
+									audio.addEventListener('ended', function(){
+										$('#play-button-cont".$rcount."').html('&#9658;');
+									});	
+									pclicks++;
+								});
+
+								</script>
+								<br>
+
+								";
+					}else{
+						$play_button = "";
+					}
 					?>
 					<div class = 'thread-reply-container' style = "<?php echo $reply_red_style; ?>" id = "treply-<?php echo $rcount; ?>">
 						<?php
@@ -228,7 +261,7 @@ if(loggedin()){
 							</form>	
 							<?php
 						}else{
-							echo $row['reply_text'];
+							echo $play_button.$row['reply_text'];
 						}
 						?>
 						<br><br>
@@ -440,6 +473,90 @@ if(loggedin()){
 			}
 			
 			?>
+				<script>
+				$(function(){
+					var fileName = "<?php echo $_SESSION['user_id'].',0,'.substr(encrypt(time()),0,8); ?>.wav";
+					var mediaTypes = {audio:true};
+					function recAudio(mediaTypes, mediaSuccess, mediaError){
+						navigator.mediaDevices.getUserMedia(mediaTypes).then(mediaSuccess).catch(mediaError);
+					}
+					function mediaError(e) {
+        				console.error('media error', e);
+    				}
+					var audiosContainer = document.getElementById('audios-container');
+					var mediaRecorder; 
+					var index = 1;
+
+					 function bytesToSize(bytes) {
+				        var k = 1000;
+				        var sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+				        if (bytes === 0) return '0 Bytes';
+				        var i = parseInt(Math.floor(Math.log(bytes) / Math.log(k)), 10);
+				        return (bytes / Math.pow(k, i)).toPrecision(3) + ' ' + sizes[i];
+				    }
+				    function getTimeLength(milliseconds) {
+				        var data = new Date(milliseconds);
+				        return data.getUTCHours() + " hours, " + data.getUTCMinutes() + " minutes and " + data.getUTCSeconds() + " second(s)";
+				    }
+				    var formData = new FormData();
+					function accRecord(stream){
+				        
+       					mediaRecorder = new MediaStreamRecorder(stream);
+				        mediaRecorder.mimeType = 'audio/wav';
+				        mediaRecorder.type = StereoAudioRecorder;
+				        mediaRecorder.audioChannels = 2;
+				        mediaRecorder.ondataavailable = function(blob) {
+				            var fileType = "audio";
+				            formData.append(fileType + '-filename', fileName);
+        					formData.append(fileType + '-blob', blob);
+			
+				        };
+				        var timeInterval = 100000000;
+				        mediaRecorder.start(timeInterval);
+
+					}
+
+					var clicks = 0;
+					$("#rec-audio").click(function(){
+						if(clicks%2==0){
+							$(this).css("background-image", "none");
+							$(this).html("<span style = 'margin-left:-7px;margin-top:-12px;position: absolute;font-size: 300%;color:dimgrey;'>&#9724;</span>");
+							$("#recording-status").html(" Recording...");
+							recAudio(mediaTypes,accRecord,mediaError);
+						}else{
+							$(this).css("background-image", "url('<?php echo $spec_judge_email_link; ?>/ext/images/mic.png')");
+							$(this).html("");
+							mediaRecorder.stop();
+							$("#recording-status").html("");
+        					$("#save-audio, #try-again-audio").fadeIn();
+     
+						}
+						clicks ++;
+					});
+					$("#try-again-audio").click(function(){
+						$("#save-audio, #try-again-audio").fadeOut();
+					});
+					$("#save-audio").click(function(){
+						var request = new XMLHttpRequest();
+			            request.onreadystatechange = function () {
+			                if (request.readyState == 4 && request.status == 200) {
+			                    console.log(location.href + request.responseText);
+			                }
+			            };
+			            $("#save-audio, #try-again-audio").fadeOut();
+			            request.open('POST', "<?php echo $ajax_script_loc; ?>");
+			            request.send(formData);
+					});
+
+
+					$("#choose-arg-type").change(function(){
+						$(".ans-type-container").hide();
+						$("#"+$("#choose-arg-type").val()+"-ans-container").show();
+						$("#argsubmit").show();
+						$("#space-breaks").show();
+					});
+				});
+				</script>
 				<hr size = "1"><br>
 				<div class = "thread-title-repeat" id = "thread-title-repeat"><?php echo $header_info['thread_title']; ?></div>
 				<br>
@@ -448,21 +565,48 @@ if(loggedin()){
 					$vote_opts = get_question_type($header_info['thread_title'], 2, $thread_id);
 				?>
 				<form action = "" method = "POST">
-					<span style = 'color:grey;'>Vote:
-					<?php if(!empty($vote_opts)){ ?>
-					<select name = "reply_status" class = "reply-status-select">
-						<option value = "na">(optional)</option>
-						<?php
-							foreach($vote_opts as $opt){
-								echo "<option value = '".$opt."'>".$opt."</option>";
-							}
-						?>
-					</select>
+
+
+					<span style = 'color:grey;' id = "give-arg-text">
+						Vote answer:<br>
+						<?php if(!empty($vote_opts)){ ?>
+						<select name = "reply_status" class = "reply-status-select">
+							<option value = "na">(optional)</option>
+							<?php
+								foreach($vote_opts as $opt){
+									echo "<option value = '".$opt."'>".$opt."</option>";
+								}
+							?>
+						</select>
+						<?php }else{ echo "No voting options available."; } ?>
+						<br><br>
+						
+						How would you like to argue?<br>
+						<select id = "choose-arg-type" class = "reply-status-select">
+							<option value = "na">---</option>
+							<option value = "txt">Text</option>
+							<option value = "rec">Speech</option>
+						</select><br><br>
+						<div id = "----ans-container" class = "ans-type-container">
+							<br><br><br><br><br><br><br><br><br><br><br><br>
+						</div>
+						<div id = "rec-ans-container" class = "ans-type-container" style = "display:none;">	
+							Record speech for argument:
+							<br><br>
+							<div class = "rec-audio" id = "rec-audio"></div><br>
+							<br><div id = "recording-status"></div><br>
+							<div id = "save-audio">Use</div><div id = "try-again-audio">Re-do</div><br><br>
+						</div>
+						<div id = "txt-ans-container" class = "ans-type-container" style = "display:none;">	
+							Text argument:<br>
+							<textarea placeholder = "Explanation/Argument..."class = "textarea-type1" id = 'new-arg-textarea' style = "width:84%;" name = "reply_text"></textarea><br>
+							
+						</div>
+						<br><input type = "submit" class = "loggedout-form-submit" id = "argsubmit" style = "display:none;" value = "Post">
+						<div id = "space-breaks" style = "display: none">
+							<br><br><br><br><br><br><br><br><br>
+						</div>	
 					</span>
-					<?php }else{ echo "No voting options available."; } ?>
-					<br><br>
-					<textarea placeholder = "Explanation/Argument..."class = "textarea-type1" id = 'new-arg-textarea' style = "width:84%;" name = "reply_text"></textarea><br>
-					<input type = "submit" class = "mreply-submit">
 				</form>
 			<?php
 
@@ -481,11 +625,18 @@ if(loggedin()){
 					$report_header = true;
 				}
 				if(in_array($reply_status, $vote_opts)){
-					if(strlen($reply_text)>50){
+					if(strlen($reply_text)>50||isset($_COOKIE['temp_audio_ret_rid'])){
 						
 						$reply = reply_debate($reply_text, $user_replied, $thread_id, $size, $reply_status);
 						$msg = $reply[1];
 						$rid = $reply[0];
+						
+						if(isset($_COOKIE['temp_audio_ret_rid'])){
+
+							$f_code = $_COOKIE['temp_audio_ret_rid'];
+							$db->query("UPDATE audio SET owner_id = ".$db->quote($rid)." WHERE audio_flocation LIKE '%$f_code'");
+							setcookie("temp_audio_ret_rid", "", time()-1000000000);
+						}
 						if($report_header==true){
 							$report_header = "&repo-c=".$rid."-";
 						}
@@ -503,7 +654,7 @@ if(loggedin()){
 				}else{
 					setcookie("success", "0Invalid vote.", time()+10);
 				}	
-				header("Location: index.php?page=view_private_thread&thread_id=".$_GET['thread_id']);
+				header("Location: index.php?page=view_private_thread&thread_id=".$_GET['thread_id']."#thread-title-repeat");
 			}
 			if(isset($_GET['vote'])){
 				
