@@ -97,7 +97,7 @@ if(isset($_FILES["${type}-blob"])) {
     	$cookie_bit = "a";
     }
     setcookie("temp_audio_ret_".$cookie_bit."id", $hdata[2], time()+10000000);
-    $uploadDirectory = "https://www.buzzzap.com/audio/$fileName";
+    $uploadDirectory = "audio/$fileName";
 
     if (!move_uploaded_file($_FILES["${type}-blob"]["tmp_name"], $uploadDirectory)) {
         echo("problem moving uploaded file");
