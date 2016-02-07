@@ -264,16 +264,137 @@ if(loggedin()||!empty($out_judge_key)){
 						echo "<div id = 'page-disabled'>This competition will not start untill all candidates have responded to their invitation to participate.</div>";
 					}
 			?>
+
+
+				<script>
+				$(function(){
+					var rec_enabled = true;
+					var fileName = "<?php echo $_SESSION['user_id'].',1,'.substr(encrypt(time()),0,8); ?>.wav";
+					var mediaTypes = {audio:true};
+					function recAudio(mediaTypes, mediaSuccess, mediaError){
+						navigator.mediaDevices.getUserMedia(mediaTypes).then(mediaSuccess).catch(mediaError);
+					}
+					function mediaError(e) {
+        				console.error('media error', e);
+    				}
+					
+					var mediaRecorder; 
+					var index = 1;
+
+					function bytesToSize(bytes) {
+				        var k = 1000;
+				        var sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+				        if (bytes === 0) return '0 Bytes';
+				        var i = parseInt(Math.floor(Math.log(bytes) / Math.log(k)), 10);
+				        return (bytes / Math.pow(k, i)).toPrecision(3) + ' ' + sizes[i];
+				    }
+				    function getTimeLength(milliseconds) {
+				        var data = new Date(milliseconds);
+				        return data.getUTCHours() + " hours, " + data.getUTCMinutes() + " minutes and " + data.getUTCSeconds() + " second(s)";
+				    }
+				    var formData = new FormData();
+					function accRecord(stream){
+				        
+       					mediaRecorder = new MediaStreamRecorder(stream);
+				        mediaRecorder.mimeType = 'audio/wav';
+				        mediaRecorder.type = StereoAudioRecorder;
+				        mediaRecorder.audioChannels = 2;
+				        mediaRecorder.ondataavailable = function(blob) {
+				            var fileType = "audio";
+				            formData.append(fileType + '-filename', fileName);
+        					formData.append(fileType + '-blob', blob);
+			
+				        };
+				        var timeInterval = 100000000;
+				        mediaRecorder.start(timeInterval);
+
+					}
+
+					var clicks = 0;
+					$("#rec-audio").click(function(){
+						if(clicks%2==0&&rec_enabled ==true){
+							$(this).css("background-image", "none");
+							$(this).html("<span style = 'margin-left:-20px;margin-top:-12px;position: absolute;font-size: 300%;color:dimgrey;'>&#9724;</span>");
+							$("#recording-status").html(" Recording...");
+							recAudio(mediaTypes,accRecord,mediaError);
+						}else{
+							$(this).css("background-image", "url('<?php echo $spec_judge_email_link; ?>/ext/images/mic.png')");
+							$(this).html("");
+							mediaRecorder.stop();
+							$("#recording-status").html("");
+							rec_enabled = false;
+        					$("#save-audio, #try-again-audio").fadeIn();
+     
+						}
+						clicks ++;
+					});
+					$("#try-again-audio").click(function(){
+						rec_enabled = true;
+						$("#save-audio, #try-again-audio").fadeOut();
+					});
+					$("#save-audio").click(function(){
+						$("#add-arg-comp-submit").animate({letterSpacing:"2px"}, 100);
+						setInterval(function(){
+							$("#add-arg-comp-submit").animate({letterSpacing:"1px"}, 100);
+							setTimeout(function(){
+								$("#add-arg-comp-submit").animate({letterSpacing:"2px"}, 100);
+							}, 100);
+						}, 200);
+						var request = new XMLHttpRequest();
+			            request.onreadystatechange = function () {
+			                if (request.readyState == 4 && request.status == 200) {
+			                    console.log(location.href + request.responseText);
+			                }
+			            };
+			            $("#save-audio, #try-again-audio").fadeOut();
+			            request.open('POST', "<?php echo $ajax_script_loc; ?>");
+			            request.send(formData);
+					});
+
+
+					$("#choose-arg-type").change(function(){
+						$(".ans-type-container").hide();
+						$("#"+$("#choose-arg-type").val()+"-ans-container").show();
+						$("#argsubmit").show();
+						$("#space-breaks").show();
+						$("#add-arg-comp-submit").show();
+					});
+				});	
+				</script>
 				<form method = "POST" class = "add-arg-comp-form" id = "add-arg-comp-form">
-					<textarea name = "add_arg_text" id = "add-arg-comp-tarea" placeholder = "My argument..."></textarea>
-					<input type = "submit" value = "Submit" id = "add-arg-comp-submit">
+					How would you like to argue?<br><br>
+					<select id = "choose-arg-type" class = "reply-status-select">
+						<option value = "na">---</option>
+						<option value = "txt">Text</option>
+						<option value = "rec">Speech</option>
+					</select><br><br>
+
+					<div id = "txt-ans-container" class = "ans-type-container" style = "display:none;">	
+						Text argument:<br>
+						<textarea name = "add_arg_text" id = "add-arg-comp-tarea" placeholder = "My argument..."></textarea>
+					</div>
+
+					<div id = "rec-ans-container" class = "ans-type-container" style = "display:none;">	
+						Record speech for argument:
+						<br><br>
+						<div class = "rec-audio" id = "rec-audio" style = "border:1px solid grey;margin-left: 155px;"></div><br>
+						<br><div id = "recording-status"></div><br>
+						<div id = "save-audio" style = "border:1px solid grey;margin-left:5px;float: left;margin-top:-28px;">Use</div><div id = "try-again-audio" style = "border:1px solid grey;margin-top:-32px;float: left;">Re-do</div><br><br>
+						<span style = 'font-size:70%'>Warning: the record feature may not<br> work properly in certain browsers. If so, use text instead.</span>
+					</div>
+
+					<input type = "submit" value = "Post" id = "add-arg-comp-submit" style = "display: none">
 				</form>	
-				<form method = "POST" class = "add-arg-comp-form" id = "add-com-comp-form">
+				<form method = "POST" class = "add-arg-comp-form" id = "add-com-comp-form" style = "height: 200px;">
 					<input type = "hidden" name = "com_cand_id" value = "" id = "com_cand_id">
 					<input type = "hidden" name = "com_arg_id" value = "" id = "com_arg_id">
-					<textarea name = "com_text" id = "add-arg-comp-tarea" placeholder = "Comment..."></textarea>
+					<textarea name = "com_text" id = "add-arg-comp-tarea" placeholder = "Comment..." style ="height:80%;"></textarea>
 					<input type = "submit" value = "Submit" id = "add-arg-comp-submit">
 				</form>	
+
+
+
+
 			<?php
 				$winner_id = get_comp_winner($comp_id, $type);
 				//print_r($winner_id);
@@ -345,21 +466,20 @@ if(loggedin()||!empty($out_judge_key)){
 						foreach($options[$rel_to_sec] as $key=>$value){
 							$options_str.=$value." ";		
 						}
-					
 						switch($rel_to_sec){
 							case 1:
 						
 								if(isset($_POST['add_arg_text'])){
 									$msg = "";
+
 									$text = htmlentities($_POST['add_arg_text']);
-									if(strlen($text)<100){
+									if(strlen($text)<100&&!isset($_COOKIE['temp_audio_ret_aid'])){
 										$msg = "0Your argument is too short.";
-									}else if (strlen($text)>5000){
+									}else if (strlen($text)>5000&&!isset($_COOKIE['temp_audio_ret_aid'])){
 										$msg = "0Your argument is too long.";
 									}else{
 										$msg = "1Successfully added your argument.";
 										$insert = $db->prepare("INSERT INTO comp_arguments VALUES('',:comp_id, :cand_id, :user_id, :arg_text, UNIX_TIMESTAMP(), 0, 0)");
-										
 										
 										$insert->execute(array(
 											"comp_id"=>$comp_id,
@@ -367,6 +487,16 @@ if(loggedin()||!empty($out_judge_key)){
 											"user_id"=>$user_id,
 											"arg_text"=>$text,
 										));
+
+										$aid = $db->lastInsertId();
+										
+										if(isset($_COOKIE['temp_audio_ret_aid'])){
+											echo $aid . "fffffffff";
+											$f_code = $_COOKIE['temp_audio_ret_aid'];
+											$db->query("UPDATE audio SET owner_id = ".$db->quote($aid)." WHERE audio_flocation LIKE '%$f_code'");
+											setcookie("temp_audio_ret_aid", "", time()-1000000000);
+										}
+
 										if($judges!="norm"){
 											foreach($judges as $jid){
 												add_note($jid, "There is new activity in a competition you are judging. Click here to get judging!", "index.php?page=view_comp&comp=".$_GET['comp']);
@@ -411,9 +541,44 @@ if(loggedin()||!empty($out_judge_key)){
 					
 						$get_m_args = $db->prepare("SELECT * FROM comp_arguments WHERE comp_id = :comp_id AND cand_id = :cand_id");
 						$get_m_args->execute(array("comp_id"=>$comp_id, "cand_id"=>$cand_id));
-					
+						$rcount = 0;
 						while($row = $get_m_args->fetch(PDO::FETCH_ASSOC)){
-							echo "<div id = 'arg-text-body' style = 'margin-top: 10px;background-color:".cand_color($cand_id).";'>".$row['arg_text']."<br>
+							$distext = $row['arg_text'];
+							$check_audio = $db->query("SELECT audio_flocation FROM audio WHERE owner_id = ".$db->quote($row['arg_id'])." AND owner_table = 'comp_arguments'")->fetchColumn();
+							if($check_audio){
+								$check_audio=$spec_judge_email_link."/audio/".$check_audio;
+								$play_button= "<div class = 'rec-audio play-audio' id = 'play-audio-".$rcount."' style = 'background-image: none;padding: 10px'>
+											 <span id = 'play-button-cont".$rcount."' style = 'margin-left:1px;margin-top:-7px;font-size: 300%;color:dimgrey;'>&#9658;</span>
+										</div><audio src  = '".$check_audio."' id = 'audio-tag".$rcount."'></audio><br><br><br>
+										
+										<script>
+										var pclicks = 0;
+										$('#play-audio-".$rcount."').click(function(){
+											
+											var audio = document.getElementById('audio-tag".$rcount."');
+											if(pclicks%2==0){
+												audio.play();
+												$('#play-button-cont".$rcount."').html('&#10074;&#10074;');
+											}else{
+												audio.pause();	
+												$('#play-button-cont".$rcount."').html('&#9658;');
+											}
+
+											audio.addEventListener('ended', function(){
+												$('#play-button-cont".$rcount."').html('&#9658;');
+											});	
+											pclicks++;
+										});
+
+										</script>
+										<br>
+
+										";
+							}else{
+								$play_button = "";
+							}
+							$distext = $play_button.$distext;
+							echo "<div id = 'arg-text-body' style = 'margin-top: 10px;background-color:".cand_color($cand_id).";'>".$distext."<br>
 								<span style = 'color:#ffffff;'>By <a style = 'color:grey;' href = 'index.php?page=profile&user=".$row['user_id']."'>".get_user_field($row['user_id'], "user_username")."</a></span>";
 							if($rel_to_sec!=3){	
 								echo "<span style = 'float:right;color:grey;cursor:pointer;' arg_id = '".$row['arg_id']."' class = 'add-comment-arg-opt' cand_id = '".$cand_id."'>Add Comment</span>";
@@ -435,7 +600,7 @@ if(loggedin()||!empty($out_judge_key)){
 							$get_replies->execute(array("arg_id"=>$row['arg_id'], "cand_id"=>$cand_id));
 						
 							while($row_= $get_replies->fetch(PDO::FETCH_ASSOC)){
-								echo "<div id = 'arg-text-body' style = 'width:70%;margin-top: 2px;background-color:".cand_color($row_['user_cand_id']).";'>".$row_['reply_text']."<br>
+								echo "<div id = 'arg-text-body' style = 'float:right;width:70%;margin-top: 2px;background-color:".cand_color($row_['user_cand_id']).";'>".$row_['reply_text']."<br>
 								<span style = 'color:#ffffff;'>By <a style = 'color:grey;' href = 'index.php?page=profile&user=".$row_['user_id']."'>".get_user_field($row_['user_id'], "user_username")."</a>";
 							
 								if(($rel_to_sec==3)&&(user_already_voted_comp_arg("comp_arg_replies", $user_id, $row_['reply_id'])==false)&&(($judges=="norm")||($judges!="norm"&&in_array($user_id, $judges)))){
@@ -450,7 +615,8 @@ if(loggedin()||!empty($out_judge_key)){
 									}
 								}
 								echo "</div>";
-							}	
+							}
+							$rcount++;	
 						}	
 							
 						echo"

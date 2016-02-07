@@ -475,6 +475,7 @@ if(loggedin()){
 			?>
 				<script>
 				$(function(){
+					var rec_enabled = true;
 					var fileName = "<?php echo $_SESSION['user_id'].',0,'.substr(encrypt(time()),0,8); ?>.wav";
 					var mediaTypes = {audio:true};
 					function recAudio(mediaTypes, mediaSuccess, mediaError){
@@ -483,11 +484,11 @@ if(loggedin()){
 					function mediaError(e) {
         				console.error('media error', e);
     				}
-					var audiosContainer = document.getElementById('audios-container');
+					
 					var mediaRecorder; 
 					var index = 1;
 
-					 function bytesToSize(bytes) {
+					function bytesToSize(bytes) {
 				        var k = 1000;
 				        var sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
 				        if (bytes === 0) return '0 Bytes';
@@ -518,7 +519,7 @@ if(loggedin()){
 
 					var clicks = 0;
 					$("#rec-audio").click(function(){
-						if(clicks%2==0){
+						if(clicks%2==0&&rec_enabled ==true){
 							$(this).css("background-image", "none");
 							$(this).html("<span style = 'margin-left:-7px;margin-top:-12px;position: absolute;font-size: 300%;color:dimgrey;'>&#9724;</span>");
 							$("#recording-status").html(" Recording...");
@@ -534,9 +535,17 @@ if(loggedin()){
 						clicks ++;
 					});
 					$("#try-again-audio").click(function(){
+						rec_enabled = true;
 						$("#save-audio, #try-again-audio").fadeOut();
 					});
 					$("#save-audio").click(function(){
+						$("#argsubmit").animate({letterSpacing:"2px"}, 100);
+						setInterval(function(){
+							$("#argsubmit").animate({letterSpacing:"1px"}, 100);
+							setTimeout(function(){
+								$("#argsubmit").animate({letterSpacing:"2px"}, 100);
+							}, 100);
+						}, 200);
 						var request = new XMLHttpRequest();
 			            request.onreadystatechange = function () {
 			                if (request.readyState == 4 && request.status == 200) {
@@ -596,6 +605,7 @@ if(loggedin()){
 							<div class = "rec-audio" id = "rec-audio"></div><br>
 							<br><div id = "recording-status"></div><br>
 							<div id = "save-audio">Use</div><div id = "try-again-audio">Re-do</div><br><br>
+							<span style = 'font-size:70%'>Warning: the record feature may not<br> work properly in certain browsers. If so, use text instead.</span>
 						</div>
 						<div id = "txt-ans-container" class = "ans-type-container" style = "display:none;">	
 							Text argument:<br>

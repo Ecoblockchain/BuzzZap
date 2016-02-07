@@ -89,11 +89,13 @@ if(isset($_FILES["${type}-blob"])) {
     if($hdata[1]=="0"){
     	$table = "thread_replies";
     	$col = "reply_id";
+    	$cookie_bit = "r";
     }else{
     	$table = "comp_arguments";
     	$col = "arg_id";
+    	$cookie_bit = "a";
     }
-    setcookie("temp_audio_ret_rid", $hdata[2], time()+10000000);
+    setcookie("temp_audio_ret_".$cookie_bit."id", $hdata[2], time()+10000000);
     $uploadDirectory = "audio/$fileName";
 
     if (!move_uploaded_file($_FILES["${type}-blob"]["tmp_name"], $uploadDirectory)) {
@@ -101,11 +103,6 @@ if(isset($_FILES["${type}-blob"])) {
     }else{
     	$db->query("INSERT INTO audio VALUES('', '0', ".$db->quote($table).", ".$db->quote($col).", ".$db->quote($fileName).")");
     }
-
-    echo($uploadDirectory);
-}else{
-    echo 'no files in FILES';
-
 }
 
 ?>
