@@ -78,4 +78,5 @@ if(isset($_POST['get_q_type'])){
 	$q = htmlentities($_POST['get_q_type']);
 	echo $res = get_question_type($q, 1);
 }
+
 ?>
