@@ -272,9 +272,9 @@ if(substr($_SERVER['PHP_SELF'], 0,3)=="/pr"){
 						$click_close= false;	
 					}
 					if($icon =="1"){
-						$icon = "<img src= 'http://i73.servimg.com/u/f73/17/40/86/18/tick10.png' height = '190' width = '215'><br>";
+						$icon = "<img src= 'https://i73.servimg.com/u/f73/17/40/86/18/tick10.png' height = '190' width = '215'><br>";
 					}else if($icon=="0"){
-						$icon = "<img src= 'http://i73.servimg.com/u/f73/17/40/86/18/error10.png' height = '120' width = '120'><br><br>";
+						$icon = "<img src= 'https://i73.servimg.com/u/f73/17/40/86/18/error10.png' height = '120' width = '120'><br><br>";
 					}else{
 						$icon = "";	
 					}
