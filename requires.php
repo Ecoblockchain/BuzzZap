@@ -8,7 +8,10 @@
 <script type="text/javascript" src = "ext/jquery/typewriter.js"></script>
 <script type="text/javascript" src = "ext/jquery/typed.js"></script>
 <script type="text/javascript" src = "ext/jquery/jquery.window.js"></script>
+<script type="text/javascript" src = "ext/jquery/audio_record_funcs.js"></script>
+<script src="https://cdn.webrtc-experiment.com/MediaStreamRecorder.js"> </script>
 <script type="text/javascript" src = "http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+<script src="https://cdn.rawgit.com/webrtc/adapter/master/adapter.js"></script>
 <link href='ext/styles/styles.css' rel='stylesheet' type='text/css'>
 <link href='http://fonts.googleapis.com/css?family=Dosis|Poiret+One' rel='stylesheet' type='text/css'>
 <link href='http://fonts.googleapis.com/css?family=Roboto:400,300,100' rel='stylesheet' type='text/css'>

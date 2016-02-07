@@ -74,11 +74,12 @@ if(loggedin()){
 							});
 
 							$("#add-arg-div-link").click(function(){
-								$("#new-arg-textarea,#thread-title-repeat").css({"border-color":"#15a9ce","color":"#15a9ce", "font-weight":"bold"});
+								
+								$("#give-arg-text,#thread-title-repeat").css({"color":"#15a9ce", "font-weight":"bold"});
 								var flash_txtarea_border = setInterval(function(){
-									$("#new-arg-textarea,#thread-title-repeat").css({"border-color":"#15a9ce","color":"#15a9ce", "font-weight":"bold"});
+									$("#give-arg-text,#thread-title-repeat").css({"color":"#15a9ce", "font-weight":"bold"});
 									setTimeout(function(){
-										$("#new-arg-textarea,#thread-title-repeat").css({"border-color":"grey","color":"grey", "font-weight":"normal"});
+										$("#give-arg-text,#thread-title-repeat").css({"color":"grey", "font-weight":"normal"});
 									}, 200);
 								}, 400);
 								
@@ -176,270 +177,400 @@ if(loggedin()){
 			$get_replies = $db->prepare("SELECT * FROM thread_replies WHERE thread_id= :thread_id AND size = '' ORDER BY time_replied ASC");
 			$get_replies->execute(array("thread_id"=>$thread_id));
 			$rcount = 0;
-			while($row = $get_replies->fetch(PDO::FETCH_ASSOC)){
-				if($row['visible']==1){
-					$dis = "norm";
-				}else if($row['user_replied']==get_user_field($_SESSION['user_id'], "user_username")){
-					$dis = "red";
-					//unapproved but user owner can see.
-				}else{
-					$dis = false;
-				}
-				
-				if($dis!=false){
-					$agrees = $row['reply_agrees'];
-					$disagrees = $row['reply_disagrees'];
-					$total = $agrees + $disagrees;
-					if($total > 0){
-						$agrees_p = round(($agrees/$total)*100);
-						$disagrees_p = round(($disagrees/$total)*100);
-						if($total==1){
-							$plur = "";	
-						}else{
-							$plur = "s";	
-						}
+			if($get_replies->rowCount()>0){
+				while($row = $get_replies->fetch(PDO::FETCH_ASSOC)){
+					if($row['visible']==1){
+						$dis = "norm";
+					}else if($row['user_replied']==get_user_field($_SESSION['user_id'], "user_username")){
+						$dis = "red";
+						//unapproved but user owner can see.
 					}else{
-						$agrees_p = 0;
-						$disagrees_p = 0;
-						$plur = "s";
+						$dis = false;
 					}
 					
-					if($dis=="red"){
-						$reply_red_style = "border: 3px solid salmon;";
-						$red_text = "<span style = 'color: salmon;'>*NOTE: Untill your community leader has approved this post, only you can see it.</span><br><br>";
-					}else{
-						$reply_red_style = "";
-						$red_text = "";
-					}
-					?>
-					<div class = 'thread-reply-container' style = "<?php echo $reply_red_style; ?>" id = "treply-<?php echo $rcount; ?>">
-						<?php
-						echo $red_text;
-						if($row['reply_status']!=''){ 
-							echo "<span style = 'color:grey;'>Voted: ".$row['reply_status']."</span><br>";
+					if($dis!=false){
+						$agrees = $row['reply_agrees'];
+						$disagrees = $row['reply_disagrees'];
+						$total = $agrees + $disagrees;
+						if($total > 0){
+							$agrees_p = round(($agrees/$total)*100);
+							$disagrees_p = round(($disagrees/$total)*100);
+							if($total==1){
+								$plur = "";	
+							}else{
+								$plur = "s";	
+							}
 						}else{
-							echo "<span style = 'color:grey;'>Hasn't Voted</span><br>";
+							$agrees_p = 0;
+							$disagrees_p = 0;
+							$plur = "s";
 						}
-						if((isset($_GET['editp']))&&($_GET['editp']==$row['reply_id'])&&(user_own_reply($row['reply_id'], $_SESSION['user_id'])||(user_rank($_SESSION['user_id'], 2, "up")))){
-							?>
-							<form method = "POST">
-								<textarea name = "editp" class = "textarea-type1"><?php echo $row['reply_text']; ?></textarea>
-								<input type= "submit" class = "mreply-submit">
-							</form>	
-							<?php
+						
+						if($dis=="red"){
+							$reply_red_style = "border: 3px solid salmon;";
+							$red_text = "<span style = 'color: salmon;'>*NOTE: Untill your community leader has approved this post, only you can see it.</span><br><br>";
 						}else{
-							echo $row['reply_text'];
+							$reply_red_style = "";
+							$red_text = "";
+						}
+						$check_audio = $db->query("SELECT audio_flocation FROM audio WHERE owner_id = ".$db->quote($row['reply_id'])." AND owner_table = 'thread_replies'")->fetchColumn();
+						if($check_audio){
+							$check_audio=$spec_judge_email_link."/audio/".$check_audio;
+							$play_button= "<div class = 'rec-audio play-audio' id = 'play-audio-".$rcount."' style = 'background-image: none;'>
+										 <span id = 'play-button-cont".$rcount."' style = 'margin-left:-5px;margin-top:-12px;position: absolute;font-size: 300%;color:dimgrey;'>&#9658;</span>
+									</div><audio src  = '".$check_audio."' id = 'audio-tag".$rcount."'></audio><br><br><br>
+									
+									<script>
+									var pclicks = 0;
+									$('#play-audio-".$rcount."').click(function(){
+										
+										var audio = document.getElementById('audio-tag".$rcount."');
+										if(pclicks%2==0){
+											audio.play();
+											$('#play-button-cont".$rcount."').html('&#10074;&#10074;');
+										}else{
+											audio.pause();	
+											$('#play-button-cont".$rcount."').html('&#9658;');
+										}
+
+										audio.addEventListener('ended', function(){
+											$('#play-button-cont".$rcount."').html('&#9658;');
+										});	
+										pclicks++;
+									});
+
+									</script>
+									<br>
+
+									";
+						}else{
+							$play_button = "";
 						}
 						?>
-						<br><br>
-						<span style = "color:dimgrey;">
-							Argued By <?php echo add_profile_link($row['user_replied'], 0, $style="color:grey"); ?> on <?php echo date("d/M/Y H:i", $row['time_replied']);?>
-							<br><span style = "color:#8FBC8F;"><?php echo $agrees_p; ?>% Agreed</span> and <span style = "color:#CD9B9B;"><?php echo $disagrees_p; ?>% Disagreed</span> with this argument (<?php echo $total;?> voter<?php echo $plur; ?>)
-						</span>
-		
-						<div class = "thread-reply-info">
+						<div class = 'thread-reply-container' style = "<?php echo $reply_red_style; ?>" id = "treply-<?php echo $rcount; ?>">
 							<?php
-								if(valid_reply_voter($_SESSION['user_id'], $row['reply_id'])){
-							?>
-									<div class = "reply-option1-container">
-										<a style = "color:#8FBC8F;" href = "index.php?page=view_private_thread&thread_id=<?php echo $_GET['thread_id']; ?>&vote=a<?php echo $row['reply_id']; ?>">
-											Agree
-										</a>
-									</div>	
-									<div class = "reply-option1-container">
-										<a style = "color:#CD9B9B;" href = "index.php?page=view_private_thread&thread_id=<?php echo $_GET['thread_id']; ?>&vote=d<?php echo $row['reply_id']; ?>">
-											Disagree
-										</a>	
-									</div>
-							<?php
-								}
-								?>
-								<div class = "reply-option1-container">
-						
-									<a id = "show-mreply-form<?php echo $row['reply_id']; ?>">
-										Reply
-									</a>	
-								
-								</div>
-								<?php
-								if((user_own_reply($row['reply_id'], $_SESSION['user_id']))||(user_rank($_SESSION['user_id'], 2, "up"))){
-								?>
-				
-								<div class = "reply-option1-container">
-						
-									<a href = "index.php?page=view_private_thread&thread_id=<?php echo $_GET['thread_id']; ?>&editp=<?php echo $row['reply_id']; ?>#treply-<?php echo $rcount;?>">
-										Edit
-									</a>
-								</div>	
-								<div class = "reply-option1-container">
-									<a href = "index.php?page=view_private_thread&thread_id=<?php echo $_GET['thread_id']; ?>&deletep=<?php echo $row['reply_id']; ?>">
-										Delete
-									</a>
-								</div>	
-							
-
-								<?php	
-							
-								}
-								if(!user_own_reply($row['reply_id'], $_SESSION['user_id'])&&!check_c_reported($row['reply_id'], "reply_id", "thread_replies")){
-								?>
-									<div class = "reply-option1-container">
-									<a style = "color: salmon;" href = "index.php?page=view_private_thread&thread_id=<?php echo $thread_id; ?>&repo-c=<?php echo $row['reply_id']; ?>">
-										Report Abuse
-									</a>
-									</div>	
-								<?php		
-								}else if(check_c_reported($row['reply_id'], "reply_id", "thread_replies")){
-								
-							?>
-								<div class = "reply-option1-container">
-									<span style = "color: salmon;">
-										*NOTE: This content has been reported
-									</span>
-								</div>	
-							<?php
-								}
-							?>
-						</div>
-					</div>
-					
-					<div id = "mreply_form<?php echo $row['reply_id']; ?>" class = "mreply-form-container">
-						<form action = "" method = "POST">
-							<textarea placeholder= "Reply" name = "mreply_text<?php echo $row['reply_id']; ?>" class = "textarea-type2"></textarea>
-							<input type = "submit" class = "mreply-submit" value = "Submit">
-						</form>
-					</div>
-		
-			
-					<script>
-						$("#show-mreply-form<?php echo $row['reply_id']; ?>").click(function(){
-							$("#mreply_form<?php echo $row['reply_id']; ?>").slideDown(300);
-						});				
-					</script>
-					<?php
-					$get_mreplies = $db->prepare("SELECT * FROM thread_replies WHERE thread_id = ".$row['reply_id']." AND size = 'mini' ORDER BY time_replied ASC");
-					$get_mreplies->execute();
-					$mrcount = 0;
-					while($mrow = $get_mreplies->fetch(PDO::FETCH_ASSOC)){
-						if($mrow['visible']==1){
-							$mdis = "norm";
-						}else if($mrow['user_replied']==get_user_field($_SESSION['user_id'], "user_username")){
-							$mdis = "red";
-							//unapproved but user owner can see.
-						}else{
-							$mdis = false;
-						}
-						if($mdis!=false){
-							if($mdis=="red"){
-								$mreply_red_style = "border: 3px solid salmon;";
-								$mred_text = "<span style = 'color: salmon;'>*NOTE: Untill your community leader has approved this post, only you can see it.</span><br><br>";
+							echo $red_text;
+							if($row['reply_status']!=''){ 
+								echo "<span style = 'color:grey;'>Voted: ".$row['reply_status']."</span><br>";
 							}else{
-								$mreply_red_style = "";
-								$mred_text = "";
+								echo "<span style = 'color:grey;'>Hasn't Voted</span><br>";
 							}
-							echo "<div class = 'mreply-container' style = '".$mreply_red_style."' id = 'mreply-".$mrcount."'>";
-								echo $mred_text;
-								if((isset($_GET['editp']))&&($_GET['editp']==$mrow['reply_id'])&&(user_own_reply($mrow['reply_id'], $_SESSION['user_id'])||(user_rank($_SESSION['user_id'], 2, "up")))){
+							if((isset($_GET['editp']))&&($_GET['editp']==$row['reply_id'])&&(user_own_reply($row['reply_id'], $_SESSION['user_id'])||(user_rank($_SESSION['user_id'], 2, "up")))){
 								?>
 								<form method = "POST">
-									<textarea name = "editp" class = "textarea-type1"><?php echo $mrow['reply_text']; ?></textarea>
+									<textarea name = "editp" class = "textarea-type1"><?php echo $row['reply_text']; ?></textarea>
 									<input type= "submit" class = "mreply-submit">
 								</form>	
 								<?php
-								}else{
-									echo $mrow['reply_text'];
-								}
+							}else{
+								echo $play_button.$row['reply_text'];
+							}
+							?>
+							<br><br>
+							<span style = "color:dimgrey;">
+								Argued By <?php echo add_profile_link($row['user_replied'], 0, $style="color:grey"); ?> on <?php echo date("d/M/Y H:i", $row['time_replied']);?>
+								<br><span style = "color:#8FBC8F;"><?php echo $agrees_p; ?>% Agreed</span> and <span style = "color:#CD9B9B;"><?php echo $disagrees_p; ?>% Disagreed</span> with this argument (<?php echo $total;?> voter<?php echo $plur; ?>)
+							</span>
+			
+							<div class = "thread-reply-info">
+								<?php
+									if(valid_reply_voter($_SESSION['user_id'], $row['reply_id'])){
 								?>
-								<br><span style = "color:dimgrey;">
-									Replied By <?php echo add_profile_link($mrow['user_replied'], 0, $style="color:grey"); ?> on <?php echo date("d/M/Y H:i", $mrow['time_replied']);
+										<div class = "reply-option1-container">
+											<a style = "color:#8FBC8F;" href = "index.php?page=view_private_thread&thread_id=<?php echo $_GET['thread_id']; ?>&vote=a<?php echo $row['reply_id']; ?>">
+												Agree
+											</a>
+										</div>	
+										<div class = "reply-option1-container">
+											<a style = "color:#CD9B9B;" href = "index.php?page=view_private_thread&thread_id=<?php echo $_GET['thread_id']; ?>&vote=d<?php echo $row['reply_id']; ?>">
+												Disagree
+											</a>	
+										</div>
+								<?php
+									}
 									?>
-									<div class = "thread-reply-info">
-									<?php
-									if((user_own_reply($mrow['reply_id'], $_SESSION['user_id']))||(user_rank($_SESSION['user_id'], 2, "up"))){
-										?>
-										
-											<div class = "reply-option1-container">
+									<div class = "reply-option1-container">
 							
-												<a href = "index.php?page=view_private_thread&thread_id=<?php echo $_GET['thread_id']; ?>&editp=<?php echo $mrow['reply_id']; ?>#mreply-<?php echo $mrcount; ?>">
-													Edit
-												</a>
-											</div>
-											<div class = "reply-option1-container">	
-												<a href = "index.php?page=view_private_thread&thread_id=<?php echo $_GET['thread_id']; ?>&deletep=<?php echo $mrow['reply_id']; ?>">
-													Delete
-												</a>
-												
-											</div>	
-											<?php
-										}	
-										if(!user_own_reply($mrow['reply_id'], $_SESSION['user_id'])&&!check_c_reported($mrow['reply_id'], "reply_id", "thread_replies")){
+										<a id = "show-mreply-form<?php echo $row['reply_id']; ?>">
+											Reply
+										</a>	
+									
+									</div>
+									<?php
+									if((user_own_reply($row['reply_id'], $_SESSION['user_id']))||(user_rank($_SESSION['user_id'], 2, "up"))){
+									?>
+					
+									<div class = "reply-option1-container">
+							
+										<a href = "index.php?page=view_private_thread&thread_id=<?php echo $_GET['thread_id']; ?>&editp=<?php echo $row['reply_id']; ?>#treply-<?php echo $rcount;?>">
+											Edit
+										</a>
+									</div>	
+									<div class = "reply-option1-container">
+										<a href = "index.php?page=view_private_thread&thread_id=<?php echo $_GET['thread_id']; ?>&deletep=<?php echo $row['reply_id']; ?>">
+											Delete
+										</a>
+									</div>	
+								
+
+									<?php	
+								
+									}
+									if(!user_own_reply($row['reply_id'], $_SESSION['user_id'])&&!check_c_reported($row['reply_id'], "reply_id", "thread_replies")){
+									?>
+										<div class = "reply-option1-container">
+										<a style = "color: salmon;" href = "index.php?page=view_private_thread&thread_id=<?php echo $thread_id; ?>&repo-c=<?php echo $row['reply_id']; ?>">
+											Report Abuse
+										</a>
+										</div>	
+									<?php		
+									}else if(check_c_reported($row['reply_id'], "reply_id", "thread_replies")){
+									
+								?>
+									<div class = "reply-option1-container">
+										<span style = "color: salmon;">
+											*NOTE: This content has been reported
+										</span>
+									</div>	
+								<?php
+									}
+								?>
+							</div>
+						</div>
+						
+						<div id = "mreply_form<?php echo $row['reply_id']; ?>" class = "mreply-form-container">
+							<form action = "" method = "POST">
+								<textarea placeholder= "Reply" name = "mreply_text<?php echo $row['reply_id']; ?>" class = "textarea-type2"></textarea>
+								<input type = "submit" class = "mreply-submit" value = "Submit">
+							</form>
+						</div>
+			
+				
+						<script>
+							$("#show-mreply-form<?php echo $row['reply_id']; ?>").click(function(){
+								$("#mreply_form<?php echo $row['reply_id']; ?>").slideDown(300);
+							});				
+						</script>
+						<?php
+						$get_mreplies = $db->prepare("SELECT * FROM thread_replies WHERE thread_id = ".$row['reply_id']." AND size = 'mini' ORDER BY time_replied ASC");
+						$get_mreplies->execute();
+						$mrcount = 0;
+						while($mrow = $get_mreplies->fetch(PDO::FETCH_ASSOC)){
+							if($mrow['visible']==1){
+								$mdis = "norm";
+							}else if($mrow['user_replied']==get_user_field($_SESSION['user_id'], "user_username")){
+								$mdis = "red";
+								//unapproved but user owner can see.
+							}else{
+								$mdis = false;
+							}
+							if($mdis!=false){
+								if($mdis=="red"){
+									$mreply_red_style = "border: 3px solid salmon;";
+									$mred_text = "<span style = 'color: salmon;'>*NOTE: Untill your community leader has approved this post, only you can see it.</span><br><br>";
+								}else{
+									$mreply_red_style = "";
+									$mred_text = "";
+								}
+								echo "<div class = 'mreply-container' style = '".$mreply_red_style."' id = 'mreply-".$mrcount."'>";
+									echo $mred_text;
+									if((isset($_GET['editp']))&&($_GET['editp']==$mrow['reply_id'])&&(user_own_reply($mrow['reply_id'], $_SESSION['user_id'])||(user_rank($_SESSION['user_id'], 2, "up")))){
+									?>
+									<form method = "POST">
+										<textarea name = "editp" class = "textarea-type1"><?php echo $mrow['reply_text']; ?></textarea>
+										<input type= "submit" class = "mreply-submit">
+									</form>	
+									<?php
+									}else{
+										echo $mrow['reply_text'];
+									}
+									?>
+									<br><span style = "color:dimgrey;">
+										Replied By <?php echo add_profile_link($mrow['user_replied'], 0, $style="color:grey"); ?> on <?php echo date("d/M/Y H:i", $mrow['time_replied']);
+										?>
+										<div class = "thread-reply-info">
+										<?php
+										if((user_own_reply($mrow['reply_id'], $_SESSION['user_id']))||(user_rank($_SESSION['user_id'], 2, "up"))){
+											?>
+											
+												<div class = "reply-option1-container">
+								
+													<a href = "index.php?page=view_private_thread&thread_id=<?php echo $_GET['thread_id']; ?>&editp=<?php echo $mrow['reply_id']; ?>#mreply-<?php echo $mrcount; ?>">
+														Edit
+													</a>
+												</div>
+												<div class = "reply-option1-container">	
+													<a href = "index.php?page=view_private_thread&thread_id=<?php echo $_GET['thread_id']; ?>&deletep=<?php echo $mrow['reply_id']; ?>">
+														Delete
+													</a>
+													
+												</div>	
+												<?php
+											}	
+											if(!user_own_reply($mrow['reply_id'], $_SESSION['user_id'])&&!check_c_reported($mrow['reply_id'], "reply_id", "thread_replies")){
+													?>
+														<div class = "reply-option1-container">
+														<a style = "color: salmon;" href = "index.php?page=view_private_thread&thread_id=<?php echo $thread_id; ?>&repo-c=<?php echo $mrow['reply_id']; ?>">
+															Report Abuse
+														</a>
+														</div>	
+													<?php		
+												}else if(check_c_reported($mrow['reply_id'], "reply_id", "thread_replies")){
+									
 												?>
 													<div class = "reply-option1-container">
-													<a style = "color: salmon;" href = "index.php?page=view_private_thread&thread_id=<?php echo $thread_id; ?>&repo-c=<?php echo $mrow['reply_id']; ?>">
-														Report Abuse
-													</a>
+														<span style = "color: salmon;">
+															*NOTE: This content has been reported
+														</span>
 													</div>	
-												<?php		
-											}else if(check_c_reported($mrow['reply_id'], "reply_id", "thread_replies")){
-								
-											?>
-												<div class = "reply-option1-container">
-													<span style = "color: salmon;">
-														*NOTE: This content has been reported
-													</span>
-												</div>	
-											<?php
-										}
-											?>	
-									</div>
-										<?php 
-									
-									?>
-								</span>
-								<?php
-							echo "</div>";
-						}	
-						$mrcount ++;
-					}
-					echo "<br><br>";
-
-					if(isset($_POST['mreply_text'.$row['reply_id']])){
-						$reply_text = $_POST['mreply_text'.$row['reply_id']];
-						$user_replied = get_user_field($_SESSION['user_id'], "user_username");
-						$reply_id = $row['reply_id'];
-						$size = "mini";
-						$reply_status="na";
-						$report_header = "";
-						$check_abuse = contains_blocked_word($reply_text);
-						if($check_abuse[0]==true){
-							$reply_text = $check_abuse[1];
-							$report_header = true;
+												<?php
+											}
+												?>	
+										</div>
+											<?php 
+										
+										?>
+									</span>
+									<?php
+								echo "</div>";
+							}	
+							$mrcount ++;
 						}
-			
-						if(strlen($reply_text)>2){
-							$reply_to  = $row['user_replied'];
-							$link = "index.php?page=view_private_thread.php?thread_id=".$thread_id;
-							$active = (user_moderation_status($_SESSION['user_id'])>1)? 0:1;
+						echo "<br><br>";
 
-							$reply = reply_debate($reply_text, $user_replied, $reply_id, $size, $reply_status);
-							$msge=$reply[1];
-							$rid = $reply[0];
-							if($report_header==true){
-								$report_header = "&repo-c=".$rid."-";
+						if(isset($_POST['mreply_text'.$row['reply_id']])){
+							$reply_text = $_POST['mreply_text'.$row['reply_id']];
+							$user_replied = get_user_field($_SESSION['user_id'], "user_username");
+							$reply_id = $row['reply_id'];
+							$size = "mini";
+							$reply_status="na";
+							$report_header = "";
+							$check_abuse = contains_blocked_word($reply_text);
+							if($check_abuse[0]==true){
+								$reply_text = $check_abuse[1];
+								$report_header = true;
 							}
-							setcookie("success", "1".$msge, time()+10);
-							header("Location: index.php?page=view_private_thread&thread_id=".$_GET['thread_id'].$report_header);
-						}else{
-							setcookie("success", "0".$msge, time()+10);
-							header("Location: index.php?page=view_private_thread&thread_id=".$_GET['thread_id']);
+				
+							if(strlen($reply_text)>2){
+								$reply_to  = $row['user_replied'];
+								$link = "index.php?page=view_private_thread.php?thread_id=".$thread_id;
+								$active = (user_moderation_status($_SESSION['user_id'])>1)? 0:1;
+
+								$reply = reply_debate($reply_text, $user_replied, $reply_id, $size, $reply_status);
+								$msge=$reply[1];
+								$rid = $reply[0];
+								if($report_header==true){
+									$report_header = "&repo-c=".$rid."-";
+								}
+								setcookie("success", "1".$msge, time()+10);
+								header("Location: index.php?page=view_private_thread&thread_id=".$_GET['thread_id'].$report_header);
+							}else{
+								setcookie("success", "0".$msge, time()+10);
+								header("Location: index.php?page=view_private_thread&thread_id=".$_GET['thread_id']);
+							}
 						}
 					}
-				}
 
-				$rcount ++;	
-			}
+					$rcount ++;	
+				}
+			}else{
+				echo "<div id = 'no-threads-message' style = 'margin-top:0px;'>No arguments posted yet.</div>";
+			}	
 			
 			?>
+				<script>
+				$(function(){
+					var rec_enabled = true;
+					var fileName = "<?php echo $_SESSION['user_id'].',0,'.substr(encrypt(time()),0,8); ?>.wav";
+					var mediaTypes = {audio:true};
+					function recAudio(mediaTypes, mediaSuccess, mediaError){
+						navigator.mediaDevices.getUserMedia(mediaTypes).then(mediaSuccess).catch(mediaError);
+					}
+					function mediaError(e) {
+        				console.error('media error', e);
+    				}
+					
+					var mediaRecorder; 
+					var index = 1;
+
+					function bytesToSize(bytes) {
+				        var k = 1000;
+				        var sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+				        if (bytes === 0) return '0 Bytes';
+				        var i = parseInt(Math.floor(Math.log(bytes) / Math.log(k)), 10);
+				        return (bytes / Math.pow(k, i)).toPrecision(3) + ' ' + sizes[i];
+				    }
+				    function getTimeLength(milliseconds) {
+				        var data = new Date(milliseconds);
+				        return data.getUTCHours() + " hours, " + data.getUTCMinutes() + " minutes and " + data.getUTCSeconds() + " second(s)";
+				    }
+				    var formData = new FormData();
+					function accRecord(stream){
+				        
+       					mediaRecorder = new MediaStreamRecorder(stream);
+				        mediaRecorder.mimeType = 'audio/wav';
+				        mediaRecorder.type = StereoAudioRecorder;
+				        mediaRecorder.audioChannels = 2;
+				        mediaRecorder.ondataavailable = function(blob) {
+				            var fileType = "audio";
+				            formData.append(fileType + '-filename', fileName);
+        					formData.append(fileType + '-blob', blob);
+			
+				        };
+				        var timeInterval = 100000000;
+				        mediaRecorder.start(timeInterval);
+
+					}
+
+					var clicks = 0;
+					$("#rec-audio").click(function(){
+						if(clicks%2==0&&rec_enabled ==true){
+							$(this).css("background-image", "none");
+							$(this).html("<span style = 'margin-left:-7px;margin-top:-12px;position: absolute;font-size: 300%;color:dimgrey;'>&#9724;</span>");
+							$("#recording-status").html(" Recording...");
+							recAudio(mediaTypes,accRecord,mediaError);
+						}else{
+							$(this).css("background-image", "url('<?php echo $spec_judge_email_link; ?>/ext/images/mic.png')");
+							$(this).html("");
+							mediaRecorder.stop();
+							$("#recording-status").html("");
+        					$("#save-audio, #try-again-audio").fadeIn();
+     
+						}
+						clicks ++;
+					});
+					$("#try-again-audio").click(function(){
+						rec_enabled = true;
+						$("#save-audio, #try-again-audio").fadeOut();
+					});
+					$("#save-audio").click(function(){
+						$("#argsubmit").animate({letterSpacing:"2px"}, 100);
+						setInterval(function(){
+							$("#argsubmit").animate({letterSpacing:"1px"}, 100);
+							setTimeout(function(){
+								$("#argsubmit").animate({letterSpacing:"2px"}, 100);
+							}, 100);
+						}, 200);
+						var request = new XMLHttpRequest();
+			            request.onreadystatechange = function () {
+			                if (request.readyState == 4 && request.status == 200) {
+			                    console.log(location.href + request.responseText);
+			                }
+			            };
+			            $("#save-audio, #try-again-audio").fadeOut();
+			            request.open('POST', "<?php echo $ajax_script_loc; ?>");
+			            request.send(formData);
+					});
+
+
+					$("#choose-arg-type").change(function(){
+						$(".ans-type-container").hide();
+						$("#"+$("#choose-arg-type").val()+"-ans-container").show();
+						$("#argsubmit").show();
+						$("#space-breaks").show();
+					});
+				});
+				</script>
 				<hr size = "1"><br>
 				<div class = "thread-title-repeat" id = "thread-title-repeat"><?php echo $header_info['thread_title']; ?></div>
 				<br>
@@ -448,21 +579,49 @@ if(loggedin()){
 					$vote_opts = get_question_type($header_info['thread_title'], 2, $thread_id);
 				?>
 				<form action = "" method = "POST">
-					<span style = 'color:grey;'>Vote:
-					<?php if(!empty($vote_opts)){ ?>
-					<select name = "reply_status" class = "reply-status-select">
-						<option value = "na">(optional)</option>
-						<?php
-							foreach($vote_opts as $opt){
-								echo "<option value = '".$opt."'>".$opt."</option>";
-							}
-						?>
-					</select>
+
+
+					<span style = 'color:grey;' id = "give-arg-text">
+						Vote answer:<br>
+						<?php if(!empty($vote_opts)){ ?>
+						<select name = "reply_status" class = "reply-status-select">
+							<option value = "na">(optional)</option>
+							<?php
+								foreach($vote_opts as $opt){
+									echo "<option value = '".$opt."'>".$opt."</option>";
+								}
+							?>
+						</select>
+						<?php }else{ echo "No voting options available."; } ?>
+						<br><br>
+						
+						How would you like to argue?<br>
+						<select id = "choose-arg-type" class = "reply-status-select">
+							<option value = "na">---</option>
+							<option value = "txt">Text</option>
+							<option value = "rec">Speech</option>
+						</select><br><br>
+						<div id = "----ans-container" class = "ans-type-container">
+							<br><br><br><br><br><br><br><br><br><br><br><br>
+						</div>
+						<div id = "rec-ans-container" class = "ans-type-container" style = "display:none;">	
+							Record speech for argument:
+							<br><br>
+							<div class = "rec-audio" id = "rec-audio"></div><br>
+							<br><div id = "recording-status"></div><br>
+							<div id = "save-audio">Use</div><div id = "try-again-audio">Re-do</div><br><br>
+							<span style = 'font-size:70%'>Warning: the record feature may not<br> work properly in certain browsers. If so, use text instead.</span>
+						</div>
+						<div id = "txt-ans-container" class = "ans-type-container" style = "display:none;">	
+							Text argument:<br>
+							<textarea placeholder = "Explanation/Argument..."class = "textarea-type1" id = 'new-arg-textarea' style = "width:84%;" name = "reply_text"></textarea><br>
+							
+						</div>
+						<br><input type = "submit" class = "loggedout-form-submit" id = "argsubmit" style = "display:none;" value = "Post">
+						<div id = "space-breaks" style = "display: none">
+							<br><br><br><br><br><br><br><br><br>
+						</div>	
 					</span>
-					<?php }else{ echo "No voting options available."; } ?>
-					<br><br>
-					<textarea placeholder = "Explanation/Argument..."class = "textarea-type1" id = 'new-arg-textarea' style = "width:84%;" name = "reply_text"></textarea><br>
-					<input type = "submit" class = "mreply-submit">
 				</form>
 			<?php
 
@@ -481,11 +640,18 @@ if(loggedin()){
 					$report_header = true;
 				}
 				if(in_array($reply_status, $vote_opts)){
-					if(strlen($reply_text)>50){
+					if(strlen($reply_text)>50||isset($_COOKIE['temp_audio_ret_rid'])){
 						
 						$reply = reply_debate($reply_text, $user_replied, $thread_id, $size, $reply_status);
 						$msg = $reply[1];
 						$rid = $reply[0];
+						
+						if(isset($_COOKIE['temp_audio_ret_rid'])){
+
+							$f_code = $_COOKIE['temp_audio_ret_rid'];
+							$db->query("UPDATE audio SET owner_id = ".$db->quote($rid)." WHERE audio_flocation LIKE '%$f_code'");
+							setcookie("temp_audio_ret_rid", "", time()-1000000000);
+						}
 						if($report_header==true){
 							$report_header = "&repo-c=".$rid."-";
 						}
@@ -503,7 +669,7 @@ if(loggedin()){
 				}else{
 					setcookie("success", "0Invalid vote.", time()+10);
 				}	
-				header("Location: index.php?page=view_private_thread&thread_id=".$_GET['thread_id']);
+				header("Location: index.php?page=view_private_thread&thread_id=".$_GET['thread_id']."#thread-title-repeat");
 			}
 			if(isset($_GET['vote'])){
 				

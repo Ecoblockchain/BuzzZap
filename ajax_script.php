@@ -79,4 +79,31 @@ if(isset($_POST['get_q_type'])){
 	echo $res = get_question_type($q, 1);
 }
 
+
+$type = "audio";
+if(isset($_FILES["${type}-blob"])) {
+    $fileName = $_POST["${type}-filename"];
+    $hdata = explode(",",$fileName);
+    //0 = userid
+    //1 = 0|1 (where 0 is general debating and 1 is comp)
+    //2 = file code
+    if($hdata[1]=="0"){
+    	$table = "thread_replies";
+    	$col = "reply_id";
+    	$cookie_bit = "r";
+    }else{
+    	$table = "comp_arguments";
+    	$col = "arg_id";
+    	$cookie_bit = "a";
+    }
+    setcookie("temp_audio_ret_".$cookie_bit."id", $hdata[2], time()+10000000);
+    $uploadDirectory = "audio/$fileName";
+
+    if (!move_uploaded_file($_FILES["${type}-blob"]["tmp_name"], $uploadDirectory)) {
+        echo("problem moving uploaded file");
+    }else{
+    	$db->query("INSERT INTO audio VALUES('', '0', ".$db->quote($table).", ".$db->quote($col).", ".$db->quote($fileName).")");
+    }
+}
+
 ?>
