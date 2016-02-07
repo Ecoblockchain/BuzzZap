@@ -1,9 +1,15 @@
+@import url(https://fonts.googleapis.com/css?family=Oswald|Quicksand|Comfortaa);
+
 body{
-	font-family: 'Roboto', sans-serif;
+	font-family: Quicksand;
 	//background-image:url("../../pages/bgimage.png");
 	background-color:#eff9f9;
 	//background-size:10%;
 	margin: 0;
+	-webkit-hyphens: auto;
+   -moz-hyphens: auto;
+    -ms-hyphens: auto;
+    hyphens: auto;
 }
 a{
 	text-decoration: none;
@@ -43,6 +49,7 @@ a{
 	margin-left:calc(50% - 530px);
 	
 }
+
 .loggedout-form-container{
 	display:none;
 	background-color:#F7F7F7;
@@ -76,6 +83,18 @@ a{
 	text-align: center;
 	margin-left: -150px;
 }
+@media only screen and (max-width:1200px) {
+	.loggedout-main-container1{
+		width: 700px;	
+		margin-left:calc(50% - 400px);
+	}
+}
+@media only screen and (max-width:1000px) {
+	.nav-bar-out{	
+		display: none;
+	}
+}
+
 
 .section{
 	width:100%;
@@ -194,12 +213,16 @@ a{
 	z-index:1;
 	color:white;
 	display:none;
+	-webkit-hyphens: none;
+   -moz-hyphens: none;
+    -ms-hyphens: none;
+    hyphens: none;
 }
 
 @media only screen and (max-width: 1250px) {
 	#nav-bar-out{
-		margin-left:83%;
-		margin-top:-70px;
+		margin-left:86%;
+		margin-top:-50px;
 		font-size:120%;
 	}
 	#home-link-out{
@@ -262,9 +285,8 @@ a{
 	width:80%;
 	min-height:100%;
 	margin:0 auto;
-	min-width:1100px;
-	//padding:10px 10px 10px 10px;
 }
+
 .loggedin-inner-container{
 	width: 100%;
 	min-height: 85%;
@@ -280,8 +302,8 @@ a{
 	
 }
 #r1{
-	height:160px;
-	margin-left:255px;
+	height:170px;
+	margin-left:266px;
 	margin-top:58px;
 }
 #r6{
@@ -291,28 +313,28 @@ a{
 }
 #r2{
 	height:100px;
-	margin-left:335px;
-	margin-top:102px;	
+	margin-left:365px;
+	margin-top:109px;	
 }
 #r5{
 	height:120px;
 	margin-left:420px;
-	margin-top:250px;	
+	margin-top:251px;	
 }
 #r3{
-	height:190px;
-	margin-left:600px;
-	margin-top:37px;	
+	height:170px;
+	margin-left:593px;
+	margin-top:56px;	
 }
 #r4{
 	height:220px;
-	margin-left:618px;
-	margin-top:191px;	
+	margin-left:616px;
+	margin-top:195px;	
 }
 #r7{
-	height:190px;
+	height:180px;
 	margin-left:200px;
-	margin-top:210px;	
+	margin-top:220px;	
 }
 /* form labels */
 
@@ -326,7 +348,7 @@ a{
 .loggedout-form-fields{
 	width:300px;
 	height:30px;
-	font-family:font-family: 'Roboto', sans-serif;
+	font-family: Quicksand;
 	color:grey;
 	outline-width:0px;
 	font-size:17px;
@@ -336,7 +358,7 @@ a{
 }
 .loggedout-form-fields-snc{
 	height:30px;
-	font-family:font-family: 'Roboto', sans-serif;
+	font-family: Quicksand;
 	color:grey;
 	outline-width:0px;
 	border: none;
@@ -346,7 +368,7 @@ a{
 }
 .loggedout-form-fields-c{
 	height:40px;
-	font-family:font-family: 'Roboto', sans-serif;
+	font-family: Quicksand;
 	color:grey;
 	outline-width:0px;
 	border: none;
@@ -359,44 +381,40 @@ a{
 .loggedin-form-field1{
 	width:400px;
 	height:40px;
-	font-family:font-family: 'Roboto', sans-serif;
+	font-family: Quicksand;
 	color:grey;
 	outline-width:0px;
 	border-radius:3px 3px 0px 0px;
 	font-size:17px;
 	letter-spacing:3px;
 	border:2px dashed lightblue;
-	margin-left:-194px;
-	position: absolute;
 	padding:10px;
 }
 .loggedin-form-field2{
 	width:400px;
 	height:200px;
-	font-family:font-family: 'Roboto', sans-serif;
+	font-family: Quicksand;
 	color:grey;
 	resize:none;
 	border: 2px dashed lightblue;
 	outline-width:0px;
 	border-radius:0px;
+	margin-top: -2px;
 	font-size:17px;
 	letter-spacing:3px;
-	margin-left:20px;
 	padding:10px;
-	margin-top:15px;
 }
 
 .loggedin-form-submit1{
-	font-family:font-family: 'Roboto', sans-serif;
+	font-family: Quicksand;
 	font-size:15px;
 	letter-spacing:3px;
 	background-color:#F7F7F7;
 	border:none;
 	color:grey;
-	margin-left:104px;
-	margin-top:-4px;
-	position: absolute;
 	padding:15px;
+	margin-top: -2px;
+	margin-left: 295px;
 	border-left: 2px dashed lightblue;
 	border-bottom: 2px dashed lightblue;
 	border-right: 2px dashed lightblue;
@@ -404,14 +422,13 @@ a{
 	cursor:pointer;
 }
 .loggedin-form-info1{
-	font-family:font-family: 'Roboto', sans-serif;
+	font-family: Quicksand;
 	font-size:10px;
 	letter-spacing:2px;
 	background-color:#F7F7F7;
 	color:grey;
-	margin-left: 20px;
-	margin-top:-4px;
 	position: absolute;
+	margin-top: -2px;
 	padding:2px;
 	width:293px;
 	border-radius: 0px 0px 0px 3px;
@@ -429,7 +446,7 @@ a{
 .loggedout-form-submit{
 	height:40px;
 	width:100px;
-	font-family:font-family: 'Roboto', sans-serif;
+	font-family: Quicksand;
 	font-size:18px;
 	letter-spacing:3px;
 	background-color:#F7F7F7;
@@ -518,10 +535,7 @@ a{
 	margin-left:0px;
 	margin-top:90px;
 }
-@media only screen and (max-width: 1200px) {
-	
 
-}
 /* nav */
 
 
@@ -535,21 +549,47 @@ a{
 	letter-spacing: 2px;
 	min-width: 780px;
 	z-index: 100000;
+	-webkit-hyphens: none;
+   -moz-hyphens: none;
+    -ms-hyphens: none;
+    hyphens: none;
 }
 
 .mitem-container{
-	width: 170px;
+	width: 220px;
 	float: left;
 	text-align: center;
 	color: grey;
 	height: 58px;
 	position: relative;
 	z-index: 100000;
+	outline-width: 0px;
 }
+@media only screen and (max-width: 1255px) {
 
+	.mitem-container{
+		width: 160px;
+		font-size: 80%;
+	}
+
+	.loggedin-body{
+		width: 75%;
+	}
+	
+	#profile-info-container2{
+		font-size: 80%;
+		letter-spacing: 1px;
+	}
+
+}
 .subitem{
 	padding: 15px;
 	color: #3a8187;
+	height: 25px;
+}
+.usubitem{
+	font-size: 95%;
+	letter-spacing: 1px;
 }
 .mitem{
 	position: absolute;
@@ -558,12 +598,6 @@ a{
 	width:100%;
 	height:100%;
 	background-color:#d1ecf0;
-}
-#mitem1{
-	width: 200px;
-}
-#mitem2{
-	width: 200px;
 }
 #mitem1{
 	border-top: 4px solid #CD96CD; 
@@ -577,9 +611,7 @@ a{
 #mitem4{
 	border-top: 4px solid gold;
 }
-#mitem5{
-	border-top: 4px solid #F08080;
-}
+
 
 .topic-link{
 	letter-spacing:4px;
@@ -605,7 +637,7 @@ a{
 .start-debate-option{
 	z-index:10;
 	background-color:#FA8072;
-	color:lightgrey;
+	color:white;
 	letter-spacing: 3px;
 	padding-left:10px;
 	position:absolute;
@@ -614,8 +646,13 @@ a{
 	text-align:center;
 	cursor:pointer;
 }
-@media only screen and (max-width: 1300px) {
 
+
+.no-hyphens{
+	-webkit-hyphens: none;
+   -moz-hyphens: none;
+    -ms-hyphens: none;
+    hyphens: none;
 }
 #drag-container{
 	height:340px;
@@ -630,6 +667,7 @@ a{
 	height:auto;
 	max-height: 100px;
 	overflow: hidden;
+	font-family: Comfortaa;
 	padding:15px;
 	padding-right: 0px;
 	letter-spacing: 3px;
@@ -640,28 +678,6 @@ a{
 	font-size:60%;
 	color:grey;
 	width:70%;
-}
-.thread-end{
-	background-color: #E3E3E3;
-	width:300px;
-	height:100%;
-	border-left:3px dashed lightgrey;
-	float:right;
-	padding:10px;
-	color: #457EA4;
-	padding-top: 30px;
-	text-align: center;
-	font-size: 75%;
-	text-align: center;
-	margin-top:-60px;
-}
-
-.thread-end-sec{
-	width: 32%;
-	height: 60px;
-	float: left;
-	text-align: center;
-	margin-top: 10px;
 }
 
 .thread-title{
@@ -690,7 +706,7 @@ a{
 	background-color:#EDEDED;
 	height: auto;
 	overflow:auto;
-	width:80%;
+	width:97%;
 	padding:15px;
 	padding-bottom: 5px;
 	color:#262626;
@@ -725,7 +741,7 @@ a{
 
 .textarea-type1{
 	resize:none;
-	font-family:font-family: 'Roboto', sans-serif;
+	font-family: Quicksand;
 	color:grey;
 	outline-width:0px;
 	font-size:15px;
@@ -738,7 +754,7 @@ a{
 }
 .textarea-type2{
 	resize:none;
-	font-family:font-family: 'Roboto', sans-serif;
+	font-family: Quicksand;
 	color:grey;
 	outline-width:0px;
 	font-size:12px;
@@ -758,7 +774,7 @@ a{
 	width:22%;
 	background-color:white;
 	height:30px;
-	font-family:font-family: 'Roboto', sans-serif;
+	font-family: Quicksand;
 	color:grey;
 	font-size:13px;
 	letter-spacing:3px;
@@ -770,7 +786,7 @@ a{
 	width:100px;
 	background-color:white;
 	height:25px;
-	font-family:font-family: 'Roboto', sans-serif;
+	font-family: Quicksand;
 	color:grey;
 	font-size:12px;
 	letter-spacing:3px;
@@ -819,9 +835,10 @@ a{
 .thread-title-repeat{
 	font-size:30px;
 	color:grey;	
+	letter-spacing: 2px;
 }
 .reply-status-select{
-	font-family:font-family: 'Roboto', sans-serif;
+	font-family: Quicksand;
 	color:grey;
 	outline-width:0px;
 	border: 1px solid #E3E3E3;
@@ -856,7 +873,7 @@ a{
 	padding:20px;
 	color:dimgrey;
 	padding-top:0px;
-	white-space:nowrap;
+	white-space:normal;
 	text-align:left;	
 }
 .profile-edit-textfield{
@@ -870,36 +887,44 @@ a{
 #sub-profile-title{
 	color:#fbaca3;
 }
+.profile-bottom-inner-container{
+	width:49%;
+	letter-spacing:3px;
+	height:100%;
+	float: left;
+	font-size:130%;
+	color:dimgrey;
+	background-color: #62b1cf;
 
-#friends-container{
-	width: 46%;
-	margin-left:50%;
-	height: 300px;
-	margin-top: -330px;
-	padding-top: 10px;
+}
+#about-me-container{
+	width:50%;
+	margin-top: 20px;
+	float: right;
 }
 
-#badge-container{
-	width: 46%;
-	height: 300px;
-	overflow: auto;
-	margin-top: -15px;
-	padding-top: 10px;
+#all-boxes{
+	position: relative;
+	width: 100%;
+	height: 100%;
+
 }
-#profile-about-me{
-	position:absolute;
-	margin-top:-220px;
-	margin-left:450px;
+#profile-bottom-container{
+	width: 100%;
+	position: relative;
+	height: 50%;
 }
 #about-me-textarea{
-	height:260px;
-	width:600px;
+	height:250px;
+	width: 100%;
 	resize:none;
 	font-size:100%;
-	color:grey;
+	background-color: #62b1cf;
+	border: 2px dotted #06e5b1;
+	color:#06e5b1;
+	outline-width: 0px;
 	line-height:30px;
 	padding:10px;
-	border: none;
 	letter-spacing:2px;
 }
 .edit-profile-submit{
@@ -916,6 +941,7 @@ a{
 .edit-instructions{
 	letter-spacing:1px;
 	font-size:12px;	
+	margin-top: 20px;
 }
 
 .admin-links{
@@ -946,7 +972,7 @@ a{
 	width:200px;
 	height:30px;
 	font-size:13px;
-	font-family:font-family: 'Roboto', sans-serif;
+	font-family: Quicksand;
 	color:grey;
 	outline-width:0px;
 	border: 1px solid #E3E3E3;
@@ -959,7 +985,7 @@ a{
 	width:100px;
 	height:30px;
 	font-size:13px;
-	font-family:font-family: 'Roboto', sans-serif;
+	font-family: Quicksand;
 	color:grey;
 	outline-width:0px;
 	border: 1px solid #E3E3E3;
@@ -1030,7 +1056,7 @@ a{
 	cursor:pointer;
 }
 #group_link{
-	color:grey;
+	color:#ffdca6;
 	letter-spacing:2px;
 	font-size:17px;	
 	cursor: pointer;
@@ -1042,7 +1068,6 @@ a{
 	background-color:#FA8072;
 	height:auto;
 	padding:10px;
-	border-radius:5px;
 	color:white;
 	width:200px;
 	position: absolute;
@@ -1102,27 +1127,23 @@ a{
 	color:#EE6A50;
 	float:right;
 	margin-right:5px;
+	letter-spacing: 2px;
 }
 
-.add-friend-link{
-	color:green;
+.action-uprofile-link{
+	color:#fff;
 	letter-spacing:1px;
 	float:right;
+	padding-top: 10px;
 	font-size:70%;
 }	
 
-.report-user-link{
-	color:green;
-	letter-spacing:1px;
-	float:right;
-	font-size:70%;
-}
-
 .friend-list{
-	width:600px;
+	width:100%;
 	letter-spacing:1px;
 	overflow: auto;
 	color:dimgrey;
+	padding: 10px;
 }
 
 .friend-list-block{
@@ -1224,7 +1245,7 @@ a{
 	border-radius:5px;
 	font-size:120%;
 	margin-top: 5px;
-	font-family:font-family: 'Roboto', sans-serif;
+	font-family: Quicksand;
 	letter-spacing:3px;
 	box-shadow:0px 0px 15px grey;
 }
@@ -1281,12 +1302,11 @@ a{
 
 .snc-field-note{
 	font-size:50%;
-	//display:none;
-	height:30px;
+	height:25px;
 	width:240px;
 	color:#ffffff;
 	margin-top:0px;
-	twxt-align: center;
+	text-align: center;
 	margin: 0 auto;
 	white-space:normal;
 	
@@ -1294,12 +1314,10 @@ a{
 
 .snc-error-container{
 	width:500px;
-	height:300px;
 	background-color:lightgrey;
 	border-radius:2px;
 	padding:20px;
-	margin: 0 auto;
-	margin-top:150px;
+	margin: 50 auto;
 	display:none;
 	z-index:2000;
 }
@@ -1341,23 +1359,6 @@ a{
 	display:none;
 }
 
-@media only screen and (max-width: 1250px) {
-	.snc-form{
-		//margin-top:-30px;
-	}
-}
-
-@media only screen and (max-width: 1130px) {
-	#learn-more-p{
-		width:60%;
-	}
-	.snc-field-note{
-		
-		width:150px;
-		padding:2px;
-	}
-}
-
 #no-threads-message{
 	font-size:200%;
 	color:dimgrey;
@@ -1382,7 +1383,7 @@ a{
 	border-radius:3px;
 	height:150px;
 	width:300px;
-	font-family:font-family: 'Roboto', sans-serif;
+	font-family: Quicksand;
 	color:dimgrey;
 	font-size:80%;
 	letter-spacing:2px;
@@ -1640,7 +1641,6 @@ a{
 	cursor: pointer;
 }
 
-/* Let's get this party started */
 
 ::-webkit-scrollbar{
     width: 4px;
@@ -1850,12 +1850,14 @@ a{
 
 .wof-container{
 	background-color: lightgrey;
-	width:45%;
-	min-height: 100%;
+	width:30%;
+	min-height: 575px;
 	height: auto;
 	text-align: center;
-	padding:10px;
-	font-size: 150%;
+	float: left;
+	margin-left: 3%;
+	display: inline-block;
+	font-size: 120%;
 }
 
 .wof-cont-title{
@@ -1863,8 +1865,71 @@ a{
 	color: salmon;
 }
 
+.wof-info{
+	font-size: 80%;
+	color: grey;
+}
 .page-path{
 	letter-spacing: 2px;
 	font-size: 110%;
 	color: #40e0d0;
+}
+
+#vote-opt-offer-box{
+	background-color: #62b1cf;
+	width: 320px;
+	position: absolute;
+	margin-left: 40px;
+	box-shadow: 0px 0px 30px grey;
+	padding: 10px;
+	color: pink;
+	z-index: 10000;
+	text-align: center;
+	height: 260px;
+	display: none;
+}
+
+.view-thread-opts-link{
+	padding: 10px;
+	letter-spacing: 2px;
+	float: right;
+	background-color: salmon;
+	color: white;
+	margin-top: -31px;
+	margin-left: 2px;
+}
+
+#vote-dis-box{
+	width:40%;
+	margin-bottom:20px;
+	height:100px;
+	background-color:#EDEDED;
+	padding:10px;
+}
+
+.thread-end{
+	background-color: #E3E3E3;
+	width:300px;
+	height:100%;
+	float:right;
+	padding:10px;
+	color: #457EA4;
+	padding-top: 30px;
+	text-align: center;
+	font-size: 75%;
+	text-align: center;
+	margin-top:-60px;
+	overflow: auto;
+}
+
+.thread-end-sec{
+	height: 60px;
+	float: left;
+	display: inline-block;
+	text-align: center;
+	letter-spacing: 1px;
+	margin-top: 10px;
+	white-space: normal;
+	word-wrap: break-word;
+	
 }

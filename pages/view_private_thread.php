@@ -23,7 +23,7 @@ if(loggedin()){
 		$topic_name = $db->query("SELECT topic_name FROM debating_topics WHERE topic_id = ".$db->quote($header_info['topic_id']))->fetchColumn();
 		if(valid_view_thread($thread_id, $_SESSION['user_id'])){
 			?>
-			<div class = 'page-path'>Debating > <?php echo "<a style = 'color: #40e0d0;' href = '".$path_link1."'>".$dtype; ?> Debating </a> > <?php echo "<a style = 'color: #40e0d0;' href = '".$path_link2."'>".$topic_name." > ".$header_info['thread_title']; ?></div><br>
+			<div class = 'page-path'>Debating > <?php echo "<a style = 'color: #40e0d0;' href = '".$path_link1."'>".$dtype; ?> Debating </a> > <?php echo "<a style = 'color: #40e0d0;' href = '".$path_link2."'>".$topic_name." </a> > ".$header_info['thread_title']; ?></div><br>
 				<?php
 					if($header_info["visible"]==0){
 						echo "<span style = 'color:salmon;'><i><u>*This debate is visible to only you untill it is approved by a leader.</u></i></span><br><br>";
@@ -35,7 +35,6 @@ if(loggedin()){
 						$like_status = "Unlike";	
 					}
 				?>
-				<a href = "index.php?page=view_private_thread&thread_id=<?php echo $_GET['thread_id']; ?>&d_like=<?php echo $thread_id; ?>" style = "color:lightblue;"><?php echo $like_status; ?> debate</a>
 				<?php
 					$user_idp = $db->query("SELECT user_id FROM users WHERE user_username = ".$db->quote($header_info['thread_starter']))->fetchColumn();
 					$perm_to_delete = false;
@@ -45,7 +44,7 @@ if(loggedin()){
 						$perm_to_delete = true;
 					}
 					if($perm_to_delete==true){
-						echo "&middot; <a style = 'font-size: 100%;color:salmon;' href = 'index.php?page=view_private_thread&deld=true&thread_id=".$thread_id."'>Delete Debate</a><br>";
+						echo "<a style = 'font-size: 100%;color:salmon;' href = 'index.php?page=view_private_thread&deld=true&thread_id=".$thread_id."'>Delete Debate</a><br>";
 					}
 					if(isset($_GET['deld'])&&$perm_to_delete==true){
 						$db->query("DELETE FROM debating_threads WHERE thread_id = ".$thread_id);
@@ -73,6 +72,21 @@ if(loggedin()){
 									}
 								});
 							});
+
+							$("#add-arg-div-link").click(function(){
+								$("#new-arg-textarea,#thread-title-repeat").css({"border-color":"#15a9ce","color":"#15a9ce", "font-weight":"bold"});
+								var flash_txtarea_border = setInterval(function(){
+									$("#new-arg-textarea,#thread-title-repeat").css({"border-color":"#15a9ce","color":"#15a9ce", "font-weight":"bold"});
+									setTimeout(function(){
+										$("#new-arg-textarea,#thread-title-repeat").css({"border-color":"grey","color":"grey", "font-weight":"normal"});
+									}, 200);
+								}, 400);
+								
+								setTimeout(function(){
+									clearInterval(flash_txtarea_border);
+									clearInterval(flash_txt_border);
+								}, 5000);
+							});
 						});
 						</script>
 					<?php
@@ -87,7 +101,7 @@ if(loggedin()){
 						}
 					}
 					?>	
-				<div class = "thread-title-header"><?php echo $header_info['thread_title']; ?></div>
+				<div class = "thread-title-header" id = "thread-title-header"><?php echo $header_info['thread_title']; ?></div>
 				<div class = "sub-info-thread" style = 'text-align: left'>
 					<?php
 						if($perm_to_delete){
@@ -98,11 +112,52 @@ if(loggedin()){
 					?>
 					Started By <?php echo $header_info['thread_starter']; ?> &middot; <?php echo $header_info['thread_likes']; ?> Debate Like(s)
 				</div>
-
-
-				
+				<a href = "index.php?page=view_private_thread&thread_id=<?php echo $_GET['thread_id']; ?>&d_like=<?php echo $thread_id; ?>" class = "view-thread-opts-link"><?php echo $like_status; ?> debate</a>
+				<a href = "#thread-title-repeat" class= "view-thread-opts-link" id = "add-arg-div-link">Add Argument</a>
+				<hr size = '1'>
 				<br>
-			<?php
+				<?php
+				$qtype = get_question_type($header_info['thread_title'], 1);
+				$dis_vote_opts = get_question_type($header_info['thread_title'], 2, $thread_id);
+				if(count($dis_vote_opts)!=0){
+					$dis_votes = "";
+					$sec_width = (100/count($dis_vote_opts))-1;
+					if($qtype=="open"){
+						$colors = array("#5a9999", "#5a9999", "#5a9999", "#5a9999", "#5a9999");
+						$vote_vals = merge_cus_vote_vals($thread_id);
+					}else{
+						$colors = array("#7fdd99","salmon", "#5a9999");
+						$vote_vals = array($header_info['vote_yes'],$header_info['vote_no'],$header_info['vote_maybe']);
+					}
+
+					$total = array_sum(array_values($vote_vals));
+
+					$count = 0;
+					foreach($dis_vote_opts as $opt){
+						$fsize = 110 - 1.5*(strlen($opt));
+						if($count==count($dis_vote_opts)-1){
+							$borderright = "border-right: 1px solid #b2b2b2;";
+						}else{
+							$borderright = "";
+						}
+						$vote_val = ($qtype=="open")? $vote_vals[$opt]: $vote_vals[$count];
+						$vote_val = get_vote_perc($vote_val, $total);
+						$dis_votes.="
+							<div class = 'thread-end-sec' style = 'width:".$sec_width."%;font-size:".$fsize."%;border-left:1px solid #b2b2b2;height:40px;".$borderright."color:grey;height:70px;'>
+								<span style = 'color:".$colors[$count].";'>".$opt."</span><br>
+								".$vote_val."%
+							</div>
+						";
+						$count++;
+					}
+					echo "<div id = 'vote-dis-box' style = ''>
+						<div class = 'voter-amount' style = 'font-size:120%'>".$total." vote(s):</div>
+
+							".$dis_votes."
+						
+						</div><br>";
+				}
+				
 
 			if(isset($_GET['scr_to'])){
 				$scr_pos = htmlentities($_GET['scr_to']);
@@ -114,11 +169,13 @@ if(loggedin()){
 				
 				});	
 				</script>
+
 				<?php
 			}
 			
 			$get_replies = $db->prepare("SELECT * FROM thread_replies WHERE thread_id= :thread_id AND size = '' ORDER BY time_replied ASC");
 			$get_replies->execute(array("thread_id"=>$thread_id));
+			$rcount = 0;
 			while($row = $get_replies->fetch(PDO::FETCH_ASSOC)){
 				if($row['visible']==1){
 					$dis = "norm";
@@ -155,11 +212,11 @@ if(loggedin()){
 						$red_text = "";
 					}
 					?>
-					<div class = 'thread-reply-container' style = "<?php echo $reply_red_style; ?>">
+					<div class = 'thread-reply-container' style = "<?php echo $reply_red_style; ?>" id = "treply-<?php echo $rcount; ?>">
 						<?php
 						echo $red_text;
 						if($row['reply_status']!=''){ 
-							echo "<span style = 'color:grey;'>Voted : ".$row['reply_status']."</span><br>";
+							echo "<span style = 'color:grey;'>Voted: ".$row['reply_status']."</span><br>";
 						}else{
 							echo "<span style = 'color:grey;'>Hasn't Voted</span><br>";
 						}
@@ -210,7 +267,7 @@ if(loggedin()){
 				
 								<div class = "reply-option1-container">
 						
-									<a href = "index.php?page=view_private_thread&thread_id=<?php echo $_GET['thread_id']; ?>&editp=<?php echo $row['reply_id']; ?>">
+									<a href = "index.php?page=view_private_thread&thread_id=<?php echo $_GET['thread_id']; ?>&editp=<?php echo $row['reply_id']; ?>#treply-<?php echo $rcount;?>">
 										Edit
 									</a>
 								</div>	
@@ -262,6 +319,7 @@ if(loggedin()){
 					<?php
 					$get_mreplies = $db->prepare("SELECT * FROM thread_replies WHERE thread_id = ".$row['reply_id']." AND size = 'mini' ORDER BY time_replied ASC");
 					$get_mreplies->execute();
+					$mrcount = 0;
 					while($mrow = $get_mreplies->fetch(PDO::FETCH_ASSOC)){
 						if($mrow['visible']==1){
 							$mdis = "norm";
@@ -279,7 +337,7 @@ if(loggedin()){
 								$mreply_red_style = "";
 								$mred_text = "";
 							}
-							echo "<div class = 'mreply-container' style = '".$mreply_red_style."'>";
+							echo "<div class = 'mreply-container' style = '".$mreply_red_style."' id = 'mreply-".$mrcount."'>";
 								echo $mred_text;
 								if((isset($_GET['editp']))&&($_GET['editp']==$mrow['reply_id'])&&(user_own_reply($mrow['reply_id'], $_SESSION['user_id'])||(user_rank($_SESSION['user_id'], 2, "up")))){
 								?>
@@ -302,7 +360,7 @@ if(loggedin()){
 										
 											<div class = "reply-option1-container">
 							
-												<a href = "index.php?page=view_private_thread&thread_id=<?php echo $_GET['thread_id']; ?>&editp=<?php echo $mrow['reply_id']; ?>">
+												<a href = "index.php?page=view_private_thread&thread_id=<?php echo $_GET['thread_id']; ?>&editp=<?php echo $mrow['reply_id']; ?>#mreply-<?php echo $mrcount; ?>">
 													Edit
 												</a>
 											</div>
@@ -339,8 +397,9 @@ if(loggedin()){
 									?>
 								</span>
 								<?php
-							echo"</div>";
+							echo "</div>";
 						}	
+						$mrcount ++;
 					}
 					echo "<br><br>";
 
@@ -375,19 +434,23 @@ if(loggedin()){
 							header("Location: index.php?page=view_private_thread&thread_id=".$_GET['thread_id']);
 						}
 					}
-				}	
+				}
+
+				$rcount ++;	
 			}
 			
 			?>
 				<hr size = "1"><br>
-				<div class = "thread-title-repeat"><?php echo $header_info['thread_title']; ?></div>
+				<div class = "thread-title-repeat" id = "thread-title-repeat"><?php echo $header_info['thread_title']; ?></div>
 				<br>
 
 				<?php
-					$vote_opts = get_question_type($header_info['thread_title'], 2);
+					$vote_opts = get_question_type($header_info['thread_title'], 2, $thread_id);
 				?>
 				<form action = "" method = "POST">
-					<span style = 'color:grey;'>Vote:</span> <select name = "reply_status" class = "reply-status-select">
+					<span style = 'color:grey;'>Vote:
+					<?php if(!empty($vote_opts)){ ?>
+					<select name = "reply_status" class = "reply-status-select">
 						<option value = "na">(optional)</option>
 						<?php
 							foreach($vote_opts as $opt){
@@ -395,14 +458,17 @@ if(loggedin()){
 							}
 						?>
 					</select>
+					</span>
+					<?php }else{ echo "No voting options available."; } ?>
 					<br><br>
-					<textarea placeholder = "Explanation/Argument..."class = "textarea-type1" style = "width:84%;" name = "reply_text"></textarea><br>
+					<textarea placeholder = "Explanation/Argument..."class = "textarea-type1" id = 'new-arg-textarea' style = "width:84%;" name = "reply_text"></textarea><br>
 					<input type = "submit" class = "mreply-submit">
 				</form>
 			<?php
+
 				
-			if(isset($_POST['reply_status'], $_POST['reply_text'])){
-				$reply_status = htmlentities($_POST['reply_status']);
+			if(isset($_POST['reply_text'])){
+				$reply_status = (isset($_POST['reply_status'])) ? htmlentities($_POST['reply_status']) : "";
 				$reply_text = htmlentities($_POST['reply_text']);
 				$user_replied = get_user_field($_SESSION['user_id'], "user_username");
 				$thread_id = $_GET['thread_id'];

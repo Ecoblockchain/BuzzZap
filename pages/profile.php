@@ -67,11 +67,11 @@ if(loggedin()){
 				}
 			}
 			?>	
-			<div class = "profile-info-container" style = "width: 97%;">
+			<div class = "profile-info-container" style = "width: 96.5%;">
 				<?php
 					if($user_id!==$view_user_id){
 				?>
-				<a href = "index.php?page=profile&user=<?php echo $view_user_id; ?>&rul=true" class = "report-user-link"> &middot; Report This User</a>
+				<a href = "index.php?page=profile&user=<?php echo $view_user_id; ?>&rul=true" class = "action-uprofile-link"> &middot; Report This User</a>
 				
 				<?php
 				
@@ -81,29 +81,30 @@ if(loggedin()){
 				if($view_user_id !=$user_id){
 					$f_st = get_friend_status(get_user_field($_SESSION['user_id'], "user_username"), get_user_field($view_user_id, "user_username"));
 					if($f_st=="none"){
-						$friend_opt = "<a class = 'add-friend-link' href = 'index.php?page=profile&user=".$view_user_id."&add_friend=true'>Add as friend</a>";
+						$friend_opt = "<a class = 'action-uprofile-link' href = 'index.php?page=profile&user=".$view_user_id."&add_friend=true'>Add as friend </a>";
 					}else if($f_st=="pending"){
-						$friend_opt = "<span class = 'add-friend-link'>Friend request sent</span>";
+						$friend_opt = "<span class = 'action-uprofile-link'>Friend request sent </span>";
 					}else if($f_st=="friends"){
-						$friend_opt = "<span class = 'add-friend-link'>Friends</span>";
+						$friend_opt = "<span class = 'action-uprofile-link'>Friends </span>";
 					}else{
-						$friend_opt = "<a class = 'add-friend-link' href = 'index.php?page=profile&user=".$view_user_id."&acc_friend=true'>Accept friend request</a>";
+						$friend_opt = "<a class = 'action-uprofile-link' href = 'index.php?page=profile&user=".$view_user_id."&acc_friend=true'>Accept friend request </a>";
 					}
 					echo $friend_opt."<br>";
 				}
 			
 			?>
-				<div id = "profile-info-container1" style  = "display:none;width:500px;margin-left:330px;">
+				<div id = "profile-info-container1" style  = "display:none;width:50%;float:left;margin-top:30px;">
 					<br>
-						<form action = "" method = "POST">
+						<form action = "" method = "POST" style = "margin-left: 50px;">
 							<input type = "password" class= "loggedout-form-fields" placeholder = " New Password" name = "new_pass"><br><br>
 							<input type = "password" class = "loggedout-form-fields" placeholder = " Confirm New Password" name = "new_pass_v"><br><br>
 							<input type = "submit" class = "loggedout-form-submit" style = "margin-left:20px;">
+							<span id = "back-info2" style = "font-size:80%;cursor:pointer;margin-left: 20px;"><< back</span>
 						</form>
-						<span id = "back-info2" style = "font-size:80%;cursor:pointer;"><< back</span>
+						
 				</div>
-				<div id = "profile-info-container2" style = "margin-top:10px;">
-					<span id = "sub-profile-title">General</span><span id = "sub-profile-title" style = "position:absolute;margin-left:400px;">About Me</span><br><br>
+				<div id = "profile-info-container2" style = "margin-top:10px;float: left;width:50%;">
+					<span id = "sub-profile-title">General</span><br><br>
 					<?php
 						
 					foreach($user_info as $column => &$value){
@@ -126,7 +127,7 @@ if(loggedin()){
 						if(($view_user_id == $user_id)&&(in_array("edit_".$column, $valid_edit))){
 							
 						
-							echo $label.": <input type = 'text' style='".$width."color:lightgreen;' value = '".$value."' name = 'edit_".$column."' 
+							echo $label.": <input type = 'text' style='".$width."color:#06e5b1;' value = '".$value."' name = 'edit_".$column."' 
 							class = 'profile-edit-textfield'  autocomplete='off' spellcheck='false' maxlength='40' id = '".$column."'><br>";
 							
 							
@@ -150,11 +151,12 @@ if(loggedin()){
 								</script>
 							<?php
 						}else{
-							echo $label.": <span style = 'color:lightgreen;'>".$value."</span><br>";
+							echo $label.": <span style = 'color:#06e5b1;'>".$value."</span><br>";
 						}
 					}
 					?>
-						
+						<div class = "edit-instructions">Click a field to edit it, or
+				<span style = "color:lightblue;cursor:pointer;" id = 'change-pass-link'><b>change password</b></span></div>
 					<?php
 					if($view_user_id == $user_id){
 						foreach($valid_edit as $column){
@@ -192,8 +194,8 @@ if(loggedin()){
 						}	
 						
 						if(isset($_GET['edit_aboutme'])){
-							$text = htmlentities($_GET['edit_aboutme']);
-							if(strlen($text)>20){
+							echo $text = htmlentities($_GET['edit_aboutme']);
+							if(strlen($text)>10){
 								$check_exists = $db->query("SELECT general FROM about_user WHERE user_id = ".$db->quote($user_id))->fetchColumn();
 								if(isset($check_exists)){
 									$query = "UPDATE about_user SET general = :text WHERE user_id = :user_id";
@@ -222,22 +224,21 @@ if(loggedin()){
 						<?php
 					}
 					
-					$get_about_user = $db->query("SELECT general FROM about_user WHERE user_id=".$db->quote($view_user_id))->fetchColumn();
+					?>
+					
+				</div> 
+				<?php
+				$get_about_user = $db->query("SELECT general FROM about_user WHERE user_id=".$db->quote($view_user_id))->fetchColumn();
 					if(!empty($get_about_user)){
 						$textarea_content = $get_about_user;
 					}
 				
-					if($view_user_id != $user_id){	
-						echo "<br><br>";
-						$a_m_text_height = "200px";
-					}else{
-						$a_m_text_height = "260px";
-					}
+					
 					?>
-					<div id = "profile-about-me">
-						<textarea id = "about-me-textarea" class = "amtxt" placeholder = "Where are you from? What do you do? What do you like to do? Which subjects do you study?" style = 'height:<?php echo $a_m_text_height; ?>;'><?php echo $textarea_content; ?></textarea>
+					<div id = "about-me-container">
+						<span id = "sub-profile-title" style = "margin-top: -10px;position:absolute;">About Me</span><br>
+						<textarea id = "about-me-textarea" class = "amtxt" placeholder = "Where are you from? What do you do? What do you like to do? Which subjects do you study?"><?php echo $textarea_content; ?></textarea>
 					</div>
-
 					<script>
 						$(document).ready(function(){
 							var old_val_ = $(".amtxt").val();
@@ -253,13 +254,10 @@ if(loggedin()){
 						});
 					</script>
 					<br>
-					
-				</div> 
-				<?php
+					<?php
 					if($view_user_id == $user_id){	
 				?>
-				<span class = "edit-instructions">Click a field to edit it, or
-				<span style = "color:lightblue;cursor:pointer;" id = 'change-pass-link'><b>change password</b></span></span>
+				
 				<script>
 					$("#change-pass-link").click(function(){
 						$(".edit-instructions").fadeOut();
@@ -363,56 +361,60 @@ if(loggedin()){
 			?>
 		
 		<br>
-			<div class = "profile-info-container" id = "badge-container" style = "width: 47%;">
-				<div id = "sub-profile-title">Badge Collection</div>
-				<div id = "profile-info-container3" style = "width: 500px;height: 10px;position:absolute;">
-					<?php
-						$get_badges = $db->prepare("SELECT text FROM badges WHERE user_id = :id");
-						$get_badges->execute(array("id"=>$view_user_id));
-						echo "</div><span style = 'font-size: 60%;'><br>".$get_badges->rowCount()." badge(s) in total</span><br><br>";
-						while($row = $get_badges->fetch(PDO::FETCH_ASSOC)){
-							echo "<div class = 'badge-body' id = 'badge-c-".rand(1,6)."' style = 'float: left;'><br><br>".$row['text']."</div>";
-						}
-						
-					?>
-				
-			</div>
-			<div class = "profile-info-container" id = "friends-container" style = "width: 47%;border-left:5px solid #eff9f9;padding-right:15px;">
-				<div id = "sub-profile-title">Friends</div>
-				
-				<?php
-					$get_friends = $db->prepare("SELECT * FROM friends WHERE (accepter = :username OR requester = :username) AND accepted = 1");
-					$get_friends->execute(array("username"=>$username));
-					if($get_friends->rowCount()>0){
-						?>
-						<div class = "friend-list">
+			<div id = "profile-bottom-container">
+				<div class = "profile-bottom-inner-container">
+					<div id = "profile-info-container3" style = "width: 100%;height: 10px;padding:10px">
+						<div id = "sub-profile-title">Badge Collection</div>
 						<?php
-			
-						while($row = $get_friends->fetch(PDO::FETCH_ASSOC)){
-							if($row['accepter']==$username){
-								$user_to_show = $row['requester'];
-							}else{
-								$user_to_show = $row['accepter'];
+							$get_badges = $db->prepare("SELECT text FROM badges WHERE user_id = :id");
+							$get_badges->execute(array("id"=>$view_user_id));
+							echo "<span style = 'font-size: 60%;'><br>".$get_badges->rowCount()." badge(s) in total</span><br><br>";
+							while($row = $get_badges->fetch(PDO::FETCH_ASSOC)){
+								echo "<div class = 'badge-body' id = 'badge-c-".rand(1,6)."' style = 'float: left;'><br><br>".$row['text']."</div>";
 							}
-							$get_info = $db->prepare("SELECT * FROM users WHERE user_username = :username");
-							$get_info->execute(array("username"=>$user_to_show));
-							$row = $get_info->fetch(PDO::FETCH_ASSOC);
-							$friend_info = array("fullname"=>$row['user_firstname']." ".$row['user_lastname'], "user_rep"=>"Rep: ".$row['user_rep']);
-							if($_GET['user']==$_SESSION['user_id']){
-								$friend_info["email"]=$row['user_email'];
+							
+						?>
+					</div>
+				</div>
+				<div class = "profile-bottom-inner-container" style = "margin-left: 2%">
+					
+					
+					<?php
+						$get_friends = $db->prepare("SELECT * FROM friends WHERE (accepter = :username OR requester = :username) AND accepted = 1");
+						$get_friends->execute(array("username"=>$username));
+						echo "<div class = 'friend-list' >";
+						if($get_friends->rowCount()>0){
+							?>
+							
+							<div id = "sub-profile-title">Friends</div>
+							<?php
+				
+							while($row = $get_friends->fetch(PDO::FETCH_ASSOC)){
+								if($row['accepter']==$username){
+									$user_to_show = $row['requester'];
+								}else{
+									$user_to_show = $row['accepter'];
+								}
+								$get_info = $db->prepare("SELECT * FROM users WHERE user_username = :username");
+								$get_info->execute(array("username"=>$user_to_show));
+								$row = $get_info->fetch(PDO::FETCH_ASSOC);
+								$friend_info = array("fullname"=>$row['user_firstname']." ".$row['user_lastname'], "user_rep"=>"Rep: ".$row['user_rep']);
+								if($_GET['user']==$_SESSION['user_id']){
+									$friend_info["email"]=$row['user_email'];
+								}
+								echo "
+								<a style = 'color:grey;' href = 'index.php?page=profile&user=".$row['user_id']."'><div class = 'friend-list-block'><span style = 'font-size:120%;font-weight:bold;'>"
+				
+								.$user_to_show."</span><br><span style = 'font-size:100%;'>".implode($friend_info, "<br>")."</span>";
+				
 							}
-							echo "
-							<a style = 'color:grey;' href = 'index.php?page=profile&user=".$row['user_id']."'><div class = 'friend-list-block'><span style = 'font-size:120%;font-weight:bold;'>"
-			
-							.$user_to_show."</span><br><span style = 'font-size:100%;'>".implode($friend_info, "<br>")."</span></div>";
-			
+							echo "</div>";
+						}else{
+							echo "<span style = 'margin-top:100px;margin-left:50px;position:absolute;'>Friend list is empty.</span>";
 						}
-					}else{
-						echo "<span style = 'margin-top:100px;margin-left:50px;position:absolute;'>Friend list is empty.</span>";
-					}
-					?>
+						?>
+				</div>
 			</div>
-			
 		</div>
 		
 		

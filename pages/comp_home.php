@@ -19,8 +19,8 @@ if(loggedin()){
 							start_comp_opened=1;
 							
 							$(this).animate({height:"700px"}, 500).animate({marginLeft:"28%"})
-							.animate({width:"40%"}, 500).css("color", "#ffffff")
-							.css("box-shadow", "0px 0px 40px dimgrey").css("border", "1px solid grey");
+							.animate({width:"42%"}, 500).css("color", "#ffffff")
+							.css("box-shadow", "0px 0px 40px dimgrey");
 					
 							setTimeout(function(){
 								$("#start-comp-form").fadeIn();
@@ -36,7 +36,7 @@ if(loggedin()){
 							$("#start-comp-form").fadeOut();
 							$("#start_comp").animate({height:"40px"}, 500).animate({marginLeft:"0%"})
 							.animate({width:"200px"}, 500).css("color", "#ffffff")
-							.css("box-shadow", "none").css("border", "none");
+							.css("box-shadow", "none");
 							setTimeout(function(){
 								start_comp_opened = 0;
 							}, 1000);
@@ -102,7 +102,7 @@ if(loggedin()){
 				});
 				</script>
 				
-				<div class = "start_comp_link" id = "start_comp">
+				<div class = "start_comp_link no-hyphens" id = "start_comp">
 					Start New Competition
 					<div class = "start-comp-form" id = "start-comp-form">
 						<form action = "" method = "POST">

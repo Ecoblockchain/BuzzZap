@@ -35,6 +35,7 @@ if(loggedin()){
 		});
 	});	
 	</script>
+	<div class = 'page-path'>Debating > I Wonder... </div><br>
 	<div id = "iwonder-t">The I Wonder Sticky Board</div>
 	<div id = "iwonder-menu">
 		<span id = "im1">
@@ -277,6 +278,12 @@ if(loggedin()){
 		if(strlen($text)>20){
 			if(substr($text, 0, 11)=="I wonder..."){
 				$active = (user_moderation_status($_SESSION['user_id'])>1)? 0:1;	
+				if($active==0){
+					$cleaders = get_com_leader_id(get_user_field($_SESSION['user_id'], "user_com"), true);
+					foreach($cleaders as $id){
+						add_note($id, "There is new content awaiting your approval in the community manager.", "index.php?page=leader_cp&go_to=2");
+					}
+				}
 				$insert = $db->prepare("INSERT INTO iwonder_threads VALUES('', :text, :username, UNIX_TIMESTAMP(), :active)");
 				$insert->execute(array("text"=>$text, "username"=>$username, "active"=>$active));
 				add_rep(5, $_SESSION['user_id']);
@@ -321,6 +328,12 @@ if(loggedin()){
 		}
 		if(strlen($reply_text)>10){
 			$active = (user_moderation_status($_SESSION['user_id'])==3)? 0:1;	
+			if($active==0){
+				$cleaders = get_com_leader_id(get_user_field($_SESSION['user_id'], "user_com"), true);
+				foreach($cleaders as $id){
+					add_note($id, "There is new content awaiting your approval in the community manager.", "index.php?page=leader_cp&go_to=2");
+				}
+			}
 			if(user_not_posted(get_user_field($_SESSION['user_id'], "user_username"))){
 				add_badge("Posting for the first time", $_SESSION['user_id'], "you posted for the first time!");
 			}

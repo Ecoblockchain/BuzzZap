@@ -6,9 +6,10 @@ if($check_valid!="true"){
 if(loggedin()){
 	$pm_id = htmlentities($_GET['pm_id']);
 	if(isset($pm_id)&&(valid_pm_id($pm_id, $_SESSION['user_id']))){
-		
+
 		mark_pms_as_seen($_SESSION['user_id'], explode(" ", $pm_id));
 		$pm_subject = $db->query("SELECT pm_subject FROM private_messages WHERE pm_id = ".$db->quote($pm_id))->fetchColumn();
+		echo "<div class = 'page-path'>".get_user_field($_SESSION['user_id'], 'user_username')." > <a href = 'index.php?page=inbox' style ='color: #40e0d0;'>My Private Messages</a> > ".$pm_subject;
 		echo "<div class = 'pm-subject'>".$pm_subject."</div>";
 		$get_replies = $db->prepare("SELECT * FROM pm_replies WHERE pm_id=:pm_id ORDER BY time_sent ASC");
 		$get_replies->execute(array("pm_id"=>$pm_id));

@@ -33,8 +33,10 @@ if(!loggedin()){
 					// scrollPos:Number
 				},
 				onSnapComplete: function($el){	
-
-					$("#nav-bar-out").fadeIn();
+					if($( window ).width()>1000){
+						$("#nav-bar-out").fadeIn();
+					}
+			
 					var key = $el.attr("id").substring(7);
 					
 					if(key!=="1"){
@@ -54,8 +56,12 @@ if(!loggedin()){
             });
             var old_pos = 0;
             
-            
-				
+    		$( window ).resize(function() {
+				if($( window ).width()<1000){
+					$("#nav-bar-out").fadeOut();
+				}
+			});
+		
 			$("#loggedout-paragraph-container1").click(function(){
 				$("#form2, #form3").fadeOut(300);
 				$("#loggedout-form-container").slideDown(1000);
@@ -601,8 +607,8 @@ if(!loggedin()){
 			if($get->rowCount()>0){
 				foreach($get as $value){
 					echo "<div class = 'bn-f'>
-							<div class = 'bn-f-title'>".$value['title']."<br><span class = 'bn-f-time'>".date("d/M/Y H:i", $value['time'])."</span></div>
-							<div class = 'bn-f-text' style = ''>".$value['feed_text']."</div>
+							<div class = 'bn-f-title' style = 'white-space:normal;width:100%;'>".$value['title']."<br><span class = 'bn-f-time'>".date("d/M/Y H:i", $value['time'])."</span></div>
+							<div class = 'bn-f-text'  style = 'white-space:normal;width:100%;'>".$value['feed_text']."</div>
 						</div><br>";
 				}
 			}else{
@@ -757,7 +763,7 @@ if(!loggedin()){
 				}else{
 				
 			?>	
-				<div id = "more-pay-info-container">
+				<div id = "more-pay-info-container" >
 					<span style = 'color: #6082B6;font-size: 140%;'>Subscription Fee</span><span id = 'mpic-close' style = "cursor:pointer;float:right;">X</span>
 					<br><br><?php echo get_static_content("subscription_fee_info"); ?>
 				</div>
@@ -765,7 +771,7 @@ if(!loggedin()){
 				<div class = "snc-error-container"></div>
 				<div class = "snc-form" style = "">
 					<form action = "index.php?page=home&go_to=4" method = "POST" id = "snc-form-in">
-						<span style = 'line-height: 20px;letter-spacing: 1px;'><?php echo (get_feature_status("payments")=="0")? get_static_content("snc_header"): get_disabled_message("payments"); ?></span><br><br>
+						<div style = 'white-space:normal;line-height: 20px;letter-spacing: 1px;'><?php echo (get_feature_status("payments")=="0")? get_static_content("snc_header"): get_disabled_message("payments"); ?></div><br>
 						<input placeholder = "Community Name" type = "text" name = "snc_com_name" class = "loggedout-form-fields-snc" style = "width:500px;" id = "sf1"><div class = "snc-field-note" id = "sfn1">This is the name of your community.</div>
 						<input placeholder = "Community Pass Code" type = "password" name = "snc_com_pass" class = "loggedout-form-fields-snc" style = "width:400px;" id = "sf2"><div class = "snc-field-note" id = "sfn2">This is the passcode used to access the community by all members.</div>
 						<input placeholder = "Your Username" type = "text" name = "snc_leader_username" class = "loggedout-form-fields-snc" style = "width:500px;" id = "sf3"><div class = "snc-field-note" id = "sfn3">This is the community leaders username, you.</div>
@@ -773,7 +779,22 @@ if(!loggedin()){
 						<input placeholder = "Verify Your Password" type = "password" name = "snc_leader_vpass" class = "loggedout-form-fields-snc" style = "width:400px;" id = "sf5"><div class = "snc-field-note" id = "sfn5">Verify your personal password.</div>
 						<input placeholder = "Your Firstname" type = "text" name = "snc_leader_firstname" class = "loggedout-form-fields-snc" style = "width:250px;" id = "sf6"><input placeholder = "Your Lastname"  type = "text" name = "snc_leader_lastname" class = "loggedout-form-fields-snc" style = "width:250px;" id = "sf6"><div class = "snc-field-note" id = "sfn6">Enter your fullname.</div>
 						<input placeholder = "Your Email"  type = "text" name = "snc_leader_email" class = "loggedout-form-fields-snc" style = "width:500px;" id = "sf7"><div class = "snc-field-note" id = "sfn7">Enter your email.</div>
-						<input type = "submit" value = "Submit" class = "loggedout-form-submit" style = "margin-top:10px;border:none;box-shadow:none;">
+						<input type = "submit" value = "Submit" class = "loggedout-form-submit" style = "border:none;box-shadow:none;height:30px;">
+						<style>
+							@media only screen and (max-width: 1250px) {
+								.loggedout-form-fields-snc{
+									height: 20px;
+									font-size: 80%;
+									width: 200px;
+								}
+								.loggedout-form-submit{
+									font-size: 80%;
+									padding:5px;
+									height: 25px;
+									margin-top: -10px;
+								}
+							}
+						</style>
 					</form>
 				</div>
 				
@@ -792,34 +813,31 @@ if(!loggedin()){
 			}else{
 			?>
 
-				<div class = "loggedout-error" style = "margin-top:200px;margin-left: 20px;">
-					<span class = "loggedout-error-content">
+				<div class = "loggedout-error" style = "margin-top:200px;margin: 150 auto;">
+					<div  style = 'white-space:normal;' class = "loggedout-error-content">
 						<center><?php echo  get_disabled_message('new_coms'); ?>
 								<br><br>To bypass this please enter the passcode.
-											<form action = '' method = 'POST'>
-												<input type = 'text' name = 'pass_snc' style = 'border:none;'>
-												<input type = 'submit' style = 'border:none;'>
-											</form>
-						</center>
-					</span>
-				</div><br>
-
-			
-			<?php	
+								<form action = 'index.php?page=home&go_to=4' method = 'POST'>
+									<input type = 'text' name = 'pass_snc' style = 'border:none;'>
+									<input type = 'submit' style = 'border:none;'>
+								</form>
+									<?php	
 		
-			if(isset($_POST['pass_snc'])){
-				$pass = htmlentities($_POST['pass_snc']);
-				$get_true_pass = $db->query("SELECT pass FROM feature_activation WHERE feature='new_coms'")->fetchColumn();
-				if($pass===$get_true_pass){
-					$_SESSION['pass_snc']="true";
-					header("Location: index.php?page=home");
-				}else{
-					echo "error";
-				}
-			}
-								
-			}
-			?>	
+									if(isset($_POST['pass_snc'])){
+										$pass = htmlentities($_POST['pass_snc']);
+										$get_true_pass = $db->query("SELECT pass FROM feature_activation WHERE feature='new_coms'")->fetchColumn();
+										if($pass===$get_true_pass){
+											$_SESSION['pass_snc']="true";
+										}else{
+											echo "<span style = 'color: red; '>Incorrect code.</span>";
+										}
+									}
+														
+									?>	
+						</center>
+					</div>
+				</div><br>
+			<?php } ?>
 		</div>	
 	</div>
 	
@@ -857,6 +875,20 @@ if(!loggedin()){
 				<textarea id = "contact-textarea" style = "border:none;box-shadow:none;" placeholder="Message..." name = "cu_body"></textarea><br>
 				<input type = "submit" value = "Submit" class = "loggedout-form-submit" style = "border:none;box-shadow:none;margin-top:10px;">
 			</form>
+			<style>
+				@media only screen and (max-width: 1250px) {
+					.loggedout-form-fields-c{
+						height: 30px;
+						font-size: 80%;
+						width: 400px;
+					}
+					#contact-textarea{
+						font-size: 80%;
+						padding:5px;
+						height: 200px;
+					}
+				}
+			</style>
 			<div style = 'line-height: 20px;letter-spacing: 1px;color:grey;text-align:center;'>Please contact us with<br> any questions or queries.</div>
 			<?php
 			}

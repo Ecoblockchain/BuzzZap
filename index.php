@@ -96,10 +96,10 @@ if(substr($_SERVER['PHP_SELF'], 0,3)=="/pr"){
 										<?php
 										 	$total =get_unread_pm_quant($user_id) + count(get_pending_friends(get_user_field($user_id, "user_username")))+get_unread_notes($user_id, $quant=true);
 										 	if($total>0){
-												echo " <div class= 'note-bubble' id = 'note-bubble' style = 'margin-top:10px;margin-left:30px;'>".$total."</div>";
+												echo " <div class= 'note-bubble' id = 'note-bubble' style = 'margin-top:4px;margin-left:30px;'>".$total."</div>";
 											}
 										?>
-										<div id "mitem1sub1" class = "subitem" style = "padding-top:20px;"><?php echo get_user_field($user_id, "user_username"); ?></div>
+										<div id "mitem1sub1" class = "subitem" style = "padding-top:20px;" hoverc = "#bc5a9b"><?php echo get_user_field($user_id, "user_username"); ?></div>
 									</a>
 
 									<a href="index.php?page=profile&user=<?php echo $_SESSION['user_id']; ?>">
@@ -112,14 +112,14 @@ if(substr($_SERVER['PHP_SELF'], 0,3)=="/pr"){
 											}
 											?>
 										</div>
-										<div id "mitem1sub2" style = "padding-top:25px;" class = "subitem">My Profile</div>
+										<div id "mitem1sub2" style = "padding-top:25px;" class = "subitem usubitem">My Profile</div>
 									</a>
 
 									<a href="index.php?page=inbox">
 										<div class= 'note-bubble' id = 'note-bubble1' style = "margin-left: 30px">
 											<?php if(get_unread_pm_quant($user_id)>0){echo get_unread_pm_quant($user_id);}?>
 										</div>
-										<div id "mitem1sub3" class = "subitem">Inbox</div>
+										<div id "mitem1sub3" class = "subitem usubitem">Inbox</div>
 									</a>
 
 									<a href="index.php?page=notifications">
@@ -131,7 +131,7 @@ if(substr($_SERVER['PHP_SELF'], 0,3)=="/pr"){
 												 }
 											?>
 										</div>
-										<div id "mitem1sub4" class = "subitem">Notifications</div>
+										<div id "mitem1sub4" class = "subitem usubitem">Notifications</div>
 									</a>
 
 								</div>
@@ -139,43 +139,40 @@ if(substr($_SERVER['PHP_SELF'], 0,3)=="/pr"){
 							<div class = "mitem-container">
 								<div class = "mitem" id = "mitem2">
 									<a href="index.php?page=home">
-										<div id "mitem1sub1" class = "subitem" style = "padding-top:20px;">Debating</div>
+										<div id "mitem1sub1" class = "subitem" style = "padding-top:20px;"  hoverc = "#049a77">Debating</div>
 									</a>
 									<a href="index.php?page=private_debating">
-										<div id "mitem2sub2" class = "subitem" style = "padding-top:30px;">Private Debating</div>
+										<div id "mitem2sub2" class = "subitem usubitem" style = "">Private Debating</div>
 									</a>
 									<a href="index.php?page=private_debating&d=g">
-										<div id "mitem2sub3" class = "subitem">Global Debating</div>
+										<div id "mitem2sub3" class = "subitem usubitem">Global Debating</div>
 									</a>
 									<a href="index.php?page=comp_home&type=0">
-										<div id "mitem2sub4" class = "subitem">Private Competitions</div>
+										<div id "mitem2sub4" class = "subitem usubitem">Private Competitions</div>
 									</a>
 									<a href="index.php?page=comp_home&type=1">
-										<div id "mitem2sub4" class = "subitem">Global Competitions</div>
+										<div id "mitem2sub4" class = "subitem usubitem">Global Competitions</div>
 									</a>
 									<a href="index.php?page=wof">
-										<div id "mitem2sub4" class = "subitem">Wall Of Fame</div>
+										<div id "mitem2sub4" class = "subitem usubitem">Wall Of Fame</div>
+									</a>
+									<a href="index.php?page=iwonder">
+										<div id "mitem4sub1" class = "subitem usubitem">I Wonder...</div>
 									</a>
 								</div>
 							</div>
 							<div class = "mitem-container">	
 								<div class = "mitem" id = "mitem3">
 									<a href="index.php?page=private_groups&com=<?php echo get_user_field($_SESSION['user_id'],'user_com'); ?>">
-										<div id "mitem3sub1" class = "subitem"  style = "padding-top:20px;"><?php echo get_user_community($user_id, "com_name"); ?></div>
+										<div id "mitem3sub1" class = "subitem"  style = "padding-top:20px;" hoverc = "#e94f42"><?php echo get_user_community($user_id, "com_name"); ?></div>
 									</a>
 								</div>
 							</div>
+							
 							<div class = "mitem-container">
 								<div class = "mitem" id = "mitem4">
-									<a href="index.php?page=iwonder">
-										<div id "mitem4sub1" class = "subitem" style = "padding-top:20px;">I Wonder...</div>
-									</a>
-								</div>
-							</div>
-							<div class = "mitem-container">
-								<div class = "mitem" id = "mitem5">
 									<a href="index.php?page=logout">
-										<div id "mitem4sub1" class = "subitem" style = "padding-top:20px;">Logout</div>
+										<div id "mitem4sub1" class = "subitem" style = "padding-top:20px;" hoverc="#045ca2">Logout</div>
 									</a>
 								</div>
 							</div>
@@ -183,10 +180,10 @@ if(substr($_SERVER['PHP_SELF'], 0,3)=="/pr"){
 							<?php
 								if(user_rank($_SESSION['user_id'], 3,"just")){
 									?>
-										<div class = "mitem-container" style = 'float:right'>
-											<div class = "mitem admin-links" id = "mitem6">
+										<div class = "mitem-container" style = 'float:right;width:120px;font-size:80%;'>
+											<div class = "mitem admin-links" id = "mitem5">
 												<a href="index.php?page=leader_cp">
-													<div id "mitem4sub1" class = "subitem" style = "padding-top:10px;">Community Manager</div>
+													<div id "mitem5sub1" class = "subitem" mouseeffect = "false" style = "padding-top:10px;">Community Manager</div>
 												</a>
 											</div>
 										</div>
@@ -200,16 +197,30 @@ if(substr($_SERVER['PHP_SELF'], 0,3)=="/pr"){
 						<script>
 						$(function(){
 							$("#mitem1").mouseover(function(){
-								$(this).animate({height:"210px"}, 200);
+								$(this).animate({height:"230px"}, 200);
 
 							}).mouseleave(function(){
 								$(this).animate({height:"58px"}, 200);
 							});
 							$("#mitem2").mouseover(function(){
-								$(this).animate({height:"360px"}, 200);
+								$(this).animate({height:"390px"}, 200);
 
 							}).mouseleave(function(){
 								$(this).animate({height:"58px"}, 200);
+							});
+
+							$(".subitem").mouseover(function(){
+								if($(this).attr("mouseeffect") != "false"){
+									var hoverc = $(this).attr("hoverc");
+									if(hoverc==undefined){
+										hoverc = "pink";
+									}
+									$(this).css("background-color", hoverc).css("color", "white");
+								}
+							}).mouseleave(function(){
+								if($(this).attr("mouseeffect") != "false"){
+									$(this).css("background-color", "#d1ecf0").css("color", "#3a8187");
+								}	
 							});
 						});
 						</script>	

@@ -39,7 +39,7 @@ if(loggedin()){
 			$("#close-form").fadeOut();
 			$("#snm-text").fadeOut();
 			$("#start-new-pm").css("text-decoration","none");
-			$("#start-new-pm").animate({width:"30px"}).animate({height:"25px"}).animate({marginLeft:"-23px"})
+			$("#start-new-pm").animate({width:"30px"}).animate({height:"25px"}).animate({marginLeft:"-10px"})
 			.animate({width:"200px"});
 			setTimeout(function(){
 			$("#snm-text").fadeIn();

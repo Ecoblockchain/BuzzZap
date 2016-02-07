@@ -29,46 +29,97 @@ if(loggedin()){
 		<script>
 		$(document).ready(function(){
 			var opened = 0;
-			
-				$(".start-debate-option").click(function(){
-					if(opened===0){
-						opened = 1;
-						$(this).animate({backgroundColor:'#FFFFFF'}, 500).animate({color:'#757575'}, 500)
-						.animate({width:'520px'}, 500).animate({height:'340px'}, 500);
-						setTimeout(function(){
-							$("#start-debate-form").fadeIn();
-							$(".start-debate-option").css("box-shadow", "0px 0px 200px #030303");
-						;}, 2000);
-						$(this).animate({marginLeft:'20%'}, 500);
-					}	
-				});
-			
-			
-				$("#close-sd").click(function(){
-					window.location="index.php?page=private_debating_topic&topic_id=<?php echo $topic_id; ?>";
-					
-				});
-				
-				
+			var offer_own_vote_opts = true;
+			$(".start-debate-option").click(function(){
+				if(opened===0){
+					opened = 1;
+					$(this).animate({backgroundColor:'#FFFFFF'}, 500).animate({color:'#757575'}, 500)
+					.animate({width:'470px'}, 500).animate({height:'340px'}, 500);
+					setTimeout(function(){
+						$("#start-debate-form").fadeIn();
+						$(".start-debate-option").css("box-shadow", "0px 0px 200px #030303");
+					;}, 2000);
+					$(this).animate({marginLeft:'20%'}, 500);
+				}	
+			});
 		
+		
+			$("#close-sd").click(function(){
+				window.location="index.php?page=private_debating_topic&topic_id=<?php echo $topic_id; ?>";
+				
+			});
+			
+			$("#start-deb-submit").mouseover(function(){
+				var q = $("#start-deb-question").val();
+				
+				if(q.length>0&&offer_own_vote_opts==true){
+					$.post("<?php echo $ajax_script_loc; ?>", {get_q_type:q}, function(result){
+						if(result=="open"){
+							$("#vote-opt-offer-box").fadeIn(50);
+						}
+					});
+
+					$("#offer-vote-opt-no").click(function(){
+						offer_own_vote_opts = false;
+						$("#vote-opt-offer-box").fadeOut(100);
+					});
+					$("#offer-vote-opt-yes").click(function(){
+						$("#voob-dis1").hide();
+						$("#voob-dis2").show();
+					});
+
+					$("#cus-vote-save").click(function(){
+						var strlist = "";
+						for(var i=1;i<=5;i++){
+							var opt = $("#cus-vote-opt"+i.toString()).val();
+							if(opt.length>0){
+								strlist+=","+opt;
+							}
+						}
+						$("#cus-vote-opts-post").attr("value", strlist);
+						$("#vote-opt-offer-box").fadeOut(100);
+						offer_own_vote_opts = false;
+					});
+				}
+			});
 			
 		});
 		</script>
 		<div class = 'page-path'>Debating > <?php echo "<a style = 'color: #40e0d0' href = '".$path_link1."'>".$dtype; ?> Debating </a> > <?php echo $topic_name; ?></div><br>
-		<div class = 'start-debate-option'>Start Debate
+		<div class = 'start-debate-option no-hyphens'><b>Start Debate</b>
 
 			<form method = "POST" id = "start-debate-form">
-			<span style = "position:absolute;margin-left:250px;margin-top:-20px;z-index:10000;" id = "close-sd">X</span>
-				<input type = "text" placeholder="Debate Question" maxlength = "120" autocomplete="off" 
-				spellcheck="false" name = "debate_title" class = "loggedin-form-field1" style = "">
+			<div id = "vote-opt-offer-box">
+				<div id = 'voob-dis1'>
+					As your question does not seem to have a straight answer (Yes/No/Agree/Disagree)
+					would you like to add your own vote options?<br><br><br>
+					<span style = 'font-size: 220%;color: white;'><span id = 'offer-vote-opt-yes'>Yes</span> / <span id = 'offer-vote-opt-no'>No</span></span>
+				</div>
+				<div id = 'voob-dis2' style = 'display:none;'>
+					Enter Vote Options:<br><br>
+					<input id = 'cus-vote-opt1' type = 'text' placeholder = 'Option 1' class = 'loggedout-form-fields-snc' style = 'margin-top: 2px; width: 80%;' maxlength = "50"><br>
+					<input id = 'cus-vote-opt2' type = 'text' placeholder = 'Option 2' class = 'loggedout-form-fields-snc' style = 'margin-top: 2px; width: 80%;' maxlength = "50"><br>
+					<input id = 'cus-vote-opt3' type = 'text' placeholder = 'Option 3' class = 'loggedout-form-fields-snc' style = 'margin-top: 2px; width: 80%;' maxlength = "50"><br>
+					<input id = 'cus-vote-opt4' type = 'text' placeholder = 'Option 4' class = 'loggedout-form-fields-snc' style = 'margin-top: 2px; width: 80%;' maxlength = "50"><br>
+					<input id = 'cus-vote-opt5' type = 'text' placeholder = 'Option 5' class = 'loggedout-form-fields-snc' style = 'margin-top: 2px; width: 80%;' maxlength = "50"><br>
+					<span style = 'font-size:80%'>*Maximum 5 options - leave blank if not needed.</span>
+					<br><input id = 'cus-vote-save' type = 'button' value = 'Save' class = 'leader-cp-submit' style = 'width: 70px;border: none;'><br>
+				</div>
+			</div>
+			<span style = "position: absolute;margin-left:420px;margin-top:-40px;z-index:10000;" id = "close-sd">X</span>
+				<span style = 'letter-spacing: 1px;font-size: 70%;position: absolute;margin-top:-15px;'>*Use correct punctuation and grammar<br>
+				<input type = "text" placeholder="Debate Question..." maxlength = "120" autocomplete="off" 
+				spellcheck="false" name = "debate_title" class = "loggedin-form-field1" style = "" id = "start-deb-question">
 				<br>
 				<textarea name = "debate_text" class = "loggedin-form-field2" placeholder = "Debate Description..."></textarea>
 				<br>
-				<div class = "loggedin-form-info1"><p>If your reputation is higher than 20, 
+				<div class = "loggedin-form-info1"><p>If your reputation is higher than 15, 
 					this question will not require any approvel from
 					staff/leaders.</p>
 				</div>
-				<input type = "submit" value = "Submit" class = "loggedin-form-submit1">
+
+				<input type = "hidden" name = "cus_vote_opts" value = "" id = "cus-vote-opts-post">
+				<input type = "submit" value = "Submit" class = "loggedin-form-submit1" id = "start-deb-submit">
 			</form>
 		</div>
 		<br><br><br>
@@ -76,6 +127,11 @@ if(loggedin()){
 		if(isset($_POST['debate_title'],$_POST['debate_text'])){
 			$title = htmlentities($_POST['debate_title']);
 			$text = htmlentities($_POST['debate_text']);
+			$cus_vote_opts = trim(trim_commas(htmlentities($_POST['cus_vote_opts'])));
+			if(strlen($cus_vote_opts)<=1){
+				$cus_vote_opts = false;
+			}
+
 			$errors = false;
 			if($com_id==0){
 				$extra_get="&d=g";
@@ -92,7 +148,7 @@ if(loggedin()){
 				header("Location: index.php?page=private_debating_topic&topic_id=".$topic_id.$extra_get);	
 			}
 			if($errors==false){
-				$thread_id = create_thread($title, $text, $com_id, $topic_id);
+				$thread_id = create_thread($title, $text, $com_id, $topic_id, $cus_vote_opts);
 				if(!empty($thread_id)){
 					header("Location: index.php?page=view_private_thread&thread_id=".$thread_id);
 					setcookie("success", "1Debate created successfully!",time()+10);
@@ -123,15 +179,9 @@ if(loggedin()){
 					$description = $db->query("SELECT reply_text FROM thread_replies WHERE
 											 thread_id = ".$db->quote($row['thread_id'])." AND first_post = '1'")->fetchColumn();
 					$votes = array("yes"=>$row['vote_yes'], "maybe"=>$row['vote_maybe'], "no"=>$row['vote_no']);
-					$total = $votes['yes'] + $votes['maybe'] + $votes['no'];
-
-					foreach ($votes as $key=>&$value){
-						if($total !== 0){
-							$value = (100 / $total) * ($value);
-							$value = round($value);
-						}
-					}
-					$dis_vote_opts = get_question_type($row['thread_title'], 2);
+		
+					$qtype = get_question_type($row['thread_title'], 1);
+					$dis_vote_opts = get_question_type($row['thread_title'], 2, $row['thread_id']);
 					echo "<a href = 'index.php?page=view_private_thread&thread_id=".$row['thread_id']."'><div class = 'thread-container' style= 'padding-top:10px;'>";
 					echo "<div class = 'thread-title' style = 'color:".$color.";'>".$row['thread_title']."<br>";
 					if($color=="#FF6A6A"){
@@ -140,25 +190,44 @@ if(loggedin()){
 					}	
 					echo "</div><br><br>";
 					if(count($dis_vote_opts)!=0){
-					echo "<div class = 'thread-end'>
+						$dis_votes = "";
+						$sec_width = (100/count($dis_vote_opts))-1;
+						if($qtype=="open"){
+							$colors = array("#5a9999", "#5a9999", "#5a9999", "#5a9999", "#5a9999");
+							$vote_vals = merge_cus_vote_vals($row['thread_id']);
+						}else{
+							$colors = array("#7fdd99","salmon", "#5a9999");
+							$vote_vals = array($votes['yes'],$votes['no'],$votes['maybe']);
+						}
+
+						
+						$total = array_sum(array_values($vote_vals));
+
+						$count = 0;
+						foreach($dis_vote_opts as $opt){
+							$fsize = 110 - 1.5*(strlen($opt));
+							if($count==count($dis_vote_opts)-1){
+								$borderright = "border-right: 1px solid #b2b2b2;";
+							}else{
+								$borderright = "";
+							}
+							$vote_val = ($qtype=="open")? $vote_vals[$opt]: $vote_vals[$count];
+							$vote_val = get_vote_perc($vote_val, $total);
+							$dis_votes.="
+								<div class = 'thread-end-sec' style = 'width:".$sec_width."%;font-size:".$fsize."%;border-left:1px solid #b2b2b2;".$borderright."'>
+									<span style = 'color:".$colors[$count].";'>".$opt."</span><br>
+									".$vote_val."%
+								</div>
+							";
+							$count++;
+						}
+						echo "<div class = 'thread-end'>
 							<div class = 'voter-amount'>".$total." vote(s)</div>
 
-							<div class = 'thread-end-sec'>
-								<span style = 'color:#8FBC8F;'>".$dis_vote_opts[0]."</span><br>
-								".$votes['yes']."%
-							</div>
-							<div class = 'thread-end-sec'>
-								<span style = 'color:#CD9B9B'>".$dis_vote_opts[1]."</span><br>
-								".$votes['no']."%
-							</div>
-							<div  class = 'thread-end-sec'>
-							<span style = 'color:dimgrey;'>".$dis_vote_opts[2]."</span><br>
-							".$votes['maybe']."%
-
+								".$dis_votes."
 							
-							</div>
-						</div>";
-					}else{
+							</div>";
+					}else{	
 						echo "<div class = 'thread-end'>
 							<br>This question is not votable.
 						</div>";

@@ -197,6 +197,8 @@ if(loggedin()){
 							";
 							$users = $db->prepare("SELECT * FROM group_members WHERE group_id = :group_id AND active = 1");
 							$users->execute(array("group_id"=>$row['group_id']));
+							echo "<b style ='font-size:80%;color:dimgrey;'><u>Members</u></b><span style = 'font-size: 70%;'><br>";
+							
 							while($row = $users->fetch(PDO::FETCH_ASSOC)){
 								if($row['leader']=="1"){
 									$leader = "(leader)";	
@@ -205,7 +207,7 @@ if(loggedin()){
 								}
 								echo add_profile_link(get_user_field($row['user_id'], "user_username"), 0, "color: grey").$leader."<br>";	
 							}	
-							echo "</div>";
+							echo "</span></div>";
 						}
 					}
 					?>

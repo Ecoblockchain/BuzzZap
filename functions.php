@@ -296,14 +296,20 @@ function valid_thread_status($status){
 		return false;
 	}
 }
-function create_thread($title, $text, $com_id, $topic_id){
+function create_thread($title, $text, $com_id, $topic_id, $cus_votes=false){
 	global $db;
 	$title = htmlentities($title);
 	$text = nl2br(htmlentities($text));
 	$com_id = (int) $com_id;
 	$topic_id = $topic_id;
 	$username = get_user_field($_SESSION['user_id'], "user_username");
-	$visible = (user_moderation_status($_SESSION['user_id'])==1)? "1":"0";	
+	$visible = (user_moderation_status($_SESSION['user_id'])==1)? "1":"0";
+	if($visible=="0"){
+		$cleaders = get_com_leader_id(get_user_field($_SESSION['user_id'], "user_com"), true);
+		foreach($cleaders as $id){
+			add_note($id, "There is new content awaiting your approval in the community manager.", "index.php?page=leader_cp&go_to=2");
+		}
+	}	
 	$uci = (int) get_user_community($_SESSION['user_id'], "com_id");
 	$time = time();
 	
@@ -317,6 +323,16 @@ function create_thread($title, $text, $com_id, $topic_id){
 
 	$insert_data = $db->prepare("INSERT INTO thread_replies VALUES('', :thread_id, :reply_text, :time, :user_replied, 0, 0, '', :visible, 1, '')");
 	$insert_data->execute(array("thread_id"=>$thread_id, "reply_text"=>$text, "time"=>$time,"user_replied"=>$username, "visible"=>$visible));
+
+	if($cus_votes!=false&&get_question_type($title, 1)=="open"){
+		$vote_zeros = explode(",", $cus_votes);
+		foreach($vote_zeros as &$val){
+			$val = "0";
+		}
+		$vote_zeros = implode(",",$vote_zeros);
+		$insert_data = $db->prepare("INSERT INTO custom_vote_options VALUES('', :thread_id, :vote_opts, :votes)");
+		$insert_data->execute(array("thread_id"=>$thread_id, "vote_opts"=>$cus_votes, "votes"=>$vote_zeros));
+	}
 	add_rep(5, $_SESSION['user_id']);
 	return $thread_id;
 }
@@ -391,12 +407,41 @@ function post_action($user_id, $reply_id, $action, $editval){
 	}	
 }
 
-function vote_debate($vote, $d_id){
+function get_vote_perc($quant, $total){
+	if($quant!=0){
+		$value = (100 / $total) * ($quant);
+	}else{
+		$value = $quant;
+	}
+	return $value = round($value);
+}
+function merge_cus_vote_vals($thread_id){
+	global $db;
+	$opts = explode(",",$db->query("SELECT vote_opts FROM custom_vote_options WHERE thread_id = ".$db->quote($thread_id))->fetchColumn());
+	$vals = explode(",",$db->query("SELECT votes FROM custom_vote_options WHERE thread_id = ".$db->quote($thread_id))->fetchColumn());
+	$merged = array();
+	$count = 0;
+	foreach($opts as $opt){
+		$merged[$opt]=$vals[$count];
+		$count++;
+	}
+
+	return $merged;
+}
+
+function vote_debate($vote, $d_id, $cus){
 	global $db;
 	$vote = strtolower($vote);
-	$assoc_vtypes = array("yes"=>"vote_yes", "no"=>"vote_no", "maybe"=>"vote_maybe", "agree"=>"vote_yes", "disagree"=>"vote_no");
-	$update = $db->prepare("UPDATE debating_threads SET `".$assoc_vtypes[$vote]."` = `".$assoc_vtypes[$vote]."` + 1 WHERE thread_id = ".$db->quote($d_id));
-	$update->execute();
+	if($cus==false){
+		$assoc_vtypes = array("yes"=>"vote_yes", "no"=>"vote_no", "maybe"=>"vote_maybe", "agree"=>"vote_yes", "disagree"=>"vote_no");
+		$update = $db->prepare("UPDATE debating_threads SET `".$assoc_vtypes[$vote]."` = `".$assoc_vtypes[$vote]."` + 1 WHERE thread_id = ".$db->quote($d_id));
+		$update->execute();
+	}else{
+		$cus_votes = merge_cus_vote_vals($d_id);
+		$cus_votes[$vote] ++;
+		$votes = implode(",",array_values($cus_votes)); 
+		$db->query("UPDATE custom_vote_options SET votes = ".$db->quote($votes)." WHERE thread_id = ".$db->quote($d_id));
+	}
 }
 
 function re_for_p_count_on_post($username){
@@ -413,6 +458,12 @@ function reply_debate($reply_text, $user_replied, $thread_id, $size, $reply_stat
 	$reply_text = nl2br(htmlentities($reply_text));
 	$active = (user_moderation_status($_SESSION['user_id'])>1)? 0:1;
 	if($active==0){
+
+		$cleaders = get_com_leader_id(get_user_field($_SESSION['user_id'], "user_com"), true);
+		foreach($cleaders as $id){
+			add_note($id, "There is new content awaiting your approval in the community manager.", "index.php?page=leader_cp&go_to=2");
+		}
+		
 		$msg = "Your comment will not be visible untill it has been approved by your community leader.";	
 	}else{
 		$visibility = 1;
@@ -421,7 +472,9 @@ function reply_debate($reply_text, $user_replied, $thread_id, $size, $reply_stat
 	if($reply_status=="na"){
 		$reply_status="";
 	}else{
-		vote_debate($reply_status, $thread_id);
+		$title = $db->query("SELECT thread_title FROM debating_threads WHERE thread_id = ".$db->quote($thread_id))->fetchColumn();
+		$cus = (get_question_type($title,1)=="open")? true: false;
+		vote_debate($reply_status, $thread_id, $cus);
 	}	
 	$b_cont = "";
 	if(user_not_posted($user_replied)){
@@ -432,10 +485,12 @@ function reply_debate($reply_text, $user_replied, $thread_id, $size, $reply_stat
 	if($size=="mini"){
 
 		$starter = $db->query("SELECT user_replied FROM thread_replies WHERE reply_id = ".$db->quote($thread_id))->fetchColumn();
-		$deb_id = $db->query("SELECT thread_id FROM thread_replies WHERE reply_id = ".$db->quote($thread_id))->fetchColumn();
-		$starter = $db->query("SELECT user_id FROM users WHERE user_username=".$db->quote($starter))->fetchColumn();
-		$deb_title = $db->query("SELECT thread_title FROM debating_threads WHERE thread_id = ".$db->quote($deb_id))->fetchColumn();
-		add_note($starter, $user_replied." has replied to your argument in the debate '".$deb_title."'.", "index.php?page=view_private_thread&thread_id=".$deb_id);
+		if($starter!=$user_replied){
+			$deb_id = $db->query("SELECT thread_id FROM thread_replies WHERE reply_id = ".$db->quote($thread_id))->fetchColumn();
+			$starter = $db->query("SELECT user_id FROM users WHERE user_username=".$db->quote($starter))->fetchColumn();
+			$deb_title = $db->query("SELECT thread_title FROM debating_threads WHERE thread_id = ".$db->quote($deb_id))->fetchColumn();
+			add_note($starter, $user_replied." has replied to your argument in the debate '".$deb_title."'.", "index.php?page=view_private_thread&thread_id=".$deb_id);
+		}
 	}
 	
 	re_for_p_count_on_post($user_replied);	
@@ -1021,7 +1076,13 @@ function report_user($by, $reported, $reason, $for_c = array(false)){
 		$fc = 1;
 		$db->query("INSERT INTO reported_content VALUES(".$db->quote($for_c[1]).",".$db->quote($for_c[2]).", ".$db->quote($for_c[3]).", ".$db->quote($by).", ".$db->quote($reported).", ".$time.")");
 	}
+
+
 	$com_id = get_user_community($db->query("SELECT user_id FROM users WHERE user_username = ".$db->quote($reported))->fetchColumn(), "com_id");
+	$cleaders = get_com_leader_id($com_id, true);
+	foreach($cleaders as $id){
+		add_note($id, "A user in your community has been reported, to attend to it click here.", "index.php?page=leader_cp&go_to=1");
+	}
 	$insert = $db->prepare("INSERT INTO reported_users VALUES(:reported_user, :reason, :reported_by, :com_id, :time, :fc)");
 	$insert->execute(array("reported_user"=>$reported, "reason"=>$reason, "reported_by"=>$by, "com_id"=>$com_id, "time"=>$time, "fc"=>$fc));
 	return true;
@@ -1600,9 +1661,18 @@ function end_comp($comp_id){
 	}
 }
 
-function get_com_leader_id($com_id){
+function get_com_leader_id($com_id, $all=false){
 	global $db;
-	return $db->query("SELECT user_id FROM users WHERE user_com = ".$db->quote($com_id)." AND user_rank = 3")->fetchColumn();
+	if($all==true){
+		$ids = array();
+		$res = $db->query("SELECT user_id FROM users WHERE user_com = ".$db->quote($com_id)." AND user_rank = 3");
+		foreach ($res as $row) {
+			$ids[] = $row['user_id'];
+		}
+		return $ids;
+	}else{
+		return $db->query("SELECT user_id FROM users WHERE user_com = ".$db->quote($com_id)." AND user_rank = 3")->fetchColumn();
+	}
 }
 
 function add_badge($text, $user_id, $reason = ""){
@@ -1754,7 +1824,7 @@ function contains_blocked_word($txt){
 	return array($result, $txt);
 }
 
-function get_question_type($q, $return_type){
+function get_question_type($q, $return_type, $thread_id=false){
 	global $db;
 
 	/* return type = 1
@@ -1796,7 +1866,12 @@ function get_question_type($q, $return_type){
 	}else if($return_type==2){
 		switch($qtype){
 			case "open":
-				return array();
+				$get_cus_vote_opts = $db->query("SELECT vote_opts FROM custom_vote_options WHERE thread_id = ".$db->quote($thread_id)." LIMIT 1")->fetchColumn();
+				if($get_cus_vote_opts){
+					return explode(",",$get_cus_vote_opts);
+				}else{
+					return array();
+				}
 			case "closed":
 				return array("Yes", "No", "Maybe");
 			case "state":
@@ -1849,6 +1924,15 @@ function get_com_rep($com_id){
 	return $rep;
 }
 
+function get_group_rep($gid){
+	global $db;
+	$rep = 0;
+	$get_users = $db->query("SELECT user_id FROM group_members WHERE active = 1 AND group_id = ".$db->quote($gid)); 
+	foreach($get_users as $u){
+		$rep = $rep + get_user_field($u['user_id'], "user_rep");
+	}
+	return $rep;
+}
 function send_mail($to,$subject,$body,$from){
 	$headers  = 'MIME-Version: 1.0' . "\r\n";
 	$headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";

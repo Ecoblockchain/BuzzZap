@@ -72,4 +72,10 @@ if(isset($_POST['vote'], $_POST['table'], $_POST['arg_id'], $_POST['comp_id'], $
 		echo $error;
 	}	
 }
+
+
+if(isset($_POST['get_q_type'])){
+	$q = htmlentities($_POST['get_q_type']);
+	echo $res = get_question_type($q, 1);
+}
 ?>

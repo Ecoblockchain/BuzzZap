@@ -220,7 +220,7 @@ if(loggedin()){
 				<div class = "hib-title">
 					POPULAR <span id = 'p-g-toggle3' class = "p-g-toggle">PRIVATE</span> DEBATES
 				</div>
-				<div class = "hib-content" id = "hibc-t3-1">
+				<div class = "hib-content" id = "hibc-t3-1" style = "height: 510px;">
 				<?php
 					$get = $db->prepare("SELECT * FROM debating_threads WHERE com_id = :com_id AND visible = 1 ORDER BY thread_likes DESC LIMIT 10");
 					$get->execute(array("com_id"=>get_user_community($_SESSION['user_id'], "com_id")));
@@ -233,7 +233,7 @@ if(loggedin()){
 					}
 				?>
 				</div>
-				<div class = "hib-content" id = "hibc-t3-2" style = "display: none;">
+				<div class = "hib-content" id = "hibc-t3-2" style = "display: none;height: 510px;">
 				<?php
 					$get = $db->prepare("SELECT * FROM debating_threads WHERE com_id = 0 AND visible = 1 ORDER BY thread_likes DESC LIMIT 10");
 					$get->execute();
