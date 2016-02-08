@@ -1946,7 +1946,7 @@ function send_mail($to,$subject,$body,$from){
 		$sig = "This is an automatically sent email. Please do not try to respond here. <br>".$sig;
 	}
 	
-	mail($to, $subject,$body , $headers);
+	mail($to, $subject,$body,$headers "-f ".$from);
 	return true;
 }
 ?>
