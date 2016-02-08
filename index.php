@@ -10,6 +10,7 @@ if(substr($_SERVER['PHP_SELF'], 0,3)=="/pr"){
 	ini_set("log_errors", 1);
 	ini_set("error_log", "php-error.log");
 	$spec_judge_email_link= "https://buzzzap.com/";
+	ini_set("sendmail_from", "buzzzap.com");
 
 }
 ?>

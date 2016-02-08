@@ -1947,29 +1947,7 @@ function send_mail($to,$subject,$body,$from){
 		$sig = "This is an automatically sent email. Please do not try to respond here. <br>".$sig;
 	}
 	
-	if(mail($to, $subject,$body , $headers)){
-		echo ":)";
-	}else{
-		echo ":(";
-	}
+	mail($to, $subject,$body , $headers);
 	return true;
-	/*
-	$sig = get_static_content("mail_signature");
-	if($from == "auto@buzzzap.com"){
-		$sig = "This is an automatically sent email. Please do not try to respond here. <br>".$sig;
-	}
-	$mail_style = get_static_content("mail_style");
-	$body = "<div style = '".$mail_style."'>".$body."</div>
-		<div style = 'font-size:80%;color:grey;text-align: center;'><br><hr size = '1'>".$sig."</div>";
-
-	$mail->SetFrom($from, 'BuzzZap');
-	$mail->Subject = $subject;
-	$mail->MsgHTML($body);
-	$mail->AddAddress($to, $to);
-	if($mail->Send()){
-	 	echo "Message sent!";
-	}else{	
-		echo "Mailer Error: " . $mail->ErrorInfo;
-	}	*/
 }
 ?>
