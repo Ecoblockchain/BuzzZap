@@ -4,12 +4,12 @@ session_start();
 //if($_SERVER['PHP_SELF']!="/buzzzap/index.php"){ 
 //	header("Location: index.php?page=home");
 //}
-/*$mail->IsSMTP();
+$mail->IsSMTP();
 $mail->SMTPAuth = true;
 $mail->Host = "mail.buzzzap.com";
 $mail->Port = 26;
 $mail->Username = "admin@buzzzap.com";
-$mail->Password = "ae1236";*/
+$mail->Password = "ae1236";
 
 $check_valid = "true";
 function valid_page($page_name){
@@ -1942,7 +1942,7 @@ function get_group_rep($gid){
 }
 function send_mail($to,$subject,$body,$from){
 	//global $mail;
-	
+	/*
 	$headers  = 'MIME-Version: 1.0' . "\r\n";
 	$headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
 	$headers .= "From: ".$from. "\r\n";
@@ -1953,7 +1953,8 @@ function send_mail($to,$subject,$body,$from){
 	$mail_style = get_static_content("mail_style");
 	mail($to, $subject,$body , $headers);
 	return true;
-	/*$sig = get_static_content("mail_signature");
+	*/
+	$sig = get_static_content("mail_signature");
 	if($from == "auto@buzzzap.com"){
 		$sig = "This is an automatically sent email. Please do not try to respond here. <br>".$sig;
 	}
@@ -1971,6 +1972,6 @@ function send_mail($to,$subject,$body,$from){
 	} else {
 		echo "Mailer Error: " . $mail->ErrorInfo;
 		return false;
-	}*/
+	}
 }
 ?>

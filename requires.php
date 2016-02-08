@@ -17,9 +17,7 @@
 <?php
 require("functions.php"); 
 require("connect_db.php");
-if(require('class.phpmailer.php')){
-	
-}
+require('class.phpmailer.php');
 if(isset($_GET['page'])){
 	require("ext/predtextjs.php");
 }
