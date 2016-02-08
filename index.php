@@ -26,10 +26,9 @@ if(substr($_SERVER['PHP_SELF'], 0,3)=="/pr"){
 			<?php
 			require("requires.php");
 			$mail = new PHPMailer;
-			$mail->SMTPDebug = 3;                                      // Set mailer to use SMTP
-			$mail->Host = 'buzzzap.com';  // Specify main and backup SMTP servers
-			$mail->isMail();   
-			$mail->setFrom('admin@buzzzap.com', 'BuzzZap');             // SMTP username
+			$mail->SMTPDebug = 3;                                     
+			$mail->Host = 'localhost';  
+			$mail->isMail();              
 
 			if( (get_feature_status("site")=="1") && (!isset($_SESSION['pass_site_d'])) && (isset($_SESSION['admin_key'])==false) ){
 				header("Location: site_disabled.php");
