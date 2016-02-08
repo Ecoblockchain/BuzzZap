@@ -1943,7 +1943,7 @@ function send_mail($to,$subject,$body,$from){
 	if($from == "auto@buzzzap.com"){
 		$sig = "This is an automatically sent email. Please do not try to respond here. <br>".$sig;
 	}
-	$mail_style = get_static_content("mail_style");
+	
 	mail($to, $subject,$body , $headers);
 	return true;
 	*/
@@ -1951,7 +1951,7 @@ function send_mail($to,$subject,$body,$from){
 	if($from == "auto@buzzzap.com"){
 		$sig = "This is an automatically sent email. Please do not try to respond here. <br>".$sig;
 	}
-
+	$mail_style = get_static_content("mail_style");
 	$body = "<div style = '".$mail_style."'>".$body."</div>
 		<div style = 'font-size:80%;color:grey;text-align: center;'><br><hr size = '1'>".$sig."</div>";
 
