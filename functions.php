@@ -4,13 +4,6 @@ session_start();
 //if($_SERVER['PHP_SELF']!="/buzzzap/index.php"){ 
 //	header("Location: index.php?page=home");
 //}
-$mail->IsSMTP();
-$mail->SMTPAuth = true;
-$mail->Host = "mail.buzzzap.com";
-$mail->Port = 26;
-$mail->Username = "admin@buzzzap.com";
-$mail->Password = "ae1236";
-
 $check_valid = "true";
 function valid_page($page_name){
 	$valid_pages_ = scandir("pages");
