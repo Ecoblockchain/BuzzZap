@@ -24,7 +24,7 @@
 			}
 		}
 	}
-
+	$db->query("UPDATE static_content SET cont = cont + '2' WHERE cont_name = 'cron_check'");
 	foreach($ebodys as $uid=>$body){
 		$email = get_user_field($uid, "user_email");
 		$name = get_user_field($uid, "user_username");

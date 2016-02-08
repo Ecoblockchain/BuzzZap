@@ -1950,9 +1950,9 @@ function send_mail($to,$subject,$body,$from){
 	$mail->AddAddress($to, $to);
 	$mail->addReplyTo($from, 'BuzzZap');
 	if($mail->Send()){
-	 	echo "Message sent!";
+	 	return true;
 	}else{	
-		echo "Mailer Error: " . $mail->ErrorInfo;
+		return false;
 	}	
 }
 ?>
