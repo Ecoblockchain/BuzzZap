@@ -27,9 +27,12 @@ if(substr($_SERVER['PHP_SELF'], 0,3)=="/pr"){
 			require("requires.php");
 
 			$mail = new PHPMailer();
-			$mail->IsMail();
-			$mail->Host = "localhost";
-			
+			$mail->IsSMTP();
+			$mail->SMTPAuth = true;
+			$mail->Host = "smtp.zoho.com";
+			$mail->Port = 465;
+			$mail->Username = "admin@buzzzap.com";
+			$mail->Password = "snowleopard123";
 
 			if( (get_feature_status("site")=="1") && (!isset($_SESSION['pass_site_d'])) && (isset($_SESSION['admin_key'])==false) ){
 				header("Location: site_disabled.php");
