@@ -27,11 +27,11 @@ if(substr($_SERVER['PHP_SELF'], 0,3)=="/pr"){
 			require("requires.php");
 
 			$mail = new PHPMailer();
-			$mail->IsSMTP();
+			/*$mail->IsSMTP();
 			$mail->SMTPAuth = false;
 			$mail->IsSendmail();
 			$mail->Host = "localhost";
-			$mail->Port = 587;
+			$mail->Port = 587;*/
 			
 
 			if( (get_feature_status("site")=="1") && (!isset($_SESSION['pass_site_d'])) && (isset($_SESSION['admin_key'])==false) ){
