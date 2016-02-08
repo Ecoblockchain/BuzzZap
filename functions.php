@@ -1948,6 +1948,7 @@ function send_mail($to,$subject,$body,$from){
 	$mail->Subject = $subject;
 	$mail->MsgHTML($body);
 	$mail->AddAddress($to, $to);
+	$mail->addReplyTo($from, 'BuzzZap');
 	if($mail->Send()){
 	 	echo "Message sent!";
 	}else{	

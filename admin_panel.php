@@ -504,7 +504,7 @@ if(loggedin_as_admin()){
 					change_static_content("last_errorf_size", filesize("php-error.log"));
 					echo "SIZE: ".filesize("php-error.log")."<br><br>";
 					$errors = fopen("php-error.log", "r") or die("Unable to open file!");
-					echo nl2br(fread($errors,filesize("php-error.log")));
+					echo nl2br(fread($errors,filesize("php-error.log")+1));
 					fclose($errors);
 
 					if(isset($_GET['rerr'])){
