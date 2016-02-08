@@ -1934,19 +1934,25 @@ function get_group_rep($gid){
 	return $rep;
 }
 function send_mail($to,$subject,$body,$from){
-
-	$headers  = 'MIME-Version: 1.0' . "\r\n";
-	$headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
-	$headers .= "From: ".$from. "\r\n";
+	global $mail;
+	
 	$sig = get_static_content("mail_signature");
-	$mail_style = get_static_content("mail_style");
-	$body = "<div style = '".$mail_style."'>".$body."</div>
-		<div style = 'font-size:80%;color:grey;text-align: center;'><br><hr size = '1'>".$sig."</div>";
 	if($from == "auto@buzzzap.com"){
 		$sig = "This is an automatically sent email. Please do not try to respond here. <br>".$sig;
 	}
-	
-	mail($to, $subject,$body,$headers,"-f ".$from);
-	return true;
+	$mail_style = get_static_content("mail_style");
+	$body = "<div style = '".$mail_style."'>".$body."</div>
+		<div style = 'font-size:80%;color:grey;text-align: center;'><br><hr size = '1'>".$sig."</div>";
+
+	$mail->SetFrom($from, 'BuzzZap');
+	$mail->Subject = $subject;
+	$mail->AddAddress($to, $to);
+	$mail->isHTML(true);  
+	$mail->Body($body);
+	if($mail->Send()){
+	 	echo "Message sent!";
+	}else{	
+		echo "Mailer Error: " . $mail->ErrorInfo;
+	}	
 }
 ?>
