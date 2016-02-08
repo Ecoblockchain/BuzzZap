@@ -543,19 +543,14 @@ if(loggedin()){
 						$("#save-audio, #try-again-audio").fadeOut();
 					});
 					$("#save-audio").click(function(){
-						$("#argsubmit").animate({letterSpacing:"2px"}, 100);
-						setInterval(function(){
-							$("#argsubmit").animate({letterSpacing:"1px"}, 100);
-							setTimeout(function(){
-								$("#argsubmit").animate({letterSpacing:"2px"}, 100);
-							}, 100);
-						}, 200);
+						$("#recording-status").html("Processing...");
 						var request = new XMLHttpRequest();
 			            request.onreadystatechange = function (err) {
 			                if (request.readyState == 4 && request.status == 200) {
-			                    console.log(location.href + request.responseText);
+			                    $("#argsubmit").show();
+			                    $("#recording-status").html("");
 			                }
-			                console.log(err);
+			                
 			            };
 			            $("#save-audio, #try-again-audio").fadeOut();
 			            request.open('POST', "<?php echo $ajax_script_loc; ?>");
@@ -564,9 +559,11 @@ if(loggedin()){
 
 
 					$("#choose-arg-type").change(function(){
-						$(".ans-type-container").hide();
+						$(".ans-type-container, #argsubmit").hide();
 						$("#"+$("#choose-arg-type").val()+"-ans-container").show();
-						$("#argsubmit").show();
+						if($("#choose-arg-type").val()=="txt"){
+							$("#argsubmit").show();
+						}
 						$("#space-breaks").show();
 					});
 				});

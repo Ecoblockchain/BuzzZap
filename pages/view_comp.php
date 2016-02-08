@@ -333,17 +333,12 @@ if(loggedin()||!empty($out_judge_key)){
 						$("#save-audio, #try-again-audio").fadeOut();
 					});
 					$("#save-audio").click(function(){
-						$("#add-arg-comp-submit").animate({letterSpacing:"2px"}, 100);
-						setInterval(function(){
-							$("#add-arg-comp-submit").animate({letterSpacing:"1px"}, 100);
-							setTimeout(function(){
-								$("#add-arg-comp-submit").animate({letterSpacing:"2px"}, 100);
-							}, 100);
-						}, 200);
+						$("#recording-status").html("Processing...");
 						var request = new XMLHttpRequest();
 			            request.onreadystatechange = function () {
 			                if (request.readyState == 4 && request.status == 200) {
-			                    console.log(location.href + request.responseText);
+			                    $("#add-arg-comp-submit").show();
+			                    $("#recording-status").html("");
 			                }
 			            };
 			            $("#save-audio, #try-again-audio").fadeOut();
@@ -353,11 +348,12 @@ if(loggedin()||!empty($out_judge_key)){
 
 
 					$("#choose-arg-type").change(function(){
-						$(".ans-type-container").hide();
+						$(".ans-type-container, #add-arg-comp-submit").hide();
 						$("#"+$("#choose-arg-type").val()+"-ans-container").show();
-						$("#argsubmit").show();
+						if($("#choose-arg-type").val()=="txt"){
+							$("#add-arg-comp-submit").show();
+						}	
 						$("#space-breaks").show();
-						$("#add-arg-comp-submit").show();
 					});
 				});	
 				</script>
