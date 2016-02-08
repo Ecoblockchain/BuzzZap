@@ -438,7 +438,7 @@ if(loggedin_as_admin()){
 					send_mail($email,"BuzzZap Community Activation",$body,"auto@buzzzap.com");
 					header("Location: index.php?page=home&m=17Successfully activated.");
 				}
-				echo "fuck";
+				
 				if(isset($_POST['emailc'], $_POST['com_id'])){
 					$com_id = htmlentities($_POST['com_id']);
 					$body = nl2br(htmlentities($_POST['emailc']));

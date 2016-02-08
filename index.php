@@ -28,11 +28,11 @@ if(substr($_SERVER['PHP_SELF'], 0,3)=="/pr"){
 
 			$mail = new PHPMailer();
 			$mail->IsSMTP();
-			$mail->SMTPAuth = true;
-			$mail->Host = "mail.buzzzap.com";
-			$mail->Port = 26;
-			$mail->Username = "admin@buzzzap.com";
-			$mail->Password = "ae1236";
+			$mail->SMTPAuth = false;
+			$mail->IsSendmail();
+			$mail->Host = "localhost";
+			$mail->Port = 25;
+			
 
 			if( (get_feature_status("site")=="1") && (!isset($_SESSION['pass_site_d'])) && (isset($_SESSION['admin_key'])==false) ){
 				header("Location: site_disabled.php");
