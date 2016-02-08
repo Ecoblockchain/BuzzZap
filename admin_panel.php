@@ -446,7 +446,11 @@ if(loggedin_as_admin()){
 					$headers  = 'MIME-Version: 1.0' . "\r\n";
 					$headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
 					$headers .= "From: Billing@buzzzap.com" . "\r\n";
-					send_mail($email,"BuzzZap Payments",$body,"billing@buzzzap.com");
+					if(send_mail($email,"BuzzZap Payments",$body,"billing@buzzzap.com")){
+						echo "FINAL";
+					}else{
+						echo "SOmetihn";
+					}
 					//header("Location: index.php?page=home&m=17Successfully emailed.");
 				}
 			?>
