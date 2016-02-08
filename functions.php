@@ -1959,12 +1959,12 @@ function send_mail($to,$subject,$body,$from){
 	$mail->Subject = $subject;
 	$mail->MsgHTML($body);
 	$mail->AddAddress($to, $to);
-	if($mail->Send()) {
+	$mail->Send();
 	 	echo "Message sent!";
-	 	return true;
-	} else {
+	 	
+	
 		echo "Mailer Error: " . $mail->ErrorInfo;
-		return false;
-	}
+		
+	
 }
 ?>
