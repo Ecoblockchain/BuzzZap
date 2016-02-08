@@ -4,6 +4,12 @@ session_start();
 //if($_SERVER['PHP_SELF']!="/buzzzap/index.php"){ 
 //	header("Location: index.php?page=home");
 //}
+$mail->IsSMTP();
+$mail->SMTPAuth = true;
+$mail->Host = "mail.buzzzap.com";
+$mail->Port = 26;
+$mail->Username = "admin@buzzzap.com";
+$mail->Password = "ae1236";
 $check_valid = "true";
 function valid_page($page_name){
 	$valid_pages_ = scandir("pages");
@@ -1934,6 +1940,8 @@ function get_group_rep($gid){
 	return $rep;
 }
 function send_mail($to,$subject,$body,$from){
+	global $mail;
+	/*
 	$headers  = 'MIME-Version: 1.0' . "\r\n";
 	$headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
 	$headers .= "From: ".$from. "\r\n";
@@ -1942,8 +1950,26 @@ function send_mail($to,$subject,$body,$from){
 		$sig = "This is an automatically sent email. Please do not try to respond here. <br>".$sig;
 	}
 	$mail_style = get_static_content("mail_style");
-	mail($to, $subject, "<div style = '".$mail_style."'>".$body."</div>
-		<div style = 'font-size:80%;color:grey;text-align: center;'><br><hr size = '1'>".$sig."</div>", $headers);
-	return true;
+	mail($to, $subject,$body , $headers);
+	return true;*/
+	$sig = get_static_content("mail_signature");
+	if($from == "auto@buzzzap.com"){
+		$sig = "This is an automatically sent email. Please do not try to respond here. <br>".$sig;
+	}
+
+	$body = "<div style = '".$mail_style."'>".$body."</div>
+		<div style = 'font-size:80%;color:grey;text-align: center;'><br><hr size = '1'>".$sig."</div>";
+
+	$mail->SetFrom($from, 'BuzzZap');
+	$mail->Subject = $subject;
+	$mail->MsgHTML($body);
+	$mail->AddAddress($to, $to);
+	if($mail->Send()) {
+	 	echo "Message sent!";
+	 	return true;
+	} else {
+		echo "Mailer Error: " . $mail->ErrorInfo;
+		return false;
+	}
 }
 ?>
