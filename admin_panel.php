@@ -447,7 +447,7 @@ if(loggedin_as_admin()){
 					$headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
 					$headers .= "From: Billing@buzzzap.com" . "\r\n";
 					send_mail($email,"BuzzZap Payments",$body,"billing@buzzzap.com");
-					header("Location: index.php?page=home&m=17Successfully emailed.");
+					//header("Location: index.php?page=home&m=17Successfully emailed.");
 				}
 			?>
 			

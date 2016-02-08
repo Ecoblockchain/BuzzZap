@@ -6,7 +6,7 @@ if(substr($_SERVER['PHP_SELF'], 0,3)=="/pr"){
 }else{
 	//PROD
 	$ajax_script_loc = "../ajax_script.php";
-	//ini_set('display_errors', 'Off');
+	ini_set('display_errors', 'Off');
 	ini_set("log_errors", 1);
 	ini_set("error_log", "php-error.log");
 	$spec_judge_email_link= "https://buzzzap.com/";
@@ -33,7 +33,7 @@ if(substr($_SERVER['PHP_SELF'], 0,3)=="/pr"){
 			$mail->Port = 26;
 			$mail->Username = "admin@buzzzap.com";
 			$mail->Password = "ae1236";
-			
+
 			if( (get_feature_status("site")=="1") && (!isset($_SESSION['pass_site_d'])) && (isset($_SESSION['admin_key'])==false) ){
 				header("Location: site_disabled.php");
 				exit();
