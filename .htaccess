@@ -1,0 +1,2 @@
+RewriteEngine On
+RewriteRule ^node$ https://buzzzap.com:3000
