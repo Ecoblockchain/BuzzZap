@@ -2,9 +2,7 @@
 
 body{
 	font-family: Quicksand;
-	//background-image:url("../../pages/bgimage.png");
 	background-color:#eff9f9;
-	//background-size:10%;
 	margin: 0;
 	-webkit-hyphens: auto;
    -moz-hyphens: auto;
@@ -25,8 +23,7 @@ a{
 	z-index:1;
 }
 .loggedout-main-container{
-	//border:1px solid white;
-	border-image: url("http://i73.servimg.com/u/f73/17/40/86/18/bg10.png");
+	border:1px solid #eff9f9;
 	width:870px;
 	height:700px;
 	white-space: nowrap;
