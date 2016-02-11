@@ -543,20 +543,7 @@ if(!loggedin()){
 			<div class=  "loggedout-header" id = "loggedout-header">
 				<span id = "tl1">B</span><span id = "tl2">u</span><span id = "tl3">z</span><span id = "tl4">z</span><span style = "color:grey;display:inline;" id = 'b-header-2'><span id = "tl5">Z</span><span id = "tl6">a</span><span id = "tl7">p</span></span>
 			</div>
-			<?php
-				if(user_browser()!="supported"){
-					?>
-					<script>
-						$("#loggedout-paragraph-container1").css("margin-top", "-140px");
-						$("#loggedout-paragraph-container2").css("margin-top", "-140px");
-						$("#loggedout-paragraph-container3").css("margin-top", "-140px");
-						$("#loggedout-header").css("margin-top", "250px");
-						$(".rotate").remove();
-
-					</script>
-					<?php
-				}
-			?>
+			
 			<div id = "c4" style = "display:none;position:absolute;background-color:orange;height:300px;width:300px;border-radius:300px;opacity:0.2;margin-top:-50px;margin-left:690px;"></div>
 			<div class = "loggedout-paragraph-container" id = "loggedout-paragraph-container4">
 				<span style = "color:#FF82AB;" id = 'lpc-title4' class = 'lpctitle'>Start A Community</span><br>
