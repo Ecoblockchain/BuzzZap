@@ -155,10 +155,11 @@ if(loggedin()){
 						}
 					}
 					?>
-						<div class = "edit-instructions">Click a field to edit it, or
-				<span style = "color:lightblue;cursor:pointer;" id = 'change-pass-link'><b>change password</b></span></div>
+						
 					<?php
 					if($view_user_id == $user_id){
+						echo "<div class = 'edit-instructions'>Click a field to edit it, or
+				<span style = 'color:lightblue;cursor:pointer;' id = 'change-pass-link'><b>change password</b></span></div>";
 						foreach($valid_edit as $column){
 							if(isset($_GET[$column])){
 								
