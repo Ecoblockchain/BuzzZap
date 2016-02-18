@@ -367,30 +367,30 @@ if(!loggedin()){
 							<form action = "" method = "POST" id = "form2_">
 								
 								<span id = 'forml1'>Username:</span><br>
-								<input type= "text" maxlength = "11" autocomplete="off" spellcheck="false" name = "username_"  class = "loggedout-form-fields"><br><br>
+								<input type= "text" maxlength = "11" autocomplete="off" spellcheck="false" name = "username_"  class = "loggedout-form-fields res-field1"><br><br>
 
 								<span id = 'forml1'>Fullname:</span><br>															
-								<input type= "text" autocomplete="off" spellcheck="false" name = "firstname_"  style  = "width:140px;" class = "loggedout-form-fields">
-								<input type= "text" autocomplete="off" spellcheck="false" name = "lastname_"  style  = "width:140px;" class = "loggedout-form-fields"><br><br>
+								<input type= "text" autocomplete="off" spellcheck="false" name = "firstname_"  style  = "width:140px;" class = "loggedout-form-fields res-field1">
+								<input type= "text" autocomplete="off" spellcheck="false" name = "lastname_"  style  = "width:140px;" class = "loggedout-form-fields res-field1"><br><br>
 
 								<span id = 'forml1'>Email:</span><br>															
-								<input type= "text" autocomplete="off" spellcheck="false" name = "email_"  class = "loggedout-form-fields"><br><br>
+								<input type= "text" autocomplete="off" spellcheck="false" name = "email_"  class = "loggedout-form-fields res-field1" ><br><br>
 
 								<span id = 'forml1'>Password:</span><br>															
-								<input type= "password" autocomplete="off" spellcheck="false" name = "password_"  class = "loggedout-form-fields"><br><br>
+								<input type= "password" autocomplete="off" spellcheck="false" name = "password_"  class = "loggedout-form-fields res-field1" ><br><br>
 
 								<span id = 'forml1'>Verify Password:</span><br>															
-								<input type= "password" autocomplete="off" spellcheck="false" name = "vpassword_"  class = "loggedout-form-fields"><br><br>
+								<input type= "password" autocomplete="off" spellcheck="false" name = "vpassword_"  class = "loggedout-form-fields res-field1"><br><br>
 
 
 								<span id = 'forml1'>Find Community:</span><br>
 		
-								<input type= "text" autocomplete="off" spellcheck="false" name = "com_name_"  class = "loggedout-form-fields" id = "com_name_search_j"><br>
+								<input type= "text" autocomplete="off" spellcheck="false" name = "com_name_"  class = "loggedout-form-fields res-field1" id = "com_name_search_j"><br>
 								<div id = "pred_results"></div>
 								<br>
 
 								<span id = 'forml1'>Community Pass:</span><br>															
-								<input type= "password" autocomplete="off" spellcheck="false" name = "com_pass_" class = "loggedout-form-fields"><br><br>
+								<input type= "password" autocomplete="off" spellcheck="false" name = "com_pass_" class = "loggedout-form-fields res-field1"><br><br>
 
 								<input type = "submit" value = "Join" class = "loggedout-form-submit"><br><br>
 								<span class = "join-a">By signing up you understand <br>and accept the legal agreements.</span>

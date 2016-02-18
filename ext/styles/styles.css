@@ -231,6 +231,7 @@ a{
 		display: none;
 	}
 }
+
 .nav-bar-out-opt{
 	padding-bottom:70px;
 	cursor:pointer;
@@ -1975,4 +1976,11 @@ a{
 	margin-top: 0px;
 	background-position: center;
 	background-repeat: no-repeat;
+}
+
+
+@media only screen and (max-width:1200px) {
+	.res-field1{
+		height: 25px;
+	}
 }

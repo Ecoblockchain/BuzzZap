@@ -19,12 +19,16 @@ if(loggedin()){
 							start_comp_opened=1;
 							
 							$(this).animate({height:"700px"}, 500).animate({marginLeft:"28%"})
-							.animate({width:"42%"}, 500).css("color", "#ffffff")
+							.animate({width:"42%", marginTop:"-=130px"}, 500).css("color", "#ffffff").css("z-index", "100000000")
 							.css("box-shadow", "0px 0px 40px dimgrey");
 					
 							setTimeout(function(){
 								$("#start-comp-form").fadeIn();
 							}, 1000);
+							setTimeout(function(){
+								$("#start-comp-form").fadeIn();
+								$("#start_comp").css("min-width", "370px");
+							}, 2000);
 						}
 					});
 				
@@ -34,7 +38,8 @@ if(loggedin()){
 						if(start_comp_opened==1){	
 							
 							$("#start-comp-form").fadeOut();
-							$("#start_comp").animate({height:"40px"}, 500).animate({marginLeft:"0%"})
+							$("#start_comp").css("min-width", "0px");
+							$("#start_comp").animate({height:"40px", marginTop:"+=130px"}, 500).animate({marginLeft:"0%"})
 							.animate({width:"200px"}, 500).css("color", "#ffffff")
 							.css("box-shadow", "none");
 							setTimeout(function(){
@@ -167,8 +172,9 @@ if(loggedin()){
 								<span id = 'comp_field_labels'>
 									<hr size = '1'>
 									Each <?php echo $gc_string; ?> will be randomly chosen to be either FOR or AGAINST (argue yes or no to) the debate question/notion. Groups are judged on how well they have argued their point, baring in mind it may not be their actual opinion.
-								</span>	<br><br>
+								</span>	<br>
 								<input type = "submit" class = "loggedout-form-submit" style = "font-size:80%;box-shadow:none;width:200px;padding:10px;" value = "Start Competition">
+								
 							</span>
 						</form>	
 					
