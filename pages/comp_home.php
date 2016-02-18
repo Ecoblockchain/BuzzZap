@@ -27,7 +27,7 @@ if(loggedin()){
 							}, 1000);
 							setTimeout(function(){
 								$("#start-comp-form").fadeIn();
-								$("#start_comp").css("min-width", "370px");
+								$("#start_comp").css("min-width", "370px").css("z-index", "1");
 							}, 2000);
 						}
 					});
