@@ -25,7 +25,7 @@ if($check_valid!="true"){
 		//request call
 		var from = getParameterByName('from');
 		var to = getParameterByName('to');
-		
+
 		$('#start-call').click(function(){
 
 		    console.log('starting call...');
@@ -73,16 +73,17 @@ if($check_valid!="true"){
 		    }
 		}
 
-		peer.on('call', onReceiveCall);
-
-		
-
-
 		var peer = new Peer({key: 'clw4u42wmqjjor'});
 		peer.on('open', function(id) {
 		  console.log('My peer ID is: ' + id);
 		});
 
+		peer.on('call', onReceiveCall);
+
+		
+
+
+		
 
 
 	});
