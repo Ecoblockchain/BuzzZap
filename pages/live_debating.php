@@ -73,7 +73,7 @@ if($check_valid!="true"){
 		    }
 		}
 
-		var peer = new Peer({key: 'clw4u42wmqjjor'});
+		var peer = new Peer({host: 'buzzzap.com', port:9000, path:'/'});
 		peer.on('open', function(id) {
 		  console.log('My peer ID is: ' + id);
 		});
