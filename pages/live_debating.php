@@ -14,8 +14,9 @@ if($check_valid!="true"){
 		        results = regex.exec(location.search);
 		    return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
 		}
+		var destid = getParameterByName('destid');
 
-		function getAudio(successCallback, errorCallback){
+		/*function getAudio(successCallback, errorCallback){
 		    navigator.getUserMedia({
 		        audio: true,
 		        video: false
@@ -74,7 +75,8 @@ if($check_valid!="true"){
 		        console.log('now playing the audio');
 		        audio.play();
 		    }
-		}
+		}*/
+
 
 		var peer = new Peer({host: 'www.buzzzap.com', port:9000, path:''});
 
@@ -82,8 +84,19 @@ if($check_valid!="true"){
 		  console.log('My peer ID is: ' + id);
 		});
 
-		peer.on('call', onReceiveCall);
+		$('#start-call').click(function(){
+			var conn = peer.connect(destid);
+		});
+		
 
+		peer.on('connection', function(conn){
+			conn.send('Hello!');
+			console.log("rec: "+conn);
+		});
+
+		conn.on('data', function(data) {
+		 	console.log(data);
+		});
 		
 
 
