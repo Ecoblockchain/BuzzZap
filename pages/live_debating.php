@@ -86,16 +86,16 @@ if($check_valid!="true"){
 
 		$('#start-call').click(function(){
 			var conn = peer.connect(destid);
-		});
+				
+			peer.on('connection', function(conn){
+				conn.send('Hello!');
+				console.log("rec: "+conn);
+			});
+
+			conn.on('data', function(data) {
+			 	console.log(data);
+			});
 		
-
-		peer.on('connection', function(conn){
-			conn.send('Hello!');
-			console.log("rec: "+conn);
-		});
-
-		conn.on('data', function(data) {
-		 	console.log(data);
 		});
 		
 
