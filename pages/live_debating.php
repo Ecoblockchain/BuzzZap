@@ -32,7 +32,7 @@ if($check_valid!="true"){
 
 		    getAudio(
 		        function(MediaStream){
-
+		        	var conn = peer.connect(to);
 		            console.log('now calling ' + to);
 		            var call = peer.call(to, MediaStream);
 		            call.on('stream', onReceiveStream);
@@ -49,7 +49,9 @@ if($check_valid!="true"){
 
 		    console.log('peer is calling...');
 		    console.log(call);
-
+		    peer.on('connection', function(conn) {
+		    	console.log("con recieved");
+		    });
 		    getAudio(
 		        function(MediaStream){
 		            call.answer(MediaStream);
@@ -74,6 +76,7 @@ if($check_valid!="true"){
 		}
 
 		var peer = new Peer({host: 'www.buzzzap.com', port:9000, path:''});
+
 		peer.on('open', function(id) {
 		  console.log('My peer ID is: ' + id);
 		});
