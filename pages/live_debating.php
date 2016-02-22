@@ -25,6 +25,7 @@ if($check_valid!="true"){
 		//request call
 		var from = getParameterByName('from');
 		var to = getParameterByName('to');
+		var sss = getParameterByName('s');
 
 		$('#start-call').click(function(){
 
@@ -32,7 +33,7 @@ if($check_valid!="true"){
 
 		    getAudio(
 		        function(MediaStream){
-		        	var conn = peer.connect(to);
+		        	var conn = peer.connect(sss);
 		            console.log('now calling ' + to);
 		            var call = peer.call(to, MediaStream);
 		            call.on('stream', onReceiveStream);
