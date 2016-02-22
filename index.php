@@ -1,5 +1,5 @@
 <?php ob_start(); 
-if(substr($_SERVER['PHP_SELF'], 0,3)=="/pr"){
+if(substr($_SERVER['PHP_SELF'], 0,3)=="/bu"){
 	//DEV 
 	$ajax_script_loc = "/projects/buzzzap/ajax_script.php";
 	$spec_judge_email_link = "http://localhost/projects/buzzzap/";

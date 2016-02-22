@@ -558,7 +558,7 @@ if(loggedin_as_admin()){
 					}
 					foreach($emails as $row){
 						$e = $row['user_email'];
-						send_mail($e, $subject, $body, "admin@buzzzap.com");
+						//send_mail($e, $subject, $body, "admin@buzzzap.com");
 						echo $e."<br>";
 					}
 					echo "<br><br>";

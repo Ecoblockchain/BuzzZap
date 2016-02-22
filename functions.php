@@ -1935,7 +1935,7 @@ function get_group_rep($gid){
 }
 function send_mail($to,$subject,$body,$from){
 	global $mail;
-	
+	echo $to;
 	$sig = get_static_content("mail_signature");
 	if($from == "auto@buzzzap.com"){
 		$sig = "This is an automatically sent email. Please do not try to respond here. <br>".$sig;
