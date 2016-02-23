@@ -1935,7 +1935,6 @@ function get_group_rep($gid){
 }
 function send_mail($to,$subject,$body,$from){
 	global $mail;
-	echo $to;
 	$sig = get_static_content("mail_signature");
 	if($from == "auto@buzzzap.com"){
 		$sig = "This is an automatically sent email. Please do not try to respond here. <br>".$sig;
@@ -1944,12 +1943,11 @@ function send_mail($to,$subject,$body,$from){
 	$body = "<div style = '".$mail_style."'>".$body."</div>
 		<div style = 'font-size:80%;color:grey;text-align: center;'><br><hr size = '1'>".$sig."</div>";
 
-	$mail->SetFrom($from, 'BuzzZap');
-	$mail->Subject = $subject;
-	$mail->MsgHTML($body);
-	$mail->AddAddress($to, $to);
-	$mail->addReplyTo($from, 'BuzzZap');
-	if($mail->Send()){
+	$headers = "From: " . $from . "\r\n";
+	$headers .= "Reply-To: ". $from . "\r\n";
+	$headers .= "MIME-Version: 1.0\r\n";
+	$headers .= "Content-Type: text/html; charset=ISO-8859-1\r\n";
+	if(mail($to, $subject, $body, $headers)){
 	 	return true;
 	}else{	
 		return false;
