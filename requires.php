@@ -14,6 +14,7 @@
 <script src="ext/jquery/peer.min.js"></script>
 <link href='ext/styles/styles.css' rel='stylesheet' type='text/css'>
 <link href='https://fonts.googleapis.com/css?family=Dosis|Poiret+One' rel='stylesheet' type='text/css'>
+<link href='https://fonts.googleapis.com/css?family=Quicksand' rel='stylesheet' type='text/css'>
 <link href='https://fonts.googleapis.com/css?family=Roboto:400,300,100' rel='stylesheet' type='text/css'>
 <?php
 require("functions.php"); 
