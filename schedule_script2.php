@@ -3,9 +3,6 @@
 	ob_start();
 	require("requires.php");
 	$users = $db->query("SELECT * FROM `notifications` WHERE `seen` = 0");
-	$headers  = 'MIME-Version: 1.0' . "\r\n";
-	$headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
-	$headers .= "From: auto@buzzzap.com" . "\r\n";
 	$ebodys = array();
 	foreach($users as $user){
 		$uid = $user['to'];
@@ -24,11 +21,13 @@
 			}
 		}
 	}
-	//$db->query("UPDATE static_content SET cont = cont + '2' WHERE cont_name = 'cron_check'");
+	send_mail("casparwylie@gmail.com", "Crons work,  script does not. unless count = 0...count: ".count($ebodys), "yay", "auto@buzzzap.com");
 	foreach($ebodys as $uid=>$body){
+		
 		$email = get_user_field($uid, "user_email");
 		$name = get_user_field($uid, "user_username");
 		$body = "Dear ".$name.", <br>You have new notification(s): <br>".$body;
+		send_mail("casparwylie@gmail.com", "Crons work , and script.", "yay:<hr>".$body, "auto@buzzzap.com");
 		send_mail($email,"BuzzZap Activity",$body,"auto@buzzzap.com");
 	}
 

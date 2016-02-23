@@ -1941,7 +1941,7 @@ function send_mail($to,$subject,$body,$from){
 	}
 	$mail_style = get_static_content("mail_style");
 	$body = "<div style = '".$mail_style."'>".$body."</div>
-		<div style = 'font-size:80%;color:grey;text-align: center;'><br><hr size = '1'>".$sig."</div>";
+		<div style = 'font-size:80%;color:grey;text-align: center;font-family:Quicksand;'><br><hr size = '1'>".$sig."</div>";
 
 	$headers = "From: " . $from . "\r\n";
 	$headers .= "Reply-To: ". $from . "\r\n";
