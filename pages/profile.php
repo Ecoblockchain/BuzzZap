@@ -406,7 +406,7 @@ if(loggedin()){
 								echo "
 								<a style = 'color:grey;' href = 'index.php?page=profile&user=".$row['user_id']."'><div class = 'friend-list-block'><span style = 'font-size:120%;font-weight:bold;'>"
 				
-								.$user_to_show."</span><br><span style = 'font-size:100%;'>".implode($friend_info, "<br>")."</span>";
+								.$user_to_show."</span><br><span style = 'font-size:100%;'>".implode($friend_info, "<br>")."</span></div>";
 				
 							}
 							echo "</div>";
