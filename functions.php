@@ -388,6 +388,11 @@ function user_own_reply($reply_id, $user_id){
 	}
 }
 
+function br2nl( $input ) {
+    return preg_replace('/<br\s?\/?>/ius', "\n", str_replace("\n","",str_replace("\r","", htmlspecialchars_decode($input))));
+}
+
+
 function post_action($user_id, $reply_id, $action, $editval){
 	global $db;
 	//action = "edit" || "delete"
@@ -395,7 +400,7 @@ function post_action($user_id, $reply_id, $action, $editval){
 		if((user_own_reply($reply_id, $user_id))||(user_rank($user_id, 2, "up"))){
 			if($action == "edit"){
 				$update = $db->prepare("UPDATE thread_replies SET reply_text = :new_text WHERE reply_id = :reply_id");
-				$update->execute(array("new_text"=>$editval, "reply_id"=>$reply_id));
+				$update->execute(array("new_text"=>nl2br($editval), "reply_id"=>$reply_id));
 				return true;
 			}else if($action=="delete"){
 				$update = $db->prepare("DELETE FROM thread_replies WHERE reply_id = :reply_id");

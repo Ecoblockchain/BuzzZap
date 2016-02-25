@@ -258,7 +258,7 @@ if(loggedin()){
 							if((isset($_GET['editp']))&&($_GET['editp']==$row['reply_id'])&&(user_own_reply($row['reply_id'], $_SESSION['user_id'])||(user_rank($_SESSION['user_id'], 2, "up")))){
 								?>
 								<form method = "POST">
-									<textarea name = "editp" class = "textarea-type1"><?php echo $row['reply_text']; ?></textarea>
+									<textarea name = "editp" class = "textarea-type1"><?php echo br2nl($row['reply_text']); ?></textarea>
 									<input type= "submit" class = "mreply-submit">
 								</form>	
 								<?php
@@ -340,7 +340,7 @@ if(loggedin()){
 						
 						<div id = "mreply_form<?php echo $row['reply_id']; ?>" class = "mreply-form-container">
 							<form action = "" method = "POST">
-								<textarea placeholder= "Reply" name = "mreply_text<?php echo $row['reply_id']; ?>" class = "textarea-type2"></textarea>
+								<textarea placeholder= "Reply" name = "mreply_text<?php echo br2nl($row['reply_id']); ?>" class = "textarea-type2"></textarea>
 								<input type = "submit" class = "mreply-submit" value = "Submit">
 							</form>
 						</div>
