@@ -1339,19 +1339,23 @@ a{
 #side-bar-menu-admin{
 	float:left;
 	height:500px;
-	width:200px;
-	border:2px solid lightgrey;
+	width:15%;
+	background-color: grey;
+	padding: 10px;
+}
+
+#choose-p-com-viewbox{
+	padding:10px;
+	background-color: lightgreen;
 }
 
 #admin-page-container{
-	height:550px;
-	width:1100px;
+	height:500px;
+	width:80%;
 	overflow: auto;
 	padding:10px;
+	background-color: grey;
 	float:right;
-	position:absolute;
-	margin-left:203px;
-	border:2px solid lightgrey;
 }
 .admin-sub-page{
 	display:none;

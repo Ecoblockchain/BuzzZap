@@ -37,8 +37,15 @@ if(loggedin()){
 		<div class = 'page-path'>Debating > <?php echo $dtype; ?> Debating</div>
 		<div class = "title-private-debate"><?php echo $title ;?></div><hr size = '1'><br><br>
 		<div class = "topic-container">
+	
+	<a href = "index.php?page=private_debating_topic&amp;topic_id=0<?php echo $extra_get; ?>" style = "text-decoration:none;">
+			<div class = "topic-link" id = "t-<?php echo $count; ?>">
+				<?php echo "<span style = 'color:orange;'>All Latest</span>"; ?>
+			</div>
+			
+		</a>
 	<?php
-	$count = 0;
+	$count = 0;	
 	foreach($get_topics as $topic){
 		?>	
 		<a href = "index.php?page=private_debating_topic&amp;topic_id=<?php echo $topic['topic_id'].$extra_get;?>" style = "text-decoration:none;">

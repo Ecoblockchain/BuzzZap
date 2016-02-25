@@ -201,6 +201,8 @@ function user_rank($id, $rank, $ext = "just"){
 	}
 	
 }
+
+
 function login_user($username, $password, $com_pass){
 	global $db;
 	$login = false;
@@ -212,38 +214,33 @@ function login_user($username, $password, $com_pass){
 	$check = $db->query("SELECT user_id FROM users WHERE user_username = ".$db->quote($username)." AND user_password = ".$db->quote($password)."")->fetchColumn();
 	
 	if(!empty($check)){
-		$get_com_id = $db->query("SELECT user_com FROM users WHERE user_username = ".$db->quote($username)."")->fetchColumn();
+		$admin_code = $db->query("SELECT user_code FROM users WHERE user_username = ".$db->quote($username))->fetchColumn();
+		$get_com_id = $db->query("SELECT user_com FROM users WHERE user_username = ".$db->quote($username))->fetchColumn();
 		$check_com = $db->query("SELECT com_name FROM communities WHERE com_id = '$get_com_id' AND com_password = ".$db->quote($com_pass)."")->fetchColumn();
-		
 		
 		if(user_rank($check, "4", "just")){
 		
-			$admin_code=$db->query("SELECT user_code FROM users WHERE user_id=".$db->quote($check))->fetchColumn();
-		
-			if($admin_code === $com_pass_or){
-				$login=true;
 				$_SESSION['admin_key']=$admin_code;
-			}else{
-				return false;
-			}
+
 		}else if( (get_feature_status("login")=="1") && ($_SESSION['pass_dl']!="true") ){
 			return "disabled";
-		}else{
-			$check_com_act = $db->query("SELECT act FROM com_act WHERE com_id = '$get_com_id'")->fetchColumn();
-			if(!empty($check_com)){
-				if($check_com_act!=0){
-					if(user_rank($check, "0", "just")){
-						return "banned";
-					}else{
-						$login=true;
-					}
+		}
+
+		$check_com_act = $db->query("SELECT act FROM com_act WHERE com_id = '$get_com_id'")->fetchColumn();
+		if(!empty($check_com)){
+			if($check_com_act!=0){
+				if(user_rank($check, "0", "just")){
+					return "banned";
 				}else{
-					return "discom";
+					$login=true;
 				}
 			}else{
-				return false;
+				return "discom";
 			}
+		}else{
+			return false;
 		}
+		
 	
 		if($login===true){
 			$user_id = $check;
@@ -397,7 +394,8 @@ function post_action($user_id, $reply_id, $action, $editval){
 	global $db;
 	//action = "edit" || "delete"
 	if($action!=="report"){
-		if((user_own_reply($reply_id, $user_id))||(user_rank($user_id, 2, "up"))){
+		$user_can_del_edit = (loggedin_as_admin())||(in_array($_SESSION['user_id'],get_com_leader_id(get_user_field($user_idp, "user_com"), true)))? true:false;
+		if((user_own_reply($reply_id, $user_id))||$user_can_del_edit){
 			if($action == "edit"){
 				$update = $db->prepare("UPDATE thread_replies SET reply_text = :new_text WHERE reply_id = :reply_id");
 				$update->execute(array("new_text"=>nl2br($editval), "reply_id"=>$reply_id));

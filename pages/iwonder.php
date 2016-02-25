@@ -71,7 +71,7 @@ if(loggedin()){
 			<div class = "iwonder-sticky" id = "iws<?php echo $row['thread_id']; ?>" <?php echo $attr_style_bg; ?> >
 				<?php
 					$perm_to_delete = false;
-					if((user_rank($_SESSION['user_id'], "3")==true)&&(get_user_community($_SESSION['user_id'], "com_id")==get_user_community($user_idp, "com_id"))){
+					if((loggedin_as_admin())||(user_rank($_SESSION['user_id'], "3")==true)&&(get_user_community($_SESSION['user_id'], "com_id")==get_user_community($user_idp, "com_id"))){
 						$perm_to_delete = true;
 					}else if($_SESSION['user_id']==$user_idp){
 						$perm_to_delete = true;
@@ -102,7 +102,7 @@ if(loggedin()){
 							while($row_ = $get_replies->fetch(PDO::FETCH_ASSOC)){
 								$muser_idp = $db->query("SELECT user_id FROM users WHERE user_username = ".$db->quote($row_['user_replied']))->fetchColumn();
 								$mperm_to_delete = false;
-								if((user_rank($_SESSION['user_id'], "3")==true)&&(get_user_community($_SESSION['user_id'], "com_id")==get_user_community($muser_idp, "com_id"))){
+								if((loggedin_as_admin())||(user_rank($_SESSION['user_id'], "3")==true)&&(get_user_community($_SESSION['user_id'], "com_id")==get_user_community($muser_idp, "com_id"))){
 									$mperm_to_delete = true;
 								}else if($_SESSION['user_id']==$muser_idp){
 									$mperm_to_delete = true;
@@ -240,7 +240,7 @@ if(loggedin()){
 		$user_idp = $db->query("SELECT thread_starter FROM iwonder_threads WHERE thread_id = ".$db->quote($q_id))->fetchColumn();
 		$user_idp = $db->query("SELECT user_id FROM users WHERE user_username = ".$db->quote($user_idp))->fetchColumn();
 		$perm_to_delete = false;
-		if((user_rank($_SESSION['user_id'], "3")==true)&&(get_user_community($_SESSION['user_id'], "com_id")==get_user_community($user_idp, "com_id"))){
+		if((loggedin_as_admin())||(user_rank($_SESSION['user_id'], "3")==true)&&(get_user_community($_SESSION['user_id'], "com_id")==get_user_community($user_idp, "com_id"))){
 			$perm_to_delete = true;
 		}else if($_SESSION['user_id']==$user_idp){
 			$perm_to_delete = true;
@@ -260,7 +260,7 @@ if(loggedin()){
 		$muser_idp = $db->query("SELECT user_replied FROM iwonder_replies WHERE reply_id = ".$db->quote($r_id))->fetchColumn();
 		$muser_idp = $db->query("SELECT user_id FROM users WHERE user_username = ".$db->quote($muser_idp))->fetchColumn();
 		$mperm_to_delete = false;
-		if((user_rank($_SESSION['user_id'], "3")==true)&&(get_user_community($_SESSION['user_id'], "com_id")==get_user_community($muser_idp, "com_id"))){
+		if((loggedin_as_admin())||(user_rank($_SESSION['user_id'], "3")==true)&&(get_user_community($_SESSION['user_id'], "com_id")==get_user_community($muser_idp, "com_id"))){
 			$mperm_to_delete = true;
 		}else if($_SESSION['user_id']==$muser_idp){
 			$mperm_to_delete = true;

@@ -3,10 +3,11 @@ if(substr($_SERVER['PHP_SELF'], 0,3)=="/bu"){
 	//DEV 
 	$ajax_script_loc = "/projects/buzzzap/ajax_script.php";
 	$spec_judge_email_link = "http://localhost/projects/buzzzap/";
+	ini_set('display_errors', 'On');
 }else{
 	//PROD
 	$ajax_script_loc = "../ajax_script.php";
-	//ini_set('display_errors', 'On');
+	ini_set('display_errors', 'Off');
 	ini_set("log_errors", 1);
 	ini_set("error_log", "php-error.log");
 	$spec_judge_email_link= "https://buzzzap.com/";
@@ -25,10 +26,7 @@ if(substr($_SERVER['PHP_SELF'], 0,3)=="/bu"){
 		<body>
 			<?php
 			require("requires.php");
-			$mail = new PHPMailer;
-			$mail->SMTPDebug = 3;                                     
-			$mail->Host = 'localhost';  
-			$mail->isMail();              
+			
 
 			if( (get_feature_status("site")=="1") && (!isset($_SESSION['pass_site_d'])) && (isset($_SESSION['admin_key'])==false) ){
 				header("Location: site_disabled.php");
@@ -43,7 +41,7 @@ if(substr($_SERVER['PHP_SELF'], 0,3)=="/bu"){
 				}
 				$page = "pages/".htmlentities($_GET['page']).".php";
 				
-					if((loggedin())&&(loggedin_as_admin()==false)){
+					if((loggedin())){
 						if(isset($_GET['login_error'])){
 							
 							if(substr($_GET['login_error'], 0, 8)=='lheader-'){
@@ -193,7 +191,19 @@ if(substr($_SERVER['PHP_SELF'], 0,3)=="/bu"){
 											</div>
 										</div>
 									<?php	
-								}
+								}else if(user_rank($_SESSION['user_id'], 4,"just")){
+									?>
+
+										<div class = "mitem-container" style = 'float:right;width:120px;font-size:80%;'>
+											<div class = "mitem admin-links" id = "mitem5">
+												<a href="index.php?page=admin_panel">
+													<div id "mitem5sub1" class = "subitem" mouseeffect = "false" style = "padding-top:10px;">Admin Panel</div>
+												</a>
+											</div>
+										</div>
+
+									<?php
+								}	
 							?>
 					
 						</div>
@@ -260,16 +270,7 @@ if(substr($_SERVER['PHP_SELF'], 0,3)=="/bu"){
 
 
 
-				}else if(loggedin_as_admin()==true){
-					?>
-						<div class = "admin-body">
-							<?php include("admin_panel.php"); ?>
-						</div>
-					<?php
 				}
-		
-		
-		
 		
 				function success_message($message, $icon, $dur = 7500, $click_close = true){
 					if(preg_match("/<form/", $message)){
@@ -317,9 +318,7 @@ if(substr($_SERVER['PHP_SELF'], 0,3)=="/bu"){
 						setcookie("success", "", time()-100);
 					}
 				}
-				if(loggedin_as_admin()&&($_GET['page']!="home"&&$_GET['page']!="logout")){
-					header("Location: index.php?page=home");
-				}
+				
 				if($_GET['page']!="ajax_script"){
 					if(isset($_GET['tour'])){
 						//--custom 
@@ -355,10 +354,10 @@ if(substr($_SERVER['PHP_SELF'], 0,3)=="/bu"){
 						</div>
 					<?php	
 					}
-					if(!loggedin_as_admin()||$_GET['page']=="logout"){
-						include($page);
-						echo "<br>";
-					}
+				
+					include($page);
+					echo "<br>";
+					
 				}else{
 					header("Location: index.php?page=home");
 				}

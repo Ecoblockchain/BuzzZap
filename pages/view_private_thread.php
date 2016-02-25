@@ -18,10 +18,11 @@ if(loggedin()){
 			$value = $db->query("SELECT ".$column." FROM debating_threads WHERE thread_id = ".$thread_id."")->fetchColumn();
 		}
 		$dtype = ($header_info['com_id']>0)? "Private" : "Global";
+		$dtype_opp_state = ($header_info['com_id']>0)? "Global" : "Private";
 		$path_link1 = ($dtype=="Private")? "index.php?page=private_debating":"index.php?page=private_debating&d=g";
 		$path_link2 = ($dtype=="Private")? "index.php?page=private_debating_topic&topic_id=".$header_info['topic_id']:"index.php?page=private_debating_topic&topic_id=".$header_info['topic_id']."&d=g";
 		$topic_name = $db->query("SELECT topic_name FROM debating_topics WHERE topic_id = ".$db->quote($header_info['topic_id']))->fetchColumn();
-		if(valid_view_thread($thread_id, $_SESSION['user_id'])){
+		if(loggedin_as_admin()||valid_view_thread($thread_id, $_SESSION['user_id'])){
 			?>
 			<div class = 'page-path'>Debating > <?php echo "<a style = 'color: #40e0d0;' href = '".$path_link1."'>".$dtype; ?> Debating </a> > <?php echo "<a style = 'color: #40e0d0;' href = '".$path_link2."'>".$topic_name." </a> > ".$header_info['thread_title']; ?></div><br>
 				<?php
@@ -38,22 +39,38 @@ if(loggedin()){
 				<?php
 					$user_idp = $db->query("SELECT user_id FROM users WHERE user_username = ".$db->quote($header_info['thread_starter']))->fetchColumn();
 					$perm_to_delete = false;
-					if((user_rank($_SESSION['user_id'], "3")==true)&&(get_user_community($_SESSION['user_id'], "com_id")==get_user_community($user_idp, "com_id"))){
+					if((loggedin_as_admin())||(user_rank($_SESSION['user_id'], "3")==true)&&(get_user_community($_SESSION['user_id'], "com_id")==get_user_community($user_idp, "com_id"))){
 						$perm_to_delete = true;
 					}else if($_SESSION['user_id']==$user_idp){
 						$perm_to_delete = true;
 					}
+
+
 					if($perm_to_delete==true){
-						echo "<a style = 'font-size: 100%;color:salmon;' href = 'index.php?page=view_private_thread&deld=true&thread_id=".$thread_id."'>Delete Debate</a><br>";
+						echo "<a style = 'font-size: 100%;color:salmon;' href = 'index.php?page=view_private_thread&deld=true&thread_id=".$thread_id."'>Delete Debate</a> &middot;";
+
+						echo " <a style = 'font-size: 100%;color:lightblue;' href = 'index.php?page=view_private_thread&change_ty=true&thread_id=".$thread_id."'>Make ".$dtype_opp_state."</a><br>";
 					}
-					if(isset($_GET['deld'])&&$perm_to_delete==true){
-						$db->query("DELETE FROM debating_threads WHERE thread_id = ".$thread_id);
-						$db->query("DELETE FROM thread_replies WHERE thread_id = ".$thread_id);
-						setcookie("success", "1Successfully deleted debate.", time()+10);
-						$dtrue = (isset($_GET['d']))? "&d=g" : "";
-						header("Location: index.php?page=private_debating_topic&topic_id=".$header_info['topic_id'].$dtrue);
-					}
+					
 					if($perm_to_delete){
+						$dtrue = (isset($_GET['d']))? "&d=g" : "";
+						if(isset($_GET['deld'])){
+							$db->query("DELETE FROM debating_threads WHERE thread_id = ".$thread_id);
+							$db->query("DELETE FROM thread_replies WHERE thread_id = ".$thread_id);
+							setcookie("success", "1Successfully deleted debate.", time()+10);
+							
+							header("Location: index.php?page=private_debating_topic&topic_id=".$header_info['topic_id'].$dtrue);
+						}
+						if(isset($_GET['change_ty'])){
+							if($dtype_opp_state=="Global"){
+								$new_type = '0';
+							}else{
+								$new_type = get_user_field($user_idp, "user_com");
+							}
+							$db->query("UPDATE debating_threads SET com_id = ".$db->quote($new_type)." WHERE thread_id=".$db->quote($thread_id));
+							setcookie("success", "1Successfully changed.", time()+10);
+							header("Location: index.php?page=view_private_thread&thread_id=".$thread_id);
+						}
 					?>
 						<script>
 						$(document).ready(function(){
@@ -173,7 +190,7 @@ if(loggedin()){
 				<?php
 			}
 			
-			$user_can_del_edit = (in_array($_SESSION['user_id'],get_com_leader_id(get_user_field($user_idp, "user_com"), true)))? true:false;
+			$user_can_del_edit = (loggedin_as_admin())||(in_array($_SESSION['user_id'],get_com_leader_id(get_user_field($user_idp, "user_com"), true)))? true:false;
 			$get_replies = $db->prepare("SELECT * FROM thread_replies WHERE thread_id= :thread_id AND size = '' ORDER BY time_replied ASC");
 			$get_replies->execute(array("thread_id"=>$thread_id));
 			$rcount = 0;

@@ -20,19 +20,19 @@ if(loggedin_as_admin()){
 	 
 	<div id="side-bar-menu-admin">
 		<a href = "index.php?page=logout" style = 'color:#71C671;'>Logout ></a><br><br>
-		<a href = "index.php?page=home&sp=0" style = 'color:#71C671;'>Home ></a><br><br>
-		<a href = "index.php?page=home&sp=1" style = 'color:#71C671;'>User Actions ></a><br>
-		<a href = "index.php?page=home&sp=2" style = 'color:#71C671;'>User Banned List ></a><br>
-		<a href = "index.php?page=home&sp=3" style = 'color:#71C671;'>User Reporting ></a><br><br>
-		<a href = "index.php?page=home&sp=4" style = 'color:#71C671;'>Site activation ></a><br>
-		<a href = "index.php?page=home&sp=5" style = 'color:#71C671;'>Direct MYSQL ></a><br>
-		<a href = "index.php?page=home&sp=6" style = 'color:#71C671;'> BuzzZap News ></a><br>
-		<a href = "index.php?page=home&sp=7" style = 'color:#71C671;'>Community payments ></a><br>
-		<a href = "index.php?page=home&sp=8" style = 'color:#71C671;'>Static Content ></a><br><br>
-		<a href = "index.php?page=home&sp=9" style = 'color:#71C671;'>Use Encryption Method ></a><br>
-		<a href = "index.php?page=home&sp=10" style = 'color:#71C671;'>Error Log ></a><br>
-		<a href = "index.php?page=home&sp=11" style = 'color:#71C671;'>Admin Notification ></a><br>
-		<a href = "index.php?page=home&sp=12" style = 'color:#71C671;'>Newsletter ></a><br><br>
+		<a href = "index.php?page=admin_panel&sp=0" style = 'color:#71C671;'>Home ></a><br><br>
+		<a href = "index.php?page=admin_panel&sp=1" style = 'color:#71C671;'>User Actions ></a><br>
+		<a href = "index.php?page=admin_panel&sp=2" style = 'color:#71C671;'>User Banned List ></a><br>
+		<a href = "index.php?page=admin_panel&sp=3" style = 'color:#71C671;'>User Reporting ></a><br><br>
+		<a href = "index.php?page=admin_panel&sp=4" style = 'color:#71C671;'>Site activation ></a><br>
+		<a href = "index.php?page=admin_panel&sp=5" style = 'color:#71C671;'>Direct MYSQL ></a><br>
+		<a href = "index.php?page=admin_panel&sp=6" style = 'color:#71C671;'> BuzzZap News ></a><br>
+		<a href = "index.php?page=admin_panel&sp=7" style = 'color:#71C671;'>Community payments ></a><br>
+		<a href = "index.php?page=admin_panel&sp=8" style = 'color:#71C671;'>Static Content ></a><br><br>
+		<a href = "index.php?page=admin_panel&sp=9" style = 'color:#71C671;'>Use Encryption Method ></a><br>
+		<a href = "index.php?page=admin_panel&sp=10" style = 'color:#71C671;'>Error Log ></a><br>
+		<a href = "index.php?page=admin_panel&sp=11" style = 'color:#71C671;'>Admin Notification ></a><br>
+		<a href = "index.php?page=admin_panel&sp=12" style = 'color:#71C671;'>Newsletter ></a><br><br>
 	
 	
 	</div>
@@ -118,10 +118,10 @@ if(loggedin_as_admin()){
 						}else{
 							$user_id = $db->query("SELECT user_id FROM users WHERE user_username = '$username'")->fetchColumn();
 							action_user($user_id, $action);
-							header("Location: index.php?page=home&m=11Successfully altered user!");
+							header("Location: index.php?page=admin_panel&m=11Successfully altered user!");
 						}
 					}else{
-						header("Location: index.php?page=home&m=01The user entered is invalid.");
+						header("Location: index.php?page=admin_panel&m=01The user entered is invalid.");
 					}
 				}			
 			}
@@ -136,13 +136,13 @@ if(loggedin_as_admin()){
 					}
 					if(update_user_field($euser_id, $new_val, $field)){
 						echo "d";
-						header("Location: index.php?page=home&m=11Successfully edited user.");
+						header("Location: index.php?page=admin_panel&m=11Successfully edited user.");
 					}else{
-						header("Location: index.php?page=home&m=01Unknown error.");
+						header("Location: index.php?page=admin_panel&m=01Unknown error.");
 					}
 					
 				}else{
-					header("Location: index.php?page=home&m=01Invalid email.");
+					header("Location: index.php?page=admin_panel&m=01Invalid email.");
 				}
 		
 			}
@@ -159,7 +159,7 @@ if(loggedin_as_admin()){
 								$("#admin-m-c").css('color', '#71C671');
 							}
 							var sp = "<?php echo substr($_GET['m'], 1, 1);?>";
-							setTimeout(function(){window.location="index.php?page=home&sp="+sp;}, 2000);
+							setTimeout(function(){window.location="index.php?page=admin_panel&sp="+sp;}, 2000);
 						});
 						</script>
 				<?php
@@ -184,7 +184,7 @@ if(loggedin_as_admin()){
 				 				echo $column.": ".get_user_field($db->query("SELECT user_id FROM users WHERE user_username = ".$db->quote($username))->fetchColumn(), $column)."<br>";
 				 			} 
 				 		}else{
-				 			header("Location: index.php?page=home&m=01Invalid user.");
+				 			header("Location: index.php?page=admin_panel&m=01Invalid user.");
 				 		}
 				 	}
 				 ?>
@@ -198,7 +198,7 @@ if(loggedin_as_admin()){
 				$banned_users->execute(array());
 				if($banned_users->rowCount()!==0){
 					while($row = $banned_users->fetch(PDO::FETCH_ASSOC)){
-						echo $row['user_username']." - <a href = 'index.php?page=home&sp=2&ub=".$row['user_username']."'>Unban</a><hr size = '1'><br>";	
+						echo $row['user_username']." - <a href = 'index.php?page=admin_panel&sp=2&ub=".$row['user_username']."'>Unban</a><hr size = '1'><br>";	
 					}
 				}else{
 					echo "There are no banned users. ";	
@@ -207,7 +207,7 @@ if(loggedin_as_admin()){
 				if(isset($_GET['ub'])){
 					$username = htmlentities($_GET['ub']);
 					if(action_user($db->query("SELECT user_id FROM users WHERE user_username=".$db->quote($username))->fetchColumn(), "unban_user")){
-						header("Location: index.php?page=home&sp=2&m=12Unbanned successfully.");
+						header("Location: index.php?page=admin_panel&sp=2&m=12Unbanned successfully.");
 					}
 				}
 			?>	
@@ -251,7 +251,7 @@ if(loggedin_as_admin()){
 					$counter++;
 				}
 				
-				echo $dis_pass." - <a href = 'index.php?page=home&sp=4&cdp=true'>Change</a>";
+				echo $dis_pass." - <a href = 'index.php?page=admin_panel&sp=4&cdp=true'>Change</a>";
 				
 				if(isset($_GET['cdp'])){
 					?>
@@ -264,7 +264,7 @@ if(loggedin_as_admin()){
 				if(isset($_POST['cdp'])){
 					$update = $db->prepare("UPDATE feature_activation SET pass = :cdp");
 					$update->execute(array("cdp"=>$_POST['cdp']));
-					header("Location: index.php?page=home&sp=4&m=14Successfully updated.");
+					header("Location: index.php?page=admin_panel&sp=4&m=14Successfully updated.");
 				}	
 				?>
 				<hr size = "1">
@@ -288,7 +288,7 @@ if(loggedin_as_admin()){
 						$update->execute(array("message"=>$_POST['m_'.$key], "feature"=>$key));	
 					}
 					
-					header("Location: index.php?page=home&sp=4&m=14Successfully saved messages.");
+					header("Location: index.php?page=admin_panel&sp=4&m=14Successfully saved messages.");
 				}
 				if(isset($_POST['sf_control'])){
 					$valid = array_keys($action_dis);
@@ -299,9 +299,9 @@ if(loggedin_as_admin()){
 						}else{
 							$action_word = "enabled feature.";
 						}
-						header("Location: index.php?page=home&sp=4&m=14Successfully ".$action_word);
+						header("Location: index.php?page=admin_panel&sp=4&m=14Successfully ".$action_word);
 					}else{	
-						header("Location: index.php?page=home&m=04Unkown Error.");
+						header("Location: index.php?page=admin_panel&m=04Unkown Error.");
 					}
 				}
 			?>
@@ -320,9 +320,9 @@ if(loggedin_as_admin()){
 					$run = run_admin_query($query);
 					
 					if($run==="false"){
-						header("Location: index.php?page=home&m=05Unkown Error.");
+						header("Location: index.php?page=admin_panel&m=05Unkown Error.");
 					}else if($run==="true"){
-						header("Location: index.php?page=home&m=15Successfully ran query.");
+						header("Location: index.php?page=admin_panel&m=15Successfully ran query.");
 					}else{
 						while($row = $run->fetch(PDO::FETCH_ASSOC)){
 							foreach($row as $column=>$value){
@@ -360,8 +360,8 @@ if(loggedin_as_admin()){
 				if($get->rowCount()>0){
 					foreach($get as $value){
 						echo "<div style = 'background: lightgrey;'>
-						<a href = 'index.php?page=home&sp=6&del_bn=".$value['feed_id']."' style = 'color: salmon;'>DELETE</a>|
-						<a href = index.php?page=home&sp=6&edit_bn=".$value['feed_id']."' style = 'color: salmon;'>EDIT</a>
+						<a href = 'index.php?page=admin_panel&sp=6&del_bn=".$value['feed_id']."' style = 'color: salmon;'>DELETE</a>|
+						<a href = index.php?page=admin_panel&sp=6&edit_bn=".$value['feed_id']."' style = 'color: salmon;'>EDIT</a>
 							<br><u>".$value['title']."</u>
 							-<i>".date("d/M/Y H:i", $value['time'])."</i>
 							<br><span style = 'font-size: 80%'>
@@ -382,15 +382,15 @@ if(loggedin_as_admin()){
 					$text = htmlentities($_POST['bn_text']);
 					if(!empty($title)&&!empty($text)){
 						add_b_news(nl2br($text), $title, $edit);
-						header("Location: index.php?page=home&m=16Successful.");
+						header("Location: index.php?page=admin_panel&m=16Successful.");
 					}else{
-						header("Location: index.php?page=home&m=06Error.");
+						header("Location: index.php?page=admin_panel&m=06Error.");
 					}
 				}
 				if(isset($_GET['del_bn'])){
 					$id = htmlentities($_GET['del_bn']);
 					del_b_news($id);
-					header("Location: index.php?page=home&m=16Successfully deleted.");
+					header("Location: index.php?page=admin_panel&m=16Successfully deleted.");
 				}	
 			?>
 		</div>
@@ -413,7 +413,7 @@ if(loggedin_as_admin()){
 						$body = static_cont_rec_vars(get_static_content("waiting_payment_email"), $parse_vars);
 						$leaderemail = $db->query("SELECT user_email FROM users WHERE user_com = ".$row['com_id']. " AND user_rank = 3")->fetchColumn();
 						$default_msg = $body;
-						echo $name." - ".$leaderemail."-".$leadername."-  <a href = 'index.php?page=home&sp=7&actc=".$row['com_id']."'>Activate</a> or
+						echo $name." - ".$leaderemail."-".$leadername."-  <a href = 'index.php?page=admin_panel&sp=7&actc=".$row['com_id']."'>Activate</a> or
 						email:<form method = 'POST'>
 							<textarea name = 'emailc' style = 'height: 150px;width: 400px;'>".$default_msg."</textarea>
 							<input type = 'hidden' name = 'com_id' value = '".$row['com_id']."'>
@@ -436,7 +436,7 @@ if(loggedin_as_admin()){
 					$parse_vars = array("leadername"=>$leadername, "com_name"=>$com_name);
 					$body = nl2br(static_cont_rec_vars(get_static_content("snc_suc_email"), $parse_vars));
 					send_mail($email,"BuzzZap Community Activation",$body,"auto@buzzzap.com");
-					header("Location: index.php?page=home&m=17Successfully activated.");
+					header("Location: index.php?page=admin_panel&m=17Successfully activated.");
 				}
 				
 				if(isset($_POST['emailc'], $_POST['com_id'])){
@@ -447,7 +447,7 @@ if(loggedin_as_admin()){
 					$headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
 					$headers .= "From: Billing@buzzzap.com" . "\r\n";
 					send_mail($email,"BuzzZap Payments",$body,"billing@buzzzap.com");
-					header("Location: index.php?page=home&m=17Successfully emailed.");
+					header("Location: index.php?page=admin_panel&m=17Successfully emailed.");
 				}
 			?>
 			
@@ -471,9 +471,9 @@ if(loggedin_as_admin()){
 						if(!empty($cont_txt)){
 							$new_cont = $cont_txt;
 							change_static_content($cont['cont_name'], $new_cont);
-							header("Location: index.php?page=home&m=18Successfully updated.");
+							header("Location: index.php?page=admin_panel&m=18Successfully updated.");
 						}else{
-							header("Location: index.php?page=home&m=08Error.");
+							header("Location: index.php?page=admin_panel&m=08Error.");
 						}
 					}
 				}
@@ -498,7 +498,7 @@ if(loggedin_as_admin()){
 		<div id = "admin-page-10" class = 'admin-sub-page'>
 			
 
-			<b>Error Log</b>-<a href  = 'index.php?page=home&sp=10&rerr=true'>CLEAR FILE</a><br><br>
+			<b>Error Log</b>-<a href  = 'index.php?page=admin_panel&sp=10&rerr=true'>CLEAR FILE</a><br><br>
 			<?php
 				if(substr($_SERVER['PHP_SELF'], 0,3)!="/pr"){
 					change_static_content("last_errorf_size", filesize("php-error.log"));
@@ -510,7 +510,7 @@ if(loggedin_as_admin()){
 					if(isset($_GET['rerr'])){
 						$handle = fopen("php-error.log", "w+");
 						fwrite($handle , ' ');
-						header("Location: index.php?page=home&sp=10");
+						header("Location: index.php?page=admin_panel&sp=10");
 					}
 				}
 			?>

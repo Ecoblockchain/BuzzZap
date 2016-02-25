@@ -7,7 +7,11 @@ if(loggedin()){
 	$user_id = $_SESSION['user_id'];
 	$com_id = get_user_field($user_id, "user_com");
 	$topic_id = htmlentities($_GET['topic_id']);
-	$topic_name = $db->query("SELECT topic_name FROM debating_topics WHERE topic_id = ".$db->quote($topic_id))->fetchColumn();
+	if($topic_id!=0){
+		$topic_name = $db->query("SELECT topic_name FROM debating_topics WHERE topic_id = ".$db->quote($topic_id))->fetchColumn();
+	}else{
+		$topic_name = "All Latest Debates";
+	}
 	$valid_topics = array();
 	$dtype = "Private";
 
@@ -18,12 +22,21 @@ if(loggedin()){
 		}	
 	}
 
+	if(isset($_GET['view_c'])){
+		if(loggedin_as_admin()){
+			$com_id = htmlentities($_GET['view_c']);
+		}else{
+			header("Location: index.php?page=home");
+		}
+	}
+
 	$path_link1 = ($dtype=="Private")? "index.php?page=private_debating":"index.php?page=private_debating&d=g";
 
 	$get_valid_topics = $db->query("SELECT topic_id FROM debating_topics");
 	foreach($get_valid_topics as $topicid){
 		$valid_topics[] = $topicid['topic_id'];
 	}
+	$valid_topics[] = "0";
 	if(in_array($topic_id, $valid_topics)){
 		?>
 		<script>
@@ -85,7 +98,22 @@ if(loggedin()){
 			
 		});
 		</script>
+		
+		<?php
+			if(loggedin_as_admin()&&$dtype=="Private"){
+				$get_coms = $db->query("SELECT com_id, com_name FROM communities");
+				echo "<div id = 'choose-p-com-viewbox'>";
+					foreach($get_coms as $com){
+						echo "<a href = 'index.php?page=private_debating_topic&topic_id=".$_GET['topic_id']."&view_c=".$com['com_id']."'>".$com['com_name']."</a><bR>";
+					}
+				echo "</div>";
+			}
+
+		?>
+
+		<br>
 		<div class = 'page-path'>Debating > <?php echo "<a style = 'color: #40e0d0' href = '".$path_link1."'>".$dtype; ?> Debating </a> > <?php echo $topic_name; ?></div><br>
+		<?php if($topic_id!="0"){ ?>
 		<div class = 'start-debate-option no-hyphens'><b>Start Debate</b>
 
 			<form method = "POST" id = "start-debate-form">
@@ -122,9 +150,10 @@ if(loggedin()){
 				<input type = "submit" value = "Submit" class = "loggedin-form-submit1" id = "start-deb-submit">
 			</form>
 		</div>
+		<?php } ?>
 		<br><br><br>
 		<?php
-		if(isset($_POST['debate_title'],$_POST['debate_text'])){
+		if(isset($_POST['debate_title'],$_POST['debate_text'])&&$topic_id!="0"){
 			$title = htmlentities($_POST['debate_title']);
 			$text = htmlentities($_POST['debate_text']);
 			$cus_vote_opts = trim(trim_commas(htmlentities($_POST['cus_vote_opts'])));
@@ -154,8 +183,17 @@ if(loggedin()){
 				}
 			}
 		}
-		$get_threads = $db->prepare("SELECT * FROM debating_threads WHERE topic_id = :id AND com_id = :com_id ORDER BY latest_action DESC");
-		$get_threads->execute(array("id"=>$topic_id, "com_id"=>$com_id));
+
+		$topic_query_bounds = array("com_id"=>$com_id);
+		if($topic_id=="0"){
+			$topic_filter = "";
+		}else{
+			$topic_filter = " topic_id = :id AND ";
+			$topic_query_bounds["id"] = $topic_id;
+		}
+		$get_threads = $db->prepare("SELECT * FROM debating_threads WHERE ".$topic_filter." com_id = :com_id ORDER BY latest_action DESC");
+		$get_threads->execute($topic_query_bounds);
+		
 		if($get_threads->rowCount()!=0){
 		
 			while($row = $get_threads->fetch(PDO::FETCH_ASSOC)){
