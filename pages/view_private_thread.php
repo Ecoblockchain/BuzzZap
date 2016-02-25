@@ -173,6 +173,7 @@ if(loggedin()){
 				<?php
 			}
 			
+			$user_can_del_edit = (in_array($_SESSION['user_id'],get_com_leader_id(get_user_field($user_idp, "user_com"), true)))? true:false;
 			$get_replies = $db->prepare("SELECT * FROM thread_replies WHERE thread_id= :thread_id AND size = '' ORDER BY time_replied ASC");
 			$get_replies->execute(array("thread_id"=>$thread_id));
 			$rcount = 0;
@@ -296,8 +297,7 @@ if(loggedin()){
 									
 									</div>
 									<?php
-									$rel_com_leader = (in_array($_SESSION['user_id'],get_com_leader_id(get_user_field($user_idp, "user_com"), true)))? true:false;
-									if((user_own_reply($row['reply_id'], $_SESSION['user_id']))||($rel_com_leader)){
+									if((user_own_reply($row['reply_id'], $_SESSION['user_id']))||($user_can_del_edit)){
 									?>
 					
 									<div class = "reply-option1-container">
@@ -390,7 +390,8 @@ if(loggedin()){
 										?>
 										<div class = "thread-reply-info">
 										<?php
-										if((user_own_reply($mrow['reply_id'], $_SESSION['user_id']))||(user_rank($_SESSION['user_id'], 2, "up"))){
+										
+										if((user_own_reply($mrow['reply_id'], $_SESSION['user_id']))||($user_can_del_edit)){
 											?>
 											
 												<div class = "reply-option1-container">
