@@ -8,7 +8,7 @@
 		$uid = $user['to'];
 		if($uid!="norm"&&substr($uid,0,1)!="o"){
 			$link = $user['link'];
-			$pre_link = "http://www.buzzzap.com/";
+			$pre_link = "https://www.buzzzap.com/";
 			if($link!=""){
 				$link = $pre_link."index.php?page=home&login_error=lheader-".str_replace("&", "~", $link);
 			}else{

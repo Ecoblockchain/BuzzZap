@@ -111,7 +111,7 @@ if(loggedin()){
 				<input type = "text" placeholder="Debate Question..." maxlength = "120" autocomplete="off" 
 				spellcheck="false" name = "debate_title" class = "loggedin-form-field1" style = "" id = "start-deb-question">
 				<br>
-				<textarea name = "debate_text" class = "loggedin-form-field2" placeholder = "Debate Description..."></textarea>
+				<textarea name = "debate_text" class = "loggedin-form-field2" placeholder = "Debate Description/Your Argument..."></textarea>
 				<br>
 				<div class = "loggedin-form-info1"><p>If your reputation is higher than 15, 
 					this question will not require any approvel from
@@ -138,11 +138,7 @@ if(loggedin()){
 			}else{
 				$extra_get="";
 			}
-			if(strlen($text)<20){
-				$errors = true;
-				setcookie("success", "0Your description must be longer.",time()+10);
-				header("Location: index.php?page=private_debating_topic&topic_id=".$topic_id.$extra_get);
-			}else if(strlen($title)<10){
+			if(strlen($title)<10){
 				$errors = true;
 				setcookie("success", "0Your question must be longer.",time()+10);
 				header("Location: index.php?page=private_debating_topic&topic_id=".$topic_id.$extra_get);	

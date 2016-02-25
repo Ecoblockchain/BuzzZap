@@ -296,7 +296,8 @@ if(loggedin()){
 									
 									</div>
 									<?php
-									if((user_own_reply($row['reply_id'], $_SESSION['user_id']))||(user_rank($_SESSION['user_id'], 2, "up"))){
+									$rel_com_leader = (in_array($_SESSION['user_id'],get_com_leader_id(get_user_field($user_idp, "user_com"), true)))? true:false;
+									if((user_own_reply($row['reply_id'], $_SESSION['user_id']))||($rel_com_leader)){
 									?>
 					
 									<div class = "reply-option1-container">
@@ -607,7 +608,9 @@ if(loggedin()){
 							<div class = "rec-audio" id = "rec-audio"></div><br>
 							<br><div id = "recording-status"></div><br>
 							<div id = "save-audio">Use</div><div id = "try-again-audio">Re-do</div><br><br>
-							<span style = 'font-size:70%'>Warning: the record feature may not<br> work properly in certain browsers. If so, use text instead.</span>
+							<span style = 'font-size:70%;color:salmon;'>
+								<?php echo supports_webrtc()[1]; ?>
+							</span>
 						</div>
 						<div id = "txt-ans-container" class = "ans-type-container" style = "display:none;">	
 							Text argument:<br>

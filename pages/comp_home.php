@@ -27,7 +27,7 @@ if(loggedin()){
 							}, 1000);
 							setTimeout(function(){
 								$("#start-comp-form").fadeIn();
-								$("#start_comp").css("min-width", "370px").css("z-index", "1");
+								$("#start_comp").css("min-width", "370px");
 							}, 2000);
 						}
 					});
@@ -44,6 +44,7 @@ if(loggedin()){
 							.css("box-shadow", "none");
 							setTimeout(function(){
 								start_comp_opened = 0;
+								$("#start_comp").css("z-index", "1");
 							}, 1000);
 							
 						}

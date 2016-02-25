@@ -321,9 +321,10 @@ function create_thread($title, $text, $com_id, $topic_id, $cus_votes=false){
 	$insert_data->execute(array("title"=>$title, "starter"=>$username, "topic_id"=>$topic_id, "com_id"=>$com_id,"time"=>$time, "visible"=>$visible, "uci"=>$uci));
 	$thread_id = $db->lastInsertId();
 
-	$insert_data = $db->prepare("INSERT INTO thread_replies VALUES('', :thread_id, :reply_text, :time, :user_replied, 0, 0, '', :visible, 1, '')");
-	$insert_data->execute(array("thread_id"=>$thread_id, "reply_text"=>$text, "time"=>$time,"user_replied"=>$username, "visible"=>$visible));
-
+	if(!empty($text)){
+		$insert_data = $db->prepare("INSERT INTO thread_replies VALUES('', :thread_id, :reply_text, :time, :user_replied, 0, 0, '', :visible, 1, '')");
+		$insert_data->execute(array("thread_id"=>$thread_id, "reply_text"=>$text, "time"=>$time,"user_replied"=>$username, "visible"=>$visible));
+	}
 	if($cus_votes!=false&&get_question_type($title, 1)=="open"){
 		$vote_zeros = explode(",", $cus_votes);
 		foreach($vote_zeros as &$val){
@@ -1881,16 +1882,36 @@ function get_question_type($q, $return_type, $thread_id=false){
 }
 
 function user_browser(){
-	if(strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE') !== FALSE){
+	$b = $_SERVER['HTTP_USER_AGENT'];
+	if(strpos($b,"MSIE")!== FALSE){
  		return "IE";
-	}else if(strpos($_SERVER['HTTP_USER_AGENT'], 'Trident') !== FALSE){ //For Supporting IE 11
+	}else if(strpos($b, 'Trident') !== FALSE){ //For Supporting IE 11
     	return 'IE';
-	}else if(strpos($_SERVER['HTTP_USER_AGENT'], 'Firefox') !== FALSE){
-   		return 'firefox';
+	}else if(strpos($b, 'Firefox') !== FALSE){
+   		return 'Firefox';
+	}else if(strpos($b, 'Chrome') !== FALSE){
+   		return 'Chrome';
+	}else if(strpos($b, 'Safari') !== FALSE){
+   		return 'Safari';
+	}else if(strpos($b, 'Opera') !== FALSE){
+   		return 'Opera';
 	}else{
-		return "supported";
+		return 'n/a';
 	}
 }	
+
+function supports_webrtc($error=true){
+	$webrtc_valid = array("Opera", "Chrome");
+	$error = "Error: Your web browser does not support audio recording.<br>
+		Please use one of the following: "
+		.trim_commas(implode(", ",$webrtc_valid)).".";
+
+	if(in_array(user_browser(),$webrtc_valid)){
+		return array(true, "<span style = 'color:grey'>Please click allow if you browser requests microphone permisson.");
+	}else{
+		return array(false, $error);
+	}
+}
 
 function update_com_profile($com_id,$col, $newval){
 	global $db;
