@@ -156,8 +156,8 @@ if(loggedin()){
 				</div>
 				<div class = "hib-content" id = "hibc-t1-2">
 				<?php
-					$get = $db->prepare("SELECT * FROM debating_threads WHERE com_id = :com_id AND visible = 1 ORDER BY time_created DESC LIMIT 5");
-					$get->execute(array("com_id"=>get_user_community($_SESSION['user_id'], "com_id")));
+					$get = $db->prepare("SELECT * FROM debating_threads WHERE com_id = 0 AND visible = 1 ORDER BY time_created DESC LIMIT 5");
+					$get->execute();
 					if($get->rowCount()>0){
 						while($row = $get->fetch(PDO::FETCH_ASSOC)){
 							echo "<a href = 'index.php?page=view_private_thread&thread_id=".$row['thread_id']."'><div class = 'hib-c-row'>".$row['thread_title']."<br><br><span style = 'font-size: 80%;color: lightgrey;'>-".date("d/M/Y H:i", $row['time_created'])."</span></div></a>";
@@ -169,8 +169,8 @@ if(loggedin()){
 				</div>
 				<div class = "hib-content" id = "hibc-t1-1" style = "display: none;">
 				<?php
-					$get = $db->prepare("SELECT * FROM debating_threads WHERE com_id = 0 AND visible = 1 ORDER BY time_created DESC LIMIT 5");
-					$get->execute();
+					$get = $db->prepare("SELECT * FROM debating_threads WHERE com_id = :com_id AND visible = 1 ORDER BY time_created DESC LIMIT 5");
+					$get->execute(array("com_id"=>get_user_community($_SESSION['user_id'], "com_id")));
 					if($get->rowCount()>0){
 						while($row = $get->fetch(PDO::FETCH_ASSOC)){
 							echo "<a href = 'index.php?page=view_private_thread&thread_id=".$row['thread_id']."'><div class = 'hib-c-row'>".$row['thread_title']."<br><br><span style = 'font-size: 80%;color: lightgrey;'>-".date("d/M/Y H:i", $row['time_created'])."</span></div></a>";
