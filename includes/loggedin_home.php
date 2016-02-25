@@ -70,11 +70,11 @@ if(loggedin()){
 			$("#p-g-toggle1").click(function(){
 				t1_clicks = t1_clicks + 1;
 				if(t1_clicks % 2==0){
-					$("#p-g-toggle1").html("PRIVATE");
+					$("#p-g-toggle1").html("GLOBAL");
 					$("#hibc-t1-1").fadeIn();
 					$("#hibc-t1-2").fadeOut();
 				}else{
-					$("#p-g-toggle1").html("GLOBAL");
+					$("#p-g-toggle1").html("PRIVATE");
 					$("#hibc-t1-1").fadeOut();
 					$("#hibc-t1-2").fadeIn();
 				}
@@ -152,9 +152,9 @@ if(loggedin()){
 		<div class = "home-in-box" id = 'hib4'>
 			<span class = "hib-c-content">
 				<div class = "hib-title">
-					LATEST <span id = 'p-g-toggle1' class = "p-g-toggle">PRIVATE</span> DEBATES
+					LATEST <span id = 'p-g-toggle1' class = "p-g-toggle">GLOBAL</span> DEBATES
 				</div>
-				<div class = "hib-content" id = "hibc-t1-1">
+				<div class = "hib-content" id = "hibc-t1-2">
 				<?php
 					$get = $db->prepare("SELECT * FROM debating_threads WHERE com_id = :com_id AND visible = 1 ORDER BY time_created DESC LIMIT 5");
 					$get->execute(array("com_id"=>get_user_community($_SESSION['user_id'], "com_id")));
@@ -167,7 +167,7 @@ if(loggedin()){
 					}	
 				?>
 				</div>
-				<div class = "hib-content" id = "hibc-t1-2" style = "display: none;">
+				<div class = "hib-content" id = "hibc-t1-1" style = "display: none;">
 				<?php
 					$get = $db->prepare("SELECT * FROM debating_threads WHERE com_id = 0 AND visible = 1 ORDER BY time_created DESC LIMIT 5");
 					$get->execute();
