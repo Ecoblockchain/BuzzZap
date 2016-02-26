@@ -36,6 +36,7 @@ if(loggedin()){
 	});	
 	</script>
 	<div class = 'page-path'>Debating > I Wonder... </div><br>
+	<span style = 'color:Green;font-size:70%;'>Tip: See and reply to a sticky note by clicking it's title/question</span>
 	<div id = "iwonder-t">The I Wonder Sticky Board</div>
 	<div id = "iwonder-menu">
 		<span id = "im1">

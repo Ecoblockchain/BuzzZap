@@ -25,9 +25,6 @@
 		$gcf.=$html_link."<br>";
 	}
 
-	$headers  = 'MIME-Version: 1.0' . "\r\n";
-	$headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
-	$headers .= "From: auto@buzzzap.com" . "\r\n";
 	$comp_body = (strlen($gcf)>0)? "<br><br>By judging competitions you can build your reputation, so here are some competitions that you can judge...<br>".$gcf : "";
 	$deb_body = (strlen($pgd)>0)? "<br><br>Here are some of the most popular global debates at the moment, take a look!<br>".$pgd : "";
 	$ebody = "Hello from BuzzZap!";

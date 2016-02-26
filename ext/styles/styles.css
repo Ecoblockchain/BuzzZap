@@ -1333,15 +1333,15 @@ a{
 	//font-weight:bold;
 	letter-spacing:3px;
 	font-size:200%;
-	margin-left:200px;
+	text-align: center;
 }	
 
 #side-bar-menu-admin{
 	float:left;
 	height:500px;
 	width:15%;
+	border: 10px solid grey;
 	background-color: grey;
-	padding: 10px;
 }
 
 #choose-p-com-viewbox{
@@ -1351,11 +1351,11 @@ a{
 
 #admin-page-container{
 	height:500px;
+	border: 10px solid grey;
 	width:80%;
 	overflow: auto;
-	padding:10px;
 	background-color: grey;
-	float:right;
+	float:left;
 }
 .admin-sub-page{
 	display:none;

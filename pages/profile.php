@@ -363,8 +363,8 @@ if(loggedin()){
 		
 		<br>
 			<div id = "profile-bottom-container">
-				<div class = "profile-bottom-inner-container">
-					<div id = "profile-info-container3" style = "width: 100%;height: 10px;padding:10px">
+				<div class = "profile-bottom-inner-container" style = 'overflow: auto;'>
+					<div id = "profile-info-container3" style = "width: 100%;height: 10px;padding:10px;">
 						<div id = "sub-profile-title">Badge Collection</div>
 						<?php
 							$get_badges = $db->prepare("SELECT text FROM badges WHERE user_id = :id");
@@ -383,11 +383,12 @@ if(loggedin()){
 					<?php
 						$get_friends = $db->prepare("SELECT * FROM friends WHERE (accepter = :username OR requester = :username) AND accepted = 1");
 						$get_friends->execute(array("username"=>$username));
-						echo "<div class = 'friend-list' >";
+						echo "<div class = 'friend-list' >
+						<div id = 'sub-profile-title'>Friends</div>";
 						if($get_friends->rowCount()>0){
 							?>
 							
-							<div id = "sub-profile-title">Friends</div>
+							
 							<?php
 				
 							while($row = $get_friends->fetch(PDO::FETCH_ASSOC)){
