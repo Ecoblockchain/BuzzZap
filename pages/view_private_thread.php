@@ -658,7 +658,7 @@ if(loggedin()){
 					$report_header = true;
 				}
 				if(in_array($reply_status, $vote_opts)){
-					if(strlen($reply_text)>50||isset($_COOKIE['temp_audio_ret_rid'])){
+					if(strlen($reply_text)>100||isset($_COOKIE['temp_audio_ret_rid'])){
 						
 						$reply = reply_debate($reply_text, $user_replied, $thread_id, $size, $reply_status);
 						$msg = $reply[1];
@@ -681,7 +681,7 @@ if(loggedin()){
 						
 						header("Location: index.php?page=view_private_thread&thread_id=".$_GET['thread_id'].$report_header);
 					}else{
-						setcookie("success", "0Your post must be longer.", time()+10);
+						setcookie("success", "0Your post must be longer. It is important to submit a detailed and in-depth answer.", time()+10);
 						
 					}
 				}else{
