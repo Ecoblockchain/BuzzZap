@@ -23,6 +23,7 @@ if(loggedin_as_admin()){
 		<a href = "index.php?page=admin_panel&sp=0" style = 'color:#71C671;'>Home ></a><br><br>
 		<a href = "index.php?page=admin_panel&sp=1" style = 'color:#71C671;'>User Actions ></a><br>
 		<a href = "index.php?page=admin_panel&sp=2" style = 'color:#71C671;'>User Banned List ></a><br>
+		<a href = "index.php?page=admin_panel&sp=3" style = 'color:#71C671;'>Send Notifications ></a><br>
 		<a href = "index.php?page=admin_panel&sp=4" style = 'color:#71C671;'>Site activation ></a><br>
 		<a href = "index.php?page=admin_panel&sp=5" style = 'color:#71C671;'>Direct MYSQL ></a><br>
 		<a href = "index.php?page=admin_panel&sp=6" style = 'color:#71C671;'> BuzzZap News ></a><br>
@@ -210,6 +211,55 @@ if(loggedin_as_admin()){
 					}
 				}
 			?>	
+		</div>
+		<div id = "admin-page-3" class = 'admin-sub-page'>
+		<b>Send Notifications</b><br><br>
+			<form action = "" method = "POST">
+				Enter "all", "comleaders", or usernames<br>
+				<input type = "text" name = "note_to" placeholder= "To..." class = "leader-cp-fields" style = "width: 300px;"><br>
+				<input type = "text" name = "note_txt" placeholder = "Note text..." class = "leader-cp-fields" style = "width: 300px;"><br>
+				<input type = "text" name = "note_link" placeholder = "Note link..." class = "leader-cp-fields" style = "width: 300px;"><br>
+				<input type = "submit" class = "leader-cp-fields">
+			</form>
+			<?php 
+				if(isset($_POST['note_to'], $_POST['note_txt'])){
+					$to = htmlentities($_POST['note_to']);
+					$link = (empty($link))? "" :htmlentities($_POST['note_link']);
+					$txt = htmlentities($_POST['note_txt']);
+					$error = "";
+					if(strlen($txt)>2){
+						switch($to){
+							case "all":
+								add_note("--all", $txt, $link);
+								break;
+							case "comleaders":
+								$comls = $db->query("SELECT user_id FROM users WHERE user_rank = '3'");
+								foreach($comls as $uid){
+									add_note($uid['user_id'], $txt, $link);
+								}
+								break;
+							default:
+								$to = strlist_to_array($to);
+								if($to[count($to)-1]=="ERROR"){
+									$error = "Invalid users: ".implode(",",array_diff($to, array("ERROR")));
+								}else{
+									foreach($to as $user){
+										$uid = $db->query("SELECT user_id FROM users WHERE user_username = ".$db->quote($user))->fetchColumn();
+										add_note($uid, $txt, $link);
+									}
+								}
+								break;
+						}
+					}else{
+						$error = "The notification is too short.";
+					}
+					if($error==""){
+						header("Location: index.php?page=admin_panel&sp=3&m=13Successfully updated.");
+					}else{
+						header("Location: index.php?page=admin_panel&sp=3&m=03".$error);
+					}
+				}
+			?>
 		</div>
 		<div id = "admin-page-4" class = 'admin-sub-page'>
 			<b>Disable/Enable Specific Site Features</b><br><br>

@@ -1988,3 +1988,12 @@ a{
 		height: 25px;
 	}
 }
+
+#lcp-userlist-container{
+	width: 300px;
+	border: 2px solid grey;
+	height: 300px;
+	overflow: auto;
+	display: none;
+	padding: 10px;
+}

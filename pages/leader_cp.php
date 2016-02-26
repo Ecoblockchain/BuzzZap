@@ -35,7 +35,20 @@ if(loggedin()){
 				}
 			?>
 			
+			var see_u_list_click = 1;
+			$("#see-all-users-opt").click(function(){
+				see_u_list_click++;
+				if(see_u_list_click%2==0){
+					$("#lcp-userlist-container").slideDown();
+				}else{
+					$("#lcp-userlist-container").slideUp();
+				}
+			});
 			
+			$(".sel-u-edit").click(function(){
+				var name = $(this).attr("id").substring(3);
+				$("#act-on-user").val(name).css("border","3px dashed lightgreen");
+			});
 		});
 		</script>
 			<div class = "leader-cp-title">Welcome To The Community Manager<br>
@@ -127,7 +140,7 @@ if(loggedin()){
 						foreach($com_emails as $e){
 							$parse_vars = array("ename"=>trim($e), "com_name"=>get_user_community($user_id, "com_name"));
 							$body = nl2br(static_cont_rec_vars(get_static_content("invite_coms_email"), $parse_vars));
-							send_mail($e,"BuzzZap Invitation",$body,"admin@buzzzap.com");
+							send_mail($e,"BuzzZap Invitation",$body,"auto@buzzzap.com");
 						}
 						setcookie("success", "1Successfully sent.", time()+10);
 						header("Location: index.php?page=leader_cp&go_to=3");
@@ -184,7 +197,18 @@ if(loggedin()){
 				 	</select>
 				 	<input type = "submit" value = "Submit" class = "leader-cp-submit" id = 'submit-act'>	
 				 </form>
-				 
+				 <span style = 'color:green;cursor:pointer;' id = 'see-all-users-opt'><u>See All Users</u></span>
+				 <div id = "lcp-userlist-container">
+				 <span style = 'font-size: 70%'>Click user to edit them</span>
+				 	<br><br>
+				 	<?php
+				 		$users = $db->query("SELECT user_username, user_firstname, user_lastname FROM users WHERE user_id != ".$db->quote($user_id)." AND user_com = ".$db->quote($com_id));
+				 		foreach($users as $user){
+				 			echo "<span style = 'cursor:pointer;' id = 'eu-".$user['user_username']."' class = 'sel-u-edit'>".$user['user_username'].
+				 			"</span><span style = 'float:right'>".$user['user_firstname']." ".$user['user_lastname']. "</span><hr size = '1'>";
+				 		}
+				 	?>
+				 </div>
 				 <br><hr size = "1">
 				 <b><u>Add User</u></b>
 				 <br>Add a new user to your community.<br><br>

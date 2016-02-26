@@ -13,30 +13,48 @@ if(loggedin()){
 	<?php
 		$counter = 0;
 		$act_id= array();
-		$get_notes = $db->prepare("SELECT * FROM notifications  WHERE `to` = :user_id ORDER BY time DESC");
-		$get_notes->execute(array("user_id"=>$_SESSION['user_id']));
+		$get_notes = $db->prepare("SELECT * FROM notifications  WHERE `to` = :user_id OR `to` = :all ORDER BY time DESC");
+		$get_notes->execute(array("user_id"=>$_SESSION['user_id'], "all"=>"--all"));
 		$quant = $get_notes->rowCount();
-		if($quant>0){
-			echo "<div class = 'profile-info-container' style = 'font-size: 90%;width:99%;padding:10px'>";
-			while($row = $get_notes->fetch(PDO::FETCH_ASSOC)){
-				$act_id[$counter]=$row['note_id'];
-				if($row['seen']=="0"){
-					$b = "<b>";
-					$b_ = "</b>";
-				}else{
-					$b = "";
-					$b_ = "";
-				}
+		$dids = array();
+		$check_all_count_show = array(0,0);
+		
+		echo "<div class = 'profile-info-container' style = 'font-size: 90%;width:99%;padding:10px'>";
+		while($row = $get_notes->fetch(PDO::FETCH_ASSOC)){
+			$dids[] = $row['note_id'];
+			$act_id[$counter]=$row['note_id'];
+			$as_arr = explode(",",trim_commas($row['seen']));
+			$not_seen_an_all = ($row['to']=="--all")? !in_array($_SESSION['user_id'], $as_arr)&&!in_array("-".$_SESSION['user_id'], $as_arr): false;
+			if($row['to']=="--all"&&$not_seen_an_all){
+				$db->query("UPDATE notifications SET `seen` = CONCAT(`seen`,".$db->quote(",".$_SESSION['user_id']).") WHERE note_id = ".$db->quote($row['note_id']));
+			}
+			if($row['to']=="--all"){
+				$check_all_count_show[0]++;
+			}
+			if($row['seen']=="0"||$not_seen_an_all){
+				$b = "<b>";
+				$b_ = "</b>";
+			}else{
+				$b = "";
+				$b_ = "";
+			}
+			if(!in_array("-".$_SESSION['user_id'], $as_arr)){
 				echo  $b."<span style = 'color:grey;'>".date("d/M/Y H:i", $row['time']).
 				"</span><a href = '".$row['link']."'><div id = 'note-line' style = 'white-space:normal;'>".$row['text']."</div></a>".$b_."
 				<div class = 'note-sel-box' id = 'sel-box-".$counter."'></div>
 				<hr size = '1'>";
-				$counter++;	
+			}else{
+				$check_all_count_show[1]++;
 			}
-			echo "</div>";
-		}else{
+			$counter++;	
+		}
+		echo "</div>";
+		if(count(array_unique($check_all_count_show))==1){
+			echo "<div id = 'no-threads-message'>You have no notifications.</div> ";
+		}else if($quant==0){
 			echo "<div id = 'no-threads-message'>You have no notifications.</div> ";
 		}
+		
 		?>
 		<script>
 		$(document).ready(function(){
@@ -89,7 +107,7 @@ if(loggedin()){
 			header("Location: index.php?page=notifications");
 		}
 		if((isset($_GET['cleara']))&&($_GET['cleara']=="true")){
-			clear_notes($_SESSION['user_id'], true, array());
+			clear_notes($_SESSION['user_id'], false, $dids);
 			header("Location: index.php?page=notifications");
 		}
 		mark_all_notes_read($_SESSION['user_id']);

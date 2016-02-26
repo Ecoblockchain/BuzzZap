@@ -417,6 +417,31 @@ if(loggedin()){
 						?>
 				</div>
 			</div>
+
+			<div id = "profile-bottom-container">
+				<div class = "profile-bottom-inner-container" style = 'margin-top:20px;height: 400px;width:100%;'>
+					<div id = 'sub-profile-title' style = "padding: 10px">Recently Participated In</div>
+					<div id = "profile-info-container3" style = "width: 100%;height: 100%;padding:10px;font-size:80%;">
+						<?php
+							$latest_posts = $db->query("SELECT thread_id FROM thread_replies WHERE user_replied = ".$db->quote(get_user_field($view_user_id, "user_username"))." ORDER BY time_replied DESC LIMIT 10");
+							$count = 0;
+							$showing = array();
+							foreach($latest_posts as $lpost){
+								
+								$thread_title = $db->query("SELECT thread_title FROM debating_threads WHERE com_id = 0 AND thread_id = ".$db->quote($lpost['thread_id'])." LIMIT 7")->fetchColumn();
+								
+								if($thread_title&&!in_array($thread_title, $showing)){
+									$showing[] = $thread_title;
+									echo "<a style = 'color:white;' href = 'index.php?page=view_private_thread&thread_id=".$lpost['thread_id']."'>".$thread_title."</a><hr size = '1' style = 'width: 90%;'>";
+									$count++;
+								}
+							}
+							if($count==0){
+								echo "No Recent Posts";
+							}
+						?>
+					</div>
+				</div>
 		</div>
 		
 		
