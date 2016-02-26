@@ -254,7 +254,7 @@ if(substr($_SERVER['PHP_SELF'], 0,3)=="/bu"){
 								$txt = htmlentities($_POST['problem']);
 								if(strlen($txt)>5){
 									$errorfile = fopen("php-error.log", "a+");
-									fwrite($errorfile, date("Y-m-d", time()).": Manual Report: ".$txt."\n\n");
+									fwrite($errorfile, date("Y-m-d", time()).": Manual Report from ".get_user_field($_SESSION['user_id'], "user_username").": ".$txt."\n\n");
 									fclose($errorfile);
 									setcookie("success", "1Successfully reported problem. Thank you for your feedback.",time()+10);
 								}else{
