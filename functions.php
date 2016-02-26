@@ -394,7 +394,7 @@ function post_action($user_id, $reply_id, $action, $editval){
 	global $db;
 	//action = "edit" || "delete"
 	if($action!=="report"){
-		$user_can_del_edit = (loggedin_as_admin())||(in_array($_SESSION['user_id'],get_com_leader_id(get_user_field($user_idp, "user_com"), true)))? true:false;
+		$user_can_del_edit = (loggedin_as_admin())||(in_array($_SESSION['user_id'],get_com_leader_id(get_user_field($user_id, "user_com"), true)))? true:false;
 		if((user_own_reply($reply_id, $user_id))||$user_can_del_edit){
 			if($action == "edit"){
 				$update = $db->prepare("UPDATE thread_replies SET reply_text = :new_text WHERE reply_id = :reply_id");
