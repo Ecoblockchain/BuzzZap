@@ -39,7 +39,7 @@ if(loggedin()){
 		<div class = "topic-container">
 	
 	<a href = "index.php?page=private_debating_topic&amp;topic_id=0<?php echo $extra_get; ?>" style = "text-decoration:none;">
-			<div class = "topic-link" id = "t-<?php echo $count; ?>">
+			<div class = "topic-link" id = "t-0">
 				<?php echo "<span style = 'color:orange;'>All Latest</span>"; ?>
 			</div>
 			

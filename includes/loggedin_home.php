@@ -71,12 +71,12 @@ if(loggedin()){
 				t1_clicks = t1_clicks + 1;
 				if(t1_clicks % 2==0){
 					$("#p-g-toggle1").html("GLOBAL");
-					$("#hibc-t1-1").fadeIn();
-					$("#hibc-t1-2").fadeOut();
+					$("#hibc-t1-2").fadeIn();
+					$("#hibc-t1-1").fadeOut();
 				}else{
 					$("#p-g-toggle1").html("PRIVATE");
-					$("#hibc-t1-1").fadeOut();
-					$("#hibc-t1-2").fadeIn();
+					$("#hibc-t1-2").fadeOut();
+					$("#hibc-t1-1").fadeIn();
 				}
 			});
 			var t2_clicks = 0;

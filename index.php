@@ -260,7 +260,7 @@ if(substr($_SERVER['PHP_SELF'], 0,3)=="/bu"){
 								}else{
 									setcookie("success", "0You have not supplied enough detail.", time()+10);
 								}
-								//header("Location: index.php?page=".$_GET['page']);
+								header("Location: index.php?page=".$_GET['page']);
 							}
 						?>
 
