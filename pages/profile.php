@@ -371,17 +371,14 @@ if(loggedin()){
 							echo "<span style = 'font-size: 60%;'><br>".$get_badges->rowCount()." badge(s) in total</span><br><br>";
 							$badges = array();
 							foreach($get_badges as $row){
-								if(in_array($row['text'], $badges)){
-									$btext = $row['text'];
-									$badgekey = array_search($btext, $badges);
-									unset($badges[$badgekey]);
-									$badgekey++;
-									$badges[$badgekey]=$btext;
+								if(in_array($row['text'],array_keys($badges))){
+									$badges[$row['text']]++;
 								}else{
-									$badges[1] = $row['text'];
+									$badges[$row['text']] = 1;
 								}
 							}
-							foreach($badges as $quant=>$text){
+							
+							foreach($badges as $text=>$quant){
 								echo "<div class = 'sing-badge-container'>";
 									echo "<div class = 'badge-body' id = 'badge-c-".rand(1,6)."'><br><br>".$text."</div><div class = 'badge-quant-label'>x".$quant."</div>";
 								echo "</div>";
