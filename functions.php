@@ -998,16 +998,29 @@ function mark_all_notes_read($user_id){
 
 function get_unread_notes($user_id, $quant=false){
 	global $db;
-	$select = $db->prepare("SELECT text FROM notifications WHERE `to` = :user_id AND seen = :seen");
-	$select->execute(array("user_id"=>$user_id, "seen"=>"0"));
-	
+	$unseen_all_count = 0;
+	$select = $db->query("SELECT * FROM notifications WHERE(`to` = ".$db->quote($user_id)." AND `seen` = '0') OR (`to` = '--all')");
+	$alls = array();
+	foreach($select as $row){
+		if($row['to']=="--all"){
+			$as_arr = explode(",",trim_commas($row['seen']));
+			if(!in_array($user_id, $as_arr)&&!in_array("-".$user_id, $as_arr)){
+				$alls[] = $row['text'];
+			}else{
+				$unseen_all_count--;
+			}
+		}
+	}
+
 	if($quant==true){
-		return $select->rowCount();
+		$count = $select->rowCount() + $unseen_all_count;
+		return $count;
 	}else{
 		$notes= array();
 		while($row = $select->fetch(PDO::FETCH_ASSOC)){
 			$notes[] = $row['text'];
 		}
+		$notes = array_merge($notes, $alls);
 		return $notes;
 	}
 }
@@ -1018,6 +1031,14 @@ function clear_notes($user_id, $all=false, $to_del){
 		foreach($to_del as $id){
 			$delete = $db->prepare("DELETE FROM notifications WHERE `to` = :user_id AND note_id = :id");
 			$delete->execute(array("user_id"=>$user_id, "id"=>$id));
+			$check_an_all = $db->query("SELECT `to` FROM `notifications` WHERE `note_id` = ".$db->quote($id))->fetchColumn();
+			if($check_an_all=="--all"){
+				$cur_seen = explode(",",$db->query("SELECT `seen` FROM `notifications` WHERE `to` = '--all' AND `note_id` = ".$db->quote($id))->fetchColumn());
+				$newval = "-".$user_id;
+				$cur_seen[array_search($user_id, $cur_seen)] = $newval;
+				$cur_seen = implode(",", $cur_seen);
+				$db->query("UPDATE notifications SET seen = ".$db->quote($cur_seen)."WHERE note_id = ".$db->quote($id));
+			}
 		}	
 	}else{
 		$delete = $db->prepare("DELETE FROM notifications WHERE `to` = :user_id");

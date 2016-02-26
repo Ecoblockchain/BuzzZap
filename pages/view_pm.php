@@ -55,7 +55,7 @@ if(loggedin()){
 		if(isset($_POST['pm_reply_text'])){
 			$text = htmlentities($_POST['pm_reply_text']);	
 			if(strlen($text)>10){
-				pm_reply($pm_id, $text);
+				pm_reply($pm_id, nl2br($text));
 				$message = "1Successfully sent!";
 			}else{
 				$message = "0Reply is too short.";

@@ -207,7 +207,7 @@ if(loggedin()){
 					if((strlen($subject)>0)&&(strlen($subject)<400)&&(strlen($body)>0)){
 						$valid_user_ids[] = $_SESSION['user_id'];
 						$valid_user_ids = array_unique($valid_user_ids);
-						if($pm_id = send_pm($valid_user_ids, $body, $subject)){
+						if($pm_id = send_pm($valid_user_ids, nl2br($body), $subject)){
 							
 							$header_link = "index.php?page=view_pm&pm_id=".$pm_id;	
 							$message = "1Successfully sent message!";
