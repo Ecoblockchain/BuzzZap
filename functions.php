@@ -435,7 +435,6 @@ function merge_cus_vote_vals($thread_id){
 
 function vote_debate($vote, $d_id, $cus){
 	global $db;
-	$vote = strtolower($vote);
 	if($cus==false){
 		$assoc_vtypes = array("yes"=>"vote_yes", "no"=>"vote_no", "maybe"=>"vote_maybe", "agree"=>"vote_yes", "disagree"=>"vote_no");
 		$update = $db->prepare("UPDATE debating_threads SET `".$assoc_vtypes[$vote]."` = `".$assoc_vtypes[$vote]."` + 1 WHERE thread_id = ".$db->quote($d_id));
