@@ -506,6 +506,7 @@ if(loggedin_as_admin()){
 					if(isset($_GET['rerr'])){
 						$handle = fopen("php-error.log", "w+");
 						fwrite($handle , ' ');
+						fclose($handle);
 						header("Location: index.php?page=admin_panel&sp=10");
 					}
 				}

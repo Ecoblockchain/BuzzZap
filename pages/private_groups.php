@@ -126,6 +126,7 @@ if(loggedin()){
 				
 				
 					<?php
+						
 						if(!user_in_group($_SESSION['user_id'],"", "true")){
 					?>		
 						<div id = "c_group" class="create-group">
@@ -263,6 +264,7 @@ if(loggedin()){
 						setcookie("success", "0There was an error.", time()+10);	
 					}
 					header("Location: index.php?page=private_groups&com=".$view_com_id);	
+				
 				}else if(isset($_POST['group_name'], $_POST['group_members'])){
 					$name = htmlentities($_POST['group_name']);
 					if(strlen($name)>3){
@@ -289,6 +291,7 @@ if(loggedin()){
 								setcookie("success", "0There was an error.", time()+10);
 							}
 						}else{
+							$count = 0;
 							$text = "The following users don't exist:<br><b>";
 							foreach($members as $user){
 								if($count!=count($members)-1){
