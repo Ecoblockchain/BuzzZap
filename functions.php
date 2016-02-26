@@ -461,6 +461,9 @@ function reply_debate($reply_text, $user_replied, $thread_id, $size, $reply_stat
 	//$thread_id = parent content id
 	$reply_text = nl2br(htmlentities($reply_text));
 	$active = (user_moderation_status($_SESSION['user_id'])>1)? 0:1;
+	if(strlen($reply_text)<3){
+		$msg = "Your reply is too short.";
+	}
 	if($active==0){
 
 		$cleaders = get_com_leader_id(get_user_field($_SESSION['user_id'], "user_com"), true);

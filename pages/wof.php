@@ -5,10 +5,10 @@ if($check_valid!="true"){
 }
 if(loggedin()){
 	?>
-	<div class = 'page-path'>Debating > Wall Of Fame </div><br>
+	<div class = 'page-path'>Debating > Wall Of Fame</div><br>
 	<div class = "wof-container">
 		<div style = 'padding:10px;' class = 'wof-cont-title'>BuzzZap Community Leaderboard</div>
-		<div class = 'wof-info'>This board shows the best communities on the whole of BuzzZap based on reputation.</div><br>
+		<div class = 'wof-info'>This board shows the best 20 communities on the whole of BuzzZap based on reputation.</div><br>
 		<?php
 			$hidden_coms = explode(",",get_static_content("hide_coms"));
 			$get1 = $db->query("SELECT com_name,com_id FROM com_profile ORDER BY com_rep DESC LIMIT 20");
@@ -29,9 +29,9 @@ if(loggedin()){
 	</div>
 	<div class = "wof-container">
 		<div style = 'padding:10px;' class = 'wof-cont-title'>BuzzZap User Leaderboard</div>
-		<div class = 'wof-info'>This board shows the best users on the whole of BuzzZap based on reputation.</div><br>
+		<div class = 'wof-info'>This board shows the best 100 users on the whole of BuzzZap based on reputation.</div><br>
 		<?php
-			$get2 = $db->query("SELECT user_username,user_com FROM users ORDER BY user_rep DESC LIMIT 20");
+			$get2 = $db->query("SELECT user_username,user_com FROM users ORDER BY user_rep DESC LIMIT 100");
 			$count = 1;
 			$color = "#59c3d8";
 			foreach($get2 as $user){

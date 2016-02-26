@@ -1,8 +1,8 @@
 <?php ob_start(); 
 if(substr($_SERVER['PHP_SELF'], 0,3)=="/bu"){
 	//DEV 
-	$ajax_script_loc = "/projects/buzzzap/ajax_script.php";
-	$spec_judge_email_link = "http://localhost/projects/buzzzap/";
+	$ajax_script_loc = "/buzzzap/ajax_script.php";
+	$spec_judge_email_link = "http://localhost/buzzzap/";
 	ini_set('display_errors', 'On');
 }else{
 	//PROD
@@ -196,7 +196,7 @@ if(substr($_SERVER['PHP_SELF'], 0,3)=="/bu"){
 
 										<div class = "mitem-container" style = 'float:right;width:120px;font-size:80%;'>
 											<div class = "mitem admin-links" id = "mitem5">
-												<a href="index.php?page=admin_panel">
+												<a href="index.php?page=admin_panel&sp=0">
 													<div id "mitem5sub1" class = "subitem" mouseeffect = "false" style = "padding-top:10px;">Admin Panel</div>
 												</a>
 											</div>
@@ -260,7 +260,7 @@ if(substr($_SERVER['PHP_SELF'], 0,3)=="/bu"){
 								}else{
 									setcookie("success", "0You have not supplied enough detail.", time()+10);
 								}
-								header("Location: index.php?page=".$_GET['page']);
+								//header("Location: index.php?page=".$_GET['page']);
 							}
 						?>
 
