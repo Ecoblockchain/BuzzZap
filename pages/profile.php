@@ -363,18 +363,30 @@ if(loggedin()){
 		
 		<br>
 			<div id = "profile-bottom-container">
-				<div class = "profile-bottom-inner-container" style = 'overflow: auto;'>
+				<div class = "profile-bottom-inner-container" style = 'overflow: auto;overflow-x:hidden;'>
 					<div id = "profile-info-container3" style = "width: 100%;height: 10px;padding:10px;">
 						<div id = "sub-profile-title">Badge Collection</div>
 						<?php
-							$get_badges = $db->prepare("SELECT text FROM badges WHERE user_id = :id");
-							$get_badges->execute(array("id"=>$view_user_id));
+							$get_badges = $db->query("SELECT text FROM badges WHERE user_id = ".$db->quote($view_user_id));
 							echo "<span style = 'font-size: 60%;'><br>".$get_badges->rowCount()." badge(s) in total</span><br><br>";
-							while($row = $get_badges->fetch(PDO::FETCH_ASSOC)){
-								echo "<div class = 'badge-body' id = 'badge-c-".rand(1,6)."' style = 'float: left;'><br><br>".$row['text']."</div>";
+							$badges = array();
+							foreach($get_badges as $row){
+								if(in_array($row['text'], $badges)){
+									$btext = $row['text'];
+									$badgekey = array_search($btext, $badges);
+									unset($badges[$badgekey]);
+									$badgekey++;
+									$badges[$badgekey]=$btext;
+								}else{
+									$badges[1] = $row['text'];
+								}
 							}
-							
-						?>
+							foreach($badges as $quant=>$text){
+								echo "<div class = 'sing-badge-container'>";
+									echo "<div class = 'badge-body' id = 'badge-c-".rand(1,6)."'><br><br>".$text."</div><div class = 'badge-quant-label'>x".$quant."</div>";
+								echo "</div>";
+							}
+							?>
 					</div>
 				</div>
 				<div class = "profile-bottom-inner-container" style = "margin-left: 2%">
