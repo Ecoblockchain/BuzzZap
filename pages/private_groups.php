@@ -321,7 +321,7 @@ if(loggedin()){
 
 			if($own == false){
 				$latest_global_debates = $db->query("SELECT thread_title,thread_id FROM debating_threads WHERE com_id = 0 AND user_com_id = ".$db->quote($view_com_id)." ORDER BY time_created DESC LIMIT 5");
-				echo "<div class = 'profile-info-container' style = 'float: left;white-space:normal;margin-top: 5px;width:46%;min-height: 300px;text-align:center;' >
+				echo "<div class = 'profile-info-container' style = 'float: left;white-space:normal;margin-top: 5px;width:46%;min-height: 300px;text-align:center;padding: 0px' >
 				Latest Global Debates By ".$com_profile['com_name']."<br>";
 				if($latest_global_debates->rowCount()>0){
 					foreach($latest_global_debates as $row){
@@ -332,7 +332,7 @@ if(loggedin()){
 				}
 				echo "</div>";
 				$latest_global_debates = $db->query("SELECT comp_title,comp_id FROM competitions WHERE comp_type = 1 AND comp_com_id = ".$db->quote($view_com_id)." ORDER BY created DESC LIMIT 5");
-				echo "<div class = 'profile-info-container' style = 'white-space:normal;width:46%;min-height: 300px;text-align:center;float:right;margin-top:5px;' >
+				echo "<div class = 'profile-info-container' style = 'white-space:normal;width:46%;min-height: 300px;text-align:center;float:right;margin-top:5px;padding: 0px' >
 				Current Global Competitions By ".$com_profile['com_name']."<br>";
 				if($latest_global_debates->rowCount()>0){
 					foreach($latest_global_debates as $row){
