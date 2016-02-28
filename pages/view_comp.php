@@ -24,8 +24,8 @@ if(loggedin()||!empty($out_judge_key)){
 		
 		//if in correct com (includes public where com = 0)
 		if(empty($out_judge_key)){
-			$com_id = ($type=="0")? get_user_community($_SESSION['user_id'], "com_id"): "0";
-			if($com_id==$comp_com_id){
+			$com_id = ($type=="0")? get_user_community($_SESSION['user_id'], "com_id"): 0;
+			if($type =='1'||$com_id==$comp_com_id){
 				$valid_to_view = true;
 			}else{
 				$valid_to_view = false;
@@ -39,7 +39,7 @@ if(loggedin()||!empty($out_judge_key)){
 			}
 		}
 
-		if((!empty($comp_info["comp_title"]))&&($valid_to_view==true)&&(in_array($type, array("0","1"))&&(!empty($type_match_comp)))){
+		if(loggedin_as_admin()||(!empty($comp_info["comp_title"]))&&($valid_to_view==true)&&(in_array($type, array("0","1"))&&(!empty($type_match_comp)))){
 
 			?>
 			<script>
@@ -131,21 +131,17 @@ if(loggedin()||!empty($out_judge_key)){
 				}
 				echo "<div class = 'page-path'>Debating > <a style = 'color: #40e0d0' href= '".$comp_home_path_link."'>".$ctype." Competitions </a> > ".$comp_info['comp_title']."</div><br>";
 				$perm_to_delete = false;
-				if(($type=="0")&&(get_user_community($user_id, "com_id")==$comp_info["comp_com_id"])&&(user_rank($user_id, "3")&&empty($out_judge_key))){
+				$is_rel_leader = ($comp_com_id==get_user_community($user_id, "com_id")&&user_rank($user_id, '3'))? true: false;
+
+				if($is_rel_leader&&empty($out_judge_key)){
 					$perm_to_delete = true;
 					echo "<a style = 'font-size: 100%;color:salmon;' href = 'index.php?page=view_comp&delcomp=true&comp=".$type.$comp_id."'>Delete Competition</a><br>";
 				}
 				if(isset($_GET['delcomp'])&&$perm_to_delete == true){
-					if($type=="0"){
-						$ids = get_all_users_in_p_comp($comp_id);
-						foreach($ids as $id){
-							add_note($id, get_user_field($_SESSION['user_id'],"user_username")." cancelled the competition '".$comp_info['comp_title']."' that you were involved in. ","");
-						}
-					}else{
-						$cids = array_keys(get_comp_acceptance_info($comp_id, $type));
-						foreach($cids as $id){
-							add_com_feed($id, get_user_field($_SESSION['user_id'],"user_username")." cancelled the competition '".$comp_info['comp_title']." that we were involved in.");
-						}
+					
+					$ids = get_all_users_in_p_comp($comp_id);
+					foreach($ids as $id){
+						add_note($id, get_user_field($_SESSION['user_id'],"user_username")." cancelled the competition '".$comp_info['comp_title']."' that you were involved in. ","");
 					}
 					$db->query("DELETE FROM competitions WHERE comp_id = ".$comp_id);
 					$db->query("DELETE FROM comp_arguments WHERE comp_id = ".$comp_id);
@@ -175,7 +171,7 @@ if(loggedin()||!empty($out_judge_key)){
 			<div class = "thread-title-header" style = 'text-align: center;'><?php echo $comp_info["comp_title"]; ?></div>
 			<div class = "sub-info-thread">
 				Started By <?php 
-				echo get_comp_starter_by_type($comp_id, $type); 
+				echo get_comp_starter_by_type($comp_id); 
 				$judges_by_name = array();
 				if($judges!="norm"){
 					
@@ -197,13 +193,13 @@ if(loggedin()||!empty($out_judge_key)){
 				if(comp_started($comp_id)){
 					if($judges!="norm"&&in_array($user_id, $judges)){
 						echo "As a judge, you must read through the different arguments and comments, and simply vote up or down to<br> which comments you are or aren't persuaded by. It is important you vote as many comments as possible.";
-					}else if(!user_in_comp($user_id, $comp_id, $type)){
+					}else if(!user_in_comp($user_id, $comp_id)){
 						echo "As a reader, you can read through the different arguments and comments, and simply vote up or down to<br> which comments you are or aren't persuaded by. This will help towards your reputation!";
 					}else{
 						echo "As you are involved in this competition, make sure to submit your main argument in your section, and argue against arguments in other sections.";
 					}
 					if(empty($out_judge_key)){
-						if((user_rank($user_id, "3")==true)&&(user_in_comp($user_id, $comp_id, $type))){
+						if((user_rank($user_id, "3")==true)&&(user_in_comp($user_id, $comp_id))){
 							echo "<br>NOTE: As a leader, only delete comments if they are abusive or spam.";
 						}
 					}
@@ -237,12 +233,12 @@ if(loggedin()||!empty($out_judge_key)){
 					}
 				
 					if(end_comp($comp_id)||comp_ended($comp_id)){
-						$winner_ids = get_comp_winner($comp_id, $type);
+						$winner_ids = get_comp_winner($comp_id);
 						if(count($winner_ids)==1){
-							$winner = ($type=="0")?$db->query("SELECT group_name FROM private_groups WHERE group_id=".$db->quote($winner_ids[0]))->fetchColumn():$db->query("SELECT com_name FROM communities WHERE com_id=".$db->quote($winner_ids[0]))->fetchColumn();
+							$winner = $db->query("SELECT group_name FROM private_groups WHERE group_id=".$db->quote($winner_ids[0]))->fetchColumn();
 							echo "<div id = 'page-disabled'>This competition has ended.
 							<br><br>
-							Winner: ".$winner."<br>
+							Winner: ".add_profile_link($winner, 2,'color: black')."<br>
 							<img src = 'pages/trophy.png' style = 'width: 400px'>
 						
 						
@@ -250,7 +246,7 @@ if(loggedin()||!empty($out_judge_key)){
 						}else{
 							$dt_str=  "";
 							foreach($winner_ids as $id){
-								$name = ($type=="0")?$db->query("SELECT group_name FROM private_groups WHERE group_id=".$db->quote($id))->fetchColumn():$db->query("SELECT com_name FROM communities WHERE com_id=".$db->quote($id))->fetchColumn();
+								$name = $db->query("SELECT group_name FROM private_groups WHERE group_id=".$db->quote($id))->fetchColumn();
 								$dt_str = $dt_str.$name.",";
 							}
 							echo "<div id = 'page-disabled'>This competition has ended. The competiton was a draw/tie between the following candidates:
@@ -392,10 +388,10 @@ if(loggedin()||!empty($out_judge_key)){
 
 
 			<?php
-				$winner_id = get_comp_winner($comp_id, $type);
+				$winner_id = get_comp_winner($comp_id);
 				
 				$cand_ids = array();
-				$all_cands = get_comp_acceptance_info($comp_id, $type);
+				$all_cands = get_comp_acceptance_info($comp_id);
 				foreach($all_cands as $key=>$value){
 					if($value==1){
 						$cand_ids[]=$key;
@@ -421,9 +417,9 @@ if(loggedin()||!empty($out_judge_key)){
 				$rcounts = array();
 				foreach($cand_ids as $cand_id){
 					array_push($rcounts,$sec_uid[$count]."0");
-					$name = ($type=="0")? $db->query("SELECT group_name FROM private_groups WHERE group_id = ".$db->quote($cand_id))->fetchColumn():$db->query("SELECT com_name FROM communities WHERE com_id = ".$db->quote($cand_id))->fetchColumn();
+					$name = $db->query("SELECT group_name FROM private_groups WHERE group_id = ".$db->quote($cand_id))->fetchColumn();
 					if($name!=""){
-						$users_host_id = ($type=="0")? get_user_group($user_id, "group_id"):get_user_community($user_id, "com_id");
+						$users_host_id = get_user_group($user_id, "group_id");
 						$your_host_str = ($users_host_id==$cand_id)? "(your section)": "";
 						
 					
@@ -490,7 +486,6 @@ if(loggedin()||!empty($out_judge_key)){
 										$aid = $db->lastInsertId();
 										
 										if(isset($_COOKIE['temp_audio_ret_aid'])){
-											echo $aid . "fffffffff";
 											$f_code = $_COOKIE['temp_audio_ret_aid'];
 											$db->query("UPDATE audio SET owner_id = ".$db->quote($aid)." WHERE audio_flocation LIKE '%$f_code'");
 											setcookie("temp_audio_ret_aid", "", time()-1000000000);

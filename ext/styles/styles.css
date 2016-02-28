@@ -1511,7 +1511,7 @@ a{
 	margin: 0 auto;
 	background-color: lightgrey;
 	opacity: 0.8;
-	z-index: 100000;
+	z-index: 10;
 	position: absolute;
 	//padding: 10px;
 	padding-top: 200px;
@@ -1548,6 +1548,14 @@ a{
 	border: 4px solid;
 	letter-spacing: 1px;
 	float: left;
+}
+
+.inner-badge-txt{
+	height: 75%;
+	margin: 0 auto;
+	width: 75%;
+	overflow: auto;
+	overflow-x:hidden;
 }
 #badge-c-1{
 	border-color:#74d76f;
@@ -1734,7 +1742,8 @@ a{
 }
 
 #group-plates-container{
-	width: 1000px;
+	width: 100%;
+	height: 500px;
 	text-align: center;
 	margin: 0 auto;
 }

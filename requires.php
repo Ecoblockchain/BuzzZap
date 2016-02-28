@@ -13,6 +13,7 @@
 <script src="https://cdn.rawgit.com/webrtc/adapter/master/adapter.js"></script>
 <script src="ext/jquery/peer.min.js"></script>
 <link href='ext/styles/styles.css' rel='stylesheet' type='text/css'>
+<link href='https://fonts.googleapis.com/css?family=Dosis|Poiret+One' rel='stylesheet' type='text/css'>
 <link href='https://fonts.googleapis.com/css?family=Quicksand' rel='stylesheet' type='text/css'>
 
 <?php

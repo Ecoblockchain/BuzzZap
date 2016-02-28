@@ -15,15 +15,12 @@
 	
 	if(isset($_GET['type'])){
 		$type = htmlentities($_GET['type']);
-	
+		$comp_start_table_search = "private_groups";
+		$comp_start_col_search = "group_name";
 		if($type=="0"){
-			$comp_start_table_search = "private_groups";
-			$comp_start_col_search = "group_name";
 			$ex_comp_q = "c:AND com_id = ".$com_id." AND group_id != ".get_user_group($_SESSION['user_id'], "group_id");
 		}else{
-			$comp_start_table_search = "communities";
-			$comp_start_col_search = "com_name";
-			$ex_comp_q = "c:AND com_id != ".get_user_field($_SESSION['user_id'], "user_com");
+			$ex_comp_q = "c:AND group_id != ".get_user_group($_SESSION['user_id'], "group_id");
 		}
 	}
 
