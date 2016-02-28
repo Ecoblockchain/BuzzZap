@@ -33,6 +33,7 @@ if(loggedin_as_admin()){
 		<a href = "index.php?page=admin_panel&sp=10" style = 'color:#71C671;'>Error Log ></a><br>
 		<a href = "index.php?page=admin_panel&sp=11" style = 'color:#71C671;'>Admin Notification ></a><br>
 		<a href = "index.php?page=admin_panel&sp=12" style = 'color:#71C671;'>Newsletter ></a><br><br>
+		<a href = "index.php?page=admin_panel&sp=13" style = 'color:#71C671;'>Simulate User ></a><br><br>
 	
 	
 	</div>
@@ -619,6 +620,19 @@ if(loggedin_as_admin()){
 				Subject:<input type = "text" name = "newsl_sub" style = 'width: 300px;' class = "leader-cp-fields"><br><br>
 				Body:<br><textarea name = "newsl_body" style ="width:300px;height:200px;text-align: center;"></textarea><br>
 				<input type = "submit" value = "Send" class = "leader-cp-submit">	
+			</form>	
+		</div>
+		<div id = "admin-page-13" class = 'admin-sub-page'>
+			<b>Change Session</b><br><br>
+			<?php
+				if(isset($_POST['ses_user'])){
+					$_SESSION['user_id'] = $db->query("SELECT user_id FROM users WHERE user_username = ".$db->quote($_POST['ses_user']))->fetchColumn();
+					header("Location: index.php?page=home");
+				}
+			?>
+			<form action = "" method = "POST">
+				<input type = "text" name = "ses_user" style = 'width: 300px;' placeholder = "Username..." class = "leader-cp-fields">
+				<input type = "submit" value = "Change" class = "leader-cp-submit">	
 			</form>	
 		</div>
 	</div>	

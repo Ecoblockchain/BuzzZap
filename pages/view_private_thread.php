@@ -49,10 +49,8 @@ if(loggedin()){
 					if($perm_to_delete==true){
 						echo "<a style = 'font-size: 100%;color:salmon;' href = 'index.php?page=view_private_thread&deld=true&thread_id=".$thread_id."'>Delete Debate</a> &middot;";
 
-						echo " <a style = 'font-size: 100%;color:lightblue;' href = 'index.php?page=view_private_thread&change_ty=true&thread_id=".$thread_id."'>Make ".$dtype_opp_state."</a><br>";
-					}
+						echo " <a style = 'font-size: 100%;color:lightblue;' href = 'index.php?page=view_private_thread&change_ty=true&thread_id=".$thread_id."'>Make ".$dtype_opp_state."</a>";
 					
-					if($perm_to_delete){
 						$dtrue = (isset($_GET['d']))? "&d=g" : "";
 						if(isset($_GET['deld'])){
 							$db->query("DELETE FROM debating_threads WHERE thread_id = ".$thread_id);
@@ -117,6 +115,12 @@ if(loggedin()){
 							header("Location: index.php?page=view_private_thread&thread_id=".$thread_id);
 						}
 					}
+					$follow_opt_text = (following_thread($_SESSION['user_id'], $thread_id, false))? "Unfollow" : "Follow";
+					if(isset($_GET['fd'])){
+						$result = following_thread($_SESSION['user_id'], $thread_id, true);
+						setcookie("success", "1Successfully ".$result." debate.", time()+10);
+						header("Location: index.php?page=view_private_thread&thread_id=".$thread_id);
+					}
 					?>	
 				<div class = "thread-title-header" id = "thread-title-header"><?php echo $header_info['thread_title']; ?></div>
 				<div class = "sub-info-thread" style = 'text-align: left'>
@@ -131,6 +135,7 @@ if(loggedin()){
 				</div>
 				<a href = "index.php?page=view_private_thread&thread_id=<?php echo $_GET['thread_id']; ?>&d_like=<?php echo $thread_id; ?>" class = "view-thread-opts-link"><?php echo $like_status; ?> debate</a>
 				<a href = "#thread-title-repeat" class= "view-thread-opts-link" id = "add-arg-div-link">Add Argument</a>
+				<a href = "index.php?page=view_private_thread&fd=true&thread_id=<?php echo $thread_id; ?>" class= "view-thread-opts-link" id = ""><?php echo $follow_opt_text; ?> Debate</a>
 				<hr size = '1'>
 				<br>
 				<?php
@@ -673,10 +678,7 @@ if(loggedin()){
 						if($report_header==true){
 							$report_header = "&repo-c=".$rid."-";
 						}
-						$starter = $db->query("SELECT user_id FROM users WHERE user_username = ".$db->quote($header_info['thread_starter']))->fetchColumn();
-						if($starter!=$_SESSION['user_id']){
-							add_note($starter, $user_replied." has replied to your debate '".$header_info['thread_title']."'.", "index.php?page=view_private_thread&thread_id=".$thread_id);
-						}
+					
 						setcookie("success", "1".$msg, time()+10);
 						
 						header("Location: index.php?page=view_private_thread&thread_id=".$_GET['thread_id'].$report_header);

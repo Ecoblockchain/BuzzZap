@@ -109,6 +109,21 @@ if(loggedin()){
 				echo "</div>";
 			}
 
+			if(isset($_GET['keep_sd'])){
+				?>
+					<script>
+					$(function(){
+						$(".start-debate-option").css("background-color","#FFFFFF").css('color','#757575')
+						.animate({width:'470px'}, 0).animate({height:'340px'}, 0);
+					
+						$("#start-debate-form").show();
+						$(".start-debate-option").css("box-shadow", "0px 0px 200px #030303");
+					
+						$(".start-debate-option").animate({marginLeft:'20%'}, 0);
+					});
+					</script>
+				<?php
+			}
 		?>
 
 		<br>
@@ -170,7 +185,7 @@ if(loggedin()){
 			if(strlen($title)<10){
 				$errors = true;
 				setcookie("success", "0Your question must be longer.",time()+10);
-				header("Location: index.php?page=private_debating_topic&topic_id=".$topic_id.$extra_get);	
+				header("Location: index.php?page=private_debating_topic&keep_sd=true&topic_id=".$topic_id.$extra_get);	
 			}
 			if($errors==false){
 				$thread_id = create_thread($title, $text, $com_id, $topic_id, $cus_vote_opts);
@@ -179,7 +194,7 @@ if(loggedin()){
 					setcookie("success", "1Debate created successfully!",time()+10);
 				}else{
 					setcookie("success", "0Unknown error.",time()+10);
-					header("Location: index.php?page=private_debating_topic&topic_id=".$topic_id);
+					header("Location: index.php?page=private_debating_topic&keep_sd=true&topic_id=".$topic_id);
 				}
 			}
 		}

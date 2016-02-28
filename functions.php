@@ -332,6 +332,9 @@ function create_thread($title, $text, $com_id, $topic_id, $cus_votes=false){
 		$insert_data->execute(array("thread_id"=>$thread_id, "vote_opts"=>$cus_votes, "votes"=>$vote_zeros));
 	}
 	add_rep(5, $_SESSION['user_id']);
+
+	following_thread($_SESSION['user_id'], $thread_id, true);
+
 	return $thread_id;
 }
 function valid_reply_voter($user_id, $reply_id){
@@ -487,15 +490,22 @@ function reply_debate($reply_text, $user_replied, $thread_id, $size, $reply_stat
 		add_badge("Posting for the first time", $_SESSION['user_id'], "you posted for the first time!");
 	}
 
-	
+	$deb_title = $db->query("SELECT thread_title FROM debating_threads WHERE thread_id = ".$db->quote($thread_id))->fetchColumn();
+
 	if($size=="mini"){
 
 		$starter = $db->query("SELECT user_replied FROM thread_replies WHERE reply_id = ".$db->quote($thread_id))->fetchColumn();
 		if($starter!=$user_replied){
 			$deb_id = $db->query("SELECT thread_id FROM thread_replies WHERE reply_id = ".$db->quote($thread_id))->fetchColumn();
 			$starter = $db->query("SELECT user_id FROM users WHERE user_username=".$db->quote($starter))->fetchColumn();
-			$deb_title = $db->query("SELECT thread_title FROM debating_threads WHERE thread_id = ".$db->quote($deb_id))->fetchColumn();
 			add_note($starter, $user_replied." has replied to your argument in the debate '".$deb_title."'.", "index.php?page=view_private_thread&thread_id=".$deb_id);
+		}
+	}
+
+	$followers = $db->query("SELECT * FROM followed_threads WHERE thread_id = ".$db->quote($thread_id));
+	foreach($followers as $user){
+		if($user['user_id']!=$_SESSION['user_id']){
+			add_note($user['user_id'], "There is new activity in the debate you are following '".$deb_title."'. Click here to see.", "index.php?page=view_private_thread&thread_id=".$thread_id);
 		}
 	}
 	
@@ -2000,4 +2010,27 @@ function send_mail($to,$subject,$body,$from){
 		return false;
 	}	
 }
+
+function following_thread($uid, $thread_id, $change){
+	global $db;
+	$check_state = $db->query("SELECT user_id FROM followed_threads WHERE thread_id = ".$db->quote($thread_id)." AND user_id = ".$db->quote($uid))->fetchColumn();
+	if($change==true){
+		if(!$check_state){
+			$db->query("INSERT INTO followed_threads VALUES('', ".$db->quote($thread_id).", ".$db->quote($uid).")");
+			//successfully...
+			return "followed";
+		}else{
+			$db->query("DELETE FROM followed_threads WHERE thread_id = ".$db->quote($thread_id)." AND user_id = ".$db->quote($uid));
+			//successfully...
+			return "unfollowed";
+		}	
+	}else{
+		if($check_state){
+			return true;
+		}else{
+			return false;
+		}
+	}
+}
 ?>
+

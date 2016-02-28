@@ -386,7 +386,7 @@ if(loggedin()){
 							?>
 					</div>
 				</div>
-				<div class = "profile-bottom-inner-container" style = "margin-left: 2%">
+				<div class = "profile-bottom-inner-container" style = "margin-left: 2%;overflow: auto;">
 					
 					
 					<?php
