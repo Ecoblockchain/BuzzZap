@@ -646,11 +646,11 @@ if(loggedin()){
 						}else{
 							$keept = "";
 						}
-						
+
 						?>
 						<div id = "txt-ans-container" class = "ans-type-container" style = "display:none;">	
 							Text argument:<br>
-							<textarea placeholder = "Explanation/Argument..." class = "textarea-type1" id = 'new-arg-textarea' style = "width:84%;" name = "reply_text" value = ""><?php echo $keept; ?></textarea><br>
+							<textarea placeholder = "Explanation/Argument...(please include good grammar)" class = "textarea-type1" id = 'new-arg-textarea' style = "width:84%;" name = "reply_text" value = ""><?php echo $keept; ?></textarea><br>
 							
 						</div>
 						<br><input type = "submit" class = "loggedout-form-submit" id = "argsubmit" style = "display:none;" value = "Post">
