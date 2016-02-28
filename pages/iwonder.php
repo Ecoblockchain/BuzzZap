@@ -84,7 +84,7 @@ if(loggedin()){
 		
 					?>
 				
-				<span style = "display:none;font-size:60%;float:right;color:green;" id = "min-opt<?php echo $row['thread_id']; ?>">Minimize<br></span>
+				g<span style = "display:none;font-size:60%;float:right;color:green;" id = "min-opt<?php echo $row['thread_id']; ?>">Minimize<br></span>
 				<span id = "iwst<?php echo $row['thread_id']; ?>"><?php echo $row['thread_title']; ?></span>
 				<?php echo "<br><span style = 'color:".$sticky_footer_bg.";font-size:60%;>'>by  <a style = 'color: #71C671;' href = 'index.php?page=profile&user=".$db->query("SELECT user_id FROM users WHERE user_username = ".$db->quote($row['thread_starter']))->fetchColumn()."'>".$row['thread_starter']."</a><br>
 				".date("h:ia d M Y ", $row['time_created'])."</span>";?>
