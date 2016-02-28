@@ -80,7 +80,7 @@ if(loggedin()){
 			echo "<div class = 'page-path'>Debating > ".$ctype." Competitions </div>";
 			echo "<div class = 'title-private-debate'>".$p_title."<br><span style = 'font-size:40%;'>".$title_note."</span></div><br>";
 			if($type == "0" || $type == "1"){
-				if( (group_leader($_SESSION['user_id'])&&$type=="0")||($type=="1"&&user_rank($_SESSION['user_id'],3)) ){
+				if(group_leader($_SESSION['user_id'])){
 				?>
 				<script>
 				$(document).ready(function(){
@@ -126,7 +126,9 @@ if(loggedin()){
 							 
 								<span id = 'comp_field_labels'>
 									Enter the groups(s) you want to compete against in this debate.
-									<?php if($type=="0"){ ?> As it is a private competition, the groups must be within this community.<?php } ?>
+									<?php if($type=="0"){ ?> As it is a private competition, the groups must be within this community.<?php }else{
+										?>As it is a global competition, any group, from any community can compete.<?php
+										} ?>
 								</span>	<br>
 								<span id = 'c-deb-sub-sec'>
 									<br><span style = 'font-size:80%;'>Debate subject:</span><br>
@@ -263,7 +265,7 @@ if(loggedin()){
 								if(count($opps)!=0){
 									if(strlen($invalid_hosts)>0){
 										if($type=="1"){
-											$errors[] = "The following groups(s) do not exist: ".trim_commas($invalid_hosts)."<br>";
+											$errors[] = "The following group(s) do not exist: ".trim_commas($invalid_hosts)."<br>";
 										}else{
 											$errors[] = "The following group(s) do not exist or are not part of your community ".trim_commas($invalid_hosts)."<br> (opponents must be part of this community as this is a private competition)";
 										}
@@ -357,7 +359,7 @@ if(loggedin()){
 									
 										$users_in_g = array_diff(get_users_in_group($opp_), array($leader_id));
 										foreach($users_in_g as $user_id){
-											add_note($user_id, "The group ".$host_name." has started a new competition, and has invited your group to take part. Please wait for your group leader to accept or decline the invite.", "index.php?page=comp_home&type=0");
+											add_note($user_id, "The group ".$host_name." has started a new competition, and has invited your group to take part. Please wait for your group leader to accept or decline the invite.", "index.php?page=comp_home&type=".$type);
 										}
 										
 									}
@@ -496,7 +498,7 @@ if(loggedin()){
 							$response = $rci[1];
 							$comp_id = $rci[0];
 							if(($response=="1" || $response=="2")&&(count($rci)==2)){
-								respond_comp_invite($comp_id, $response, $type, $host_id);
+								respond_comp_invite($comp_id, $response, $host_id);
 								check_comp_ready($comp_id, $type);
 								setcookie("success", "1Successfully responded to invitation.", time()+10);
 							}else{

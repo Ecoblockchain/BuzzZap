@@ -1301,17 +1301,13 @@ function comp_started($comp_id){
 function get_comp_user_starter_id($comp_id, $type){
 	global $db;
 	$get_starter = $db->query("SELECT starter_id FROM competitions WHERE comp_id = ".$db->quote($comp_id))->fetchColumn();	
-	if($type=="0"){
-		return $user_id = get_group_leader_id($get_starter);	
-	}else{
-		return $user_id = $db->query("SELECT  user_id FROM users WHERE user_com = ".$db->quote($get_starter). "AND user_rank = 3")->fetchColumn();
-	}
+	return $user_id = get_group_leader_id($get_starter);	
 }	
 
-function respond_comp_invite($comp_id, $response, $type, $opp_id){
+function respond_comp_invite($comp_id, $response, $opp_id){
 	global $db;
 	
-	$acceptance_info = get_comp_acceptance_info($comp_id, $type);
+	$acceptance_info = get_comp_acceptance_info($comp_id);
 	if(array_key_exists($opp_id, $acceptance_info)){
 		$acceptance_info[$opp_id]=$response;
 	}	
@@ -1429,7 +1425,7 @@ function get_judge_acceptance($comp_id){
 	}
 }
 
-function check_comp_ready($comp_id){
+function check_comp_ready($comp_id, $type){
 	global $db;
 	$acceptance = get_comp_acceptance_info($comp_id);
 	if(comp_started($comp_id)==false){
@@ -1473,7 +1469,7 @@ function check_comp_ready($comp_id){
 			}
 			$jval = $db->query("SELECT judges FROM competitions WHERE comp_id = ".$db->quote($comp_id)." LIMIT 1")->fetchColumn();
 			$comp_c_id = $db->query("SELECT comp_com_id FROM competitions WHERE comp_id = ".$db->quote($comp_id)." LIMIT 1")->fetchColumn();
-			if($jval=="norm"){
+			if($jval=="norm"&&$type=="0"){
 				add_com_feed($comp_c_id, "A new private competition has started and everyone not involved is welcome to judge it which will add to your reputation! <a href = 'index.php?page=view_comp&comp=0".$comp_id."' >Click here</a> to see!");
 			}
 		
@@ -1622,13 +1618,22 @@ function end_comp($comp_id){
 			
 			$winner_ids = get_comp_winner($comp_id);
 			$all_cands = get_comp_acceptance_info($comp_id);
+			$all_cands[$comp_info['starter_id']]="1";
 			foreach($all_cands as $gid=>$acc){
 				if($acc==1){
+
 					$cid = $db->query("SELECT com_id FROM private_groups WHERE group_id = ".$db->quote($gid))->fetchColumn();
+					
 					$cur_val = $db->query("SELECT com_comp_stat FROM com_profile WHERE com_id = ".$db->quote($cid))->fetchColumn();
 					$cur_val = explode(",",$cur_val);
-					if($winner_id[0]==$jid&&count($winner_ids)==1){
+					if($winner_ids[0]==$gid&&count($winner_ids)==1){
 						$new0 = $cur_val[0] + 1;
+						$users = get_users_contributed_comp($comp_id, $gid);
+					
+						foreach($users as $uid){
+							add_rep(7,$uid);
+							add_badge("Has contributed to the victory of his/her group in a competition.", $uid, "You have just recieved a new badge for contributing the the victory of your group in the competition '".$comp_info['comp_title']."'.");
+						}
 					}else{
 						$new0 = $cur_val[0];
 					}
@@ -1919,7 +1924,7 @@ function add_profile_link($name, $type, $style="", $ex_link=""){
 
 		case 2:
 			$link = "index.php?page=private_groups&com=".$db->query("SELECT com_id FROM private_groups WHERE group_name = ".$db->quote($name))->fetchColumn()
-			."&highlight_g=".$db->query("SELECT group_id FROM private_groups WHERE group_name = ".$db->quote($name))->fetchColumn();
+			."&highlight_g=".$db->query("SELECT group_id FROM private_groups WHERE group_name = ".$db->quote($name))->fetchColumn()."#start-group-list";
 	}
 
 	$html = "<a href = '".$link.$ex_link."' style = '".$style."'>".$name."</a>";

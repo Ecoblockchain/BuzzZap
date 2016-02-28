@@ -39,7 +39,7 @@ if(loggedin()||!empty($out_judge_key)){
 			}
 		}
 
-		if(loggedin_as_Admin()||(!empty($comp_info["comp_title"]))&&($valid_to_view==true)&&(in_array($type, array("0","1"))&&(!empty($type_match_comp)))){
+		if(loggedin_as_admin()||(!empty($comp_info["comp_title"]))&&($valid_to_view==true)&&(in_array($type, array("0","1"))&&(!empty($type_match_comp)))){
 
 			?>
 			<script>
@@ -235,10 +235,10 @@ if(loggedin()||!empty($out_judge_key)){
 					if(end_comp($comp_id)||comp_ended($comp_id)){
 						$winner_ids = get_comp_winner($comp_id);
 						if(count($winner_ids)==1){
-							$winner = ($type=="0")?$db->query("SELECT group_name FROM private_groups WHERE group_id=".$db->quote($winner_ids[0]))->fetchColumn():$db->query("SELECT com_name FROM communities WHERE com_id=".$db->quote($winner_ids[0]))->fetchColumn();
+							$winner = $db->query("SELECT group_name FROM private_groups WHERE group_id=".$db->quote($winner_ids[0]))->fetchColumn();
 							echo "<div id = 'page-disabled'>This competition has ended.
 							<br><br>
-							Winner: ".$winner."<br>
+							Winner: ".add_profile_link($winner, 2,'color: black')."<br>
 							<img src = 'pages/trophy.png' style = 'width: 400px'>
 						
 						
@@ -246,7 +246,7 @@ if(loggedin()||!empty($out_judge_key)){
 						}else{
 							$dt_str=  "";
 							foreach($winner_ids as $id){
-								$name = ($type=="0")?$db->query("SELECT group_name FROM private_groups WHERE group_id=".$db->quote($id))->fetchColumn():$db->query("SELECT com_name FROM communities WHERE com_id=".$db->quote($id))->fetchColumn();
+								$name = $db->query("SELECT group_name FROM private_groups WHERE group_id=".$db->quote($id))->fetchColumn();
 								$dt_str = $dt_str.$name.",";
 							}
 							echo "<div id = 'page-disabled'>This competition has ended. The competiton was a draw/tie between the following candidates:

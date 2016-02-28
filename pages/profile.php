@@ -379,8 +379,9 @@ if(loggedin()){
 							}
 							
 							foreach($badges as $text=>$quant){
+								
 								echo "<div class = 'sing-badge-container'>";
-									echo "<div class = 'badge-body' id = 'badge-c-".rand(1,6)."'><br><br>".$text."</div><div class = 'badge-quant-label'>x".$quant."</div>";
+									echo "<div class = 'badge-body' id = 'badge-c-".rand(1,6)."'><br><div class = 'inner-badge-txt'>".$text."</div></div><div class = 'badge-quant-label'>x".$quant."</div>";
 								echo "</div>";
 							}
 							?>

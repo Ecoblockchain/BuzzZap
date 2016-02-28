@@ -65,7 +65,7 @@ if(loggedin()){
 				}else if($count==2){
 					$color = "#59c3d8";
 				}
-				echo "<span style = 'color:".$color."'>".$count.".".add_profile_link($gname, 2, 'color: '.$color, "#start-group-list")."</span><hr size = '1'>";
+				echo "<span style = 'color:".$color."'>".$count.".".add_profile_link($gname, 2, 'color: '.$color)."</span><hr size = '1'>";
 				$count++;
 			}
 		?>
