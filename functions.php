@@ -1212,7 +1212,7 @@ function start_comp($type, $opps_array, $end_time, $judges, $topic, $starter_id,
 
 	$acceptance_str = trim_commas($acceptance_str);
 
-	$comp_com_id = ($type=="0")? get_user_field($_SESSION['user_id'], "user_com"): "0";
+	$comp_com_id =  get_user_field($_SESSION['user_id'], "user_com");
 
 	if($judges != "norm"){
 		$judges = implode(",",$judges);
@@ -1236,7 +1236,7 @@ function start_comp($type, $opps_array, $end_time, $judges, $topic, $starter_id,
 	return $db->lastInsertId();
 }
 
-function get_comp_acceptance_info($comp_id, $type){
+function get_comp_acceptance_info($comp_id){
 	global $db;
 	/*
 	acceptance 1 = accepted.
@@ -1261,11 +1261,11 @@ function get_comp_acceptance_info($comp_id, $type){
 	
 }
 
-function user_in_comp($user_id, $comp_id, $type){
+function user_in_comp($user_id, $comp_id){
 	global $db;
 	
 	$host_ids = array();
-	$all_cands = get_comp_acceptance_info($comp_id, $type);
+	$all_cands = get_comp_acceptance_info($comp_id);
 	foreach($all_cands as $key=>$value){
 		if($value==1){
 			$host_ids[]=$key;
@@ -1275,11 +1275,13 @@ function user_in_comp($user_id, $comp_id, $type){
 	$host_ids[] = $gci["starter_id"];
 
 	foreach($host_ids as $id){
-		if( (($type=="0")&&(user_in_group($user_id, $id, $check_act="true")))||(($type=="1")&&(get_user_community($user_id, "com_id")==$id))){
+		if(user_in_group($user_id, $id, $check_act="true")){
 			return true;
 			break;
 		}		
 	}
+
+	return false;
 	
 }
 
@@ -1319,9 +1321,9 @@ function respond_comp_invite($comp_id, $response, $type, $opp_id){
 
 }	
 
-function waiting_for_comp_response($comp_id, $type, $opp_id){
+function waiting_for_comp_response($comp_id, $opp_id){
 	global $db;
-	$acc_info = get_comp_acceptance_info($comp_id, $type);
+	$acc_info = get_comp_acceptance_info($comp_id);
 	if((array_key_exists($opp_id, $acc_info))&&($acc_info[$opp_id]=="0")){
 		return true;
 	}else{
@@ -1341,7 +1343,7 @@ function get_comp_info($comp_id){
 
 function get_all_users_in_p_comp($comp_id){
 	global $db;
-	$opp_id_as_key = get_comp_acceptance_info($comp_id, "0");
+	$opp_id_as_key = get_comp_acceptance_info($comp_id);
 	$opp_ids = array();
 	
 	foreach($opp_id_as_key as $opp_id=>$element){
@@ -1499,16 +1501,13 @@ function check_comp_ready($comp_id, $type){
 	
 }
 
-function get_comp_starter_by_type($comp_id, $type){
+function get_comp_starter_by_type($comp_id){
 	global $db;
 	//returns group name or com name.
 	$gci = get_comp_info($comp_id);
 	$starter_id = $gci["starter_id"];
-	if($type=="0"){
-		return $db->query("SELECT group_name FROM private_groups WHERE group_id = ".$db->quote($starter_id))->fetchColumn();
-	}else{
-		return $db->query("SELECT com_name FROM communities WHERE com_id = ".$db->quote($starter_id))->fetchColumn();
-	}
+	return $db->query("SELECT group_name FROM private_groups WHERE group_id = ".$db->quote($starter_id))->fetchColumn();
+	
 }
 
 function get_cand_side($comp_id, $cand_id){
@@ -1544,9 +1543,9 @@ function add_voter_comp_arg($table, $user_id, $arg_id){
 	}		
 }
 
-function get_comp_winner($comp_id, $type){
+function get_comp_winner($comp_id){
 	global $db;
-	$scores = get_comp_acceptance_info($comp_id,$type);
+	$scores = get_comp_acceptance_info($comp_id);
 	$gci = get_comp_info($comp_id);
 	$scores[$gci["starter_id"]] = "0";
 	foreach($scores as $key=>&$value){
@@ -1630,67 +1629,34 @@ function end_comp($comp_id){
 	$comp_info = get_comp_info($comp_id);
 	if((substr($comp_info['end'],0,1)!=".")&&(!comp_ended($comp_id))){
 		if(time()>intval($comp_info['end'])){
-			if($comp_info['comp_type']=="0"){
-				$all_users = get_all_users_in_p_comp($comp_id);
-				foreach($all_users as $uid){
-					add_note($uid, "A competition you are involved in ('".$comp_info['comp_title']."') has just ended. Click here to see the results.", "index.php?page=view_comp&comp=".$comp_info['comp_type'].$comp_id);
-				}
-			}else{
-				$opp_id_as_key = get_comp_acceptance_info($comp_id, "1");
-				$opp_ids = array();
-				foreach($opp_id_as_key as $opp_id=>$element){
-					if($element=="1"){
-						$opp_ids[] = $opp_id;
-					}
-				}	
-				
-				$opp_ids[] = $comp_info["starter_id"];
-				foreach($opp_ids as $cid){
-					if($cid!=null){
-						add_com_feed($cid, "A global competition we are all involved in has just ended! <a href = 'index.php?page=view_comp&comp=1".$comp_id."' >Click here</a> to see the results.");
-					}
-				}
+		
+			$all_users = get_all_users_in_p_comp($comp_id);
+			foreach($all_users as $uid){
+				add_note($uid, "A competition you are involved in ('".$comp_info['comp_title']."') has just ended. Click here to see the results.", "index.php?page=view_comp&comp=".$comp_info['comp_type'].$comp_id);
 			}
-	
+			
 			$end = $db->prepare("UPDATE competitions SET end = 'true' WHERE comp_id = :comp_id");
 			$end->execute(array("comp_id"=>$comp_id));
 			
-			$winner_ids = get_comp_winner($comp_id, $comp_info['comp_type']);
-			if(count($winner_ids)==1){
-				$winner = $winner_ids[0];
-				$gc_string = ($comp_info['comp_type']=="0")? "group":"community";
-				if($gc_string=="community"){
-					foreach($opp_ids as $cid){
-						
-						$cur_val = $db->query("SELECT com_comp_stat FROM com_profile WHERE com_id = ".$db->quote($cid))->fetchColumn();
-						$cur_val = explode(",",$cur_val);
-						if($winner==$cid){
-							$new0 = $cur_val[0] + 1;
-						}else{
-							$new0 = $cur_val[0];
-						}
-						$new1 = $cur_val[1]+1;
-						$newval = $new0.",".$new1;
-						update_com_profile($cid,"com_comp_stat", $newval);
-					}
-					
-				}
-				$rew_users = get_users_contributed_comp($comp_id, $winner);
-				foreach($rew_users as $uid){
-					add_rep(10, $uid, " you contributed to your ".$gc_string."'s victory in the competition '".$comp_info['comp_title']."'");
-					add_badge("Being on the winning side of a competition.", $uid, "you contributed to your ".$gc_string."'s victory in the competition '".$comp_info['comp_title']."'");
-				}
-				
-			}else{
-				foreach($opp_ids as $cid){
+			$winner_ids = get_comp_winner($comp_id);
+			$all_cands = get_comp_acceptance_info($comp_id);
+			foreach($all_cands as $gid=>$acc){
+				if($acc==1){
+					$cid = $db->query("SELECT com_id FROM private_groups WHERE group_id = ".$db->quote($gid))->fetchColumn();
 					$cur_val = $db->query("SELECT com_comp_stat FROM com_profile WHERE com_id = ".$db->quote($cid))->fetchColumn();
 					$cur_val = explode(",",$cur_val);
-					$new0 = $cur_val[0];
+					if($winner_id[0]==$jid&&count($winner_ids)==1){
+						$new0 = $cur_val[0] + 1;
+					}else{
+						$new0 = $cur_val[0];
+					}
 					$new1 = $cur_val[1]+1;
 					$newval = $new0.",".$new1;
 					update_com_profile($cid,"com_comp_stat", $newval);
 				}
+
 			}
+			
 			return true;
 		}else{
 			return false;

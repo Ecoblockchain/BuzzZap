@@ -64,8 +64,8 @@ if(loggedin()){
 			if($type=="0"){
 				$ctype = "Private";
 				$p_title = "Private Competitions";
-				$des_opp_placeholder = "e.g group1, group2, group3";
-				$gc_string = "group";
+				
+			
 				$gp_string = "private";
 				$table_search = "private_groups";
 				$col_name = "group_name";
@@ -73,8 +73,7 @@ if(loggedin()){
 			}else{
 				$ctype = "Global";
 				$p_title = "Global Competitions";
-				$des_opp_placeholder = "e.g community1, community2, community3";
-				$gc_string = "community";
+
 				$gp_string = "global";
 				$table_search = "communities";
 				$col_name = "com_name";
@@ -92,7 +91,7 @@ if(loggedin()){
 						if(val=="jnorm"){
 							$(".tjudge-info").html("This means any user who is not involved in the competition can view the debate, and vote each argument up or down.<br>");
 						}else if(val=="jspec"){
-							$(".tjudge-info").html("This means you can choose any specific and trustworthy user(s) to judge the competition, however they cannot be in any of the involved <?php echo $gc_string.'\'s'; ?>: <input type = 'text' placeholder = 'usernames... e.g user1,user2,user3' class = 'tjudge-spec-users-field' name = 'jspec_users'><br>");
+							$(".tjudge-info").html("This means you can choose any specific and trustworthy user(s) to judge the competition, however they cannot be in any of the involved groups: <input type = 'text' placeholder = 'usernames... e.g user1,user2,user3' class = 'tjudge-spec-users-field' name = 'jspec_users'><br>");
 						}else if(val=="jout"){
 							$(".tjudge-info").html("This means you would like someone who is not on BuzzZap at all to judge the competition, a link will be sent to them. Please supply their email(s) here: <input type = 'text' placeholder = 'emails... e.g email1,email2,email3' id = 'tjudge-out-email-field' name = 'jout_emails' class = 'tjudge-spec-users-field'><br>");
 						}
@@ -122,12 +121,12 @@ if(loggedin()){
 								</span>	<br><br>
 
 								<span style = 'font-size:80%;'>Desired Opponents: </span><br>
-								<input type = "text" id = "des_opponents" class = "loggedout-form-fields" placeholder = "<?php echo $des_opp_placeholder; ?>" style = "height:30px;outline-width:0px;font-size:60%;box-shadow:none;" name = "des_opponents">
+								<input type = "text" id = "des_opponents" class = "loggedout-form-fields" placeholder = "e.g group1, group2, group3" style = "height:30px;outline-width:0px;font-size:60%;box-shadow:none;" name = "des_opponents">
 							 
 								 <div id = "pred_results"></div>
 							 
 								<span id = 'comp_field_labels'>
-									Enter the <?php echo $gc_string; ?>(s) you want to compete against in this debate.
+									Enter the groups(s) you want to compete against in this debate.
 									<?php if($type=="0"){ ?> As it is a private competition, the groups must be within this community.<?php } ?>
 								</span>	<br>
 								<span id = 'c-deb-sub-sec'>
@@ -172,7 +171,7 @@ if(loggedin()){
 								<textarea name = "comp_note" id = "sncomp-txtarea" placeholder= "A note that will be displayed to everyone involved (optional)"></textarea>
 								<span id = 'comp_field_labels'>
 									<hr size = '1'>
-									Each <?php echo $gc_string; ?> will be randomly chosen to be either FOR or AGAINST (argue yes or no to) the debate question/notion. Groups are judged on how well they have argued their point, baring in mind it may not be their actual opinion.
+									Each group will be randomly chosen to be either FOR or AGAINST (argue yes or no to) the debate question/notion. Groups are judged on how well they have argued their point, baring in mind it may not be their actual opinion.
 								</span>	<br>
 								<input type = "submit" class = "loggedout-form-submit" style = "font-size:80%;box-shadow:none;width:200px;padding:10px;" value = "Start Competition">
 								
@@ -181,13 +180,11 @@ if(loggedin()){
 					
 						<?php
 							if(isset($_POST['des_opponents'], $_POST['comp_topic'], $_POST['comp_dur'], $_POST['comp_judge'], $_POST['deb_question'])){
-								if($type=="0"){
-									$user_host_name = array(get_user_group($_SESSION['user_id'], "group_name"));
-								}else{
-									$user_host_name = array(get_user_community($_SESSION['user_id'], "com_name"));	
-								}
+								
+								$user_group_name = array(get_user_group($_SESSION['user_id'], "group_name"));
+								
 								$opps_w_starter = strlist_to_array(htmlentities(trim_commas(trim($_POST['des_opponents']))), false);
-								$opps = array_diff($opps_w_starter, $user_host_name);
+								$opps = array_diff($opps_w_starter, $user_group_name);
 								
 								$comp_topic_id = htmlentities($_POST['comp_topic']);
 								$comp_dur = htmlentities($_POST['comp_dur']);
@@ -244,17 +241,16 @@ if(loggedin()){
 								
 								$com_id = get_user_community($_SESSION['user_id'], "com_id");
 								
+							
+								$table = "private_groups";
+								$col_name = "group_name";
 								if($type=="0"){
-									$table = "private_groups";
-									$col_name = "group_name";
 									$e_validation = "AND com_id = ".$db->quote($com_id);
-									$id_col = "group_id";
 								}else{
-									$col_name = "com_name";
-									$table = "communities";
 									$e_validation = "";
-									$id_col = "com_id";
 								}
+								$id_col = "group_id";
+							
 								foreach($opps as &$opp){
 									
 									$check_host = $db->query("SELECT `".$col_name."` FROM `".$table."` WHERE `".$col_name."` = ".$db->quote($opp).$e_validation)->fetchColumn();
@@ -267,7 +263,11 @@ if(loggedin()){
 								}	
 								if(count($opps)!=0){
 									if(strlen($invalid_hosts)>0){
-										$errors[] = "The following ".$gc_string."(s) do not exist, or are not part of your community: ".trim_commas($invalid_hosts)."<br>";
+										if($type=="1"){
+											$errors[] = "The following groups(s) do not exist: ".trim_commas($invalid_hosts)."<br>";
+										}else{
+											$errors[] = "The following group(s) do not exist or are not part of your community ".trim_commas($invalid_hosts)."<br> (opponents must be part of this community as this is a private competition)";
+										}
 									}
 								}else{
 									$errors[] = "You must have atleast one valid opponent.";
@@ -278,12 +278,8 @@ if(loggedin()){
 								// once started, end time is time()+($comp_dur*3600);
 								
 								
-								$invjudges = "";
-								if($type=="0"){
-									$user_host_id = get_user_group($_SESSION['user_id'], "group_id");
-								}else{
-									$user_host_id = get_user_community($_SESSION['user_id'], "com_id");	
-								}
+								
+								$user_host_id = get_user_group($_SESSION['user_id'], "group_id");
 								
 								$opps_ws = $opps;
 								$opps_ws[] = $user_host_id;
@@ -292,15 +288,9 @@ if(loggedin()){
 									
 									foreach($opps_ws as $opph){
 										foreach($judges as $judgeid){
-											if($type=="0"){
-												if(user_in_group($judgeid, $opph)){
-													$invjudges = $invjudges.",".get_user_field($judgeid, "user_username");
-												}
-											}else{
-												if(user_in_community($judgeid, $opph)){
-
-													$invjudges = $invjudges.",".get_user_field($judgeid, "user_username");
-												}
+											
+											if(user_in_group($judgeid, $opph)){
+												$invjudges = $invjudges.",".get_user_field($judgeid, "user_username");
 											}
 										}
 									}
@@ -310,10 +300,11 @@ if(loggedin()){
 									}
 								}	
 								
-								if( (group_leader($_SESSION['user_id'])&&$type=="0")||($type=="1"&&user_rank($_SESSION['user_id'],3)) ){
-									$starter_id= ($type=="0")? get_user_group($_SESSION['user_id'], "group_id") : get_user_community($_SESSION['user_id'], "com_id");
+								$starter_id = "";
+								if(group_leader($_SESSION['user_id'])){
+									$starter_id= get_user_group($_SESSION['user_id'], "group_id");
 								}else{
-									$errors[] = ($type=="0")? "You must be in a group and the group leader to start a private competition.<br>" : "You must be your community's leader to start a global competition.<br>";
+									$errors[] =  "You must be in a group and the group leader to start a competition.<br>";
 								}
 
 								if(empty($deb_question)){
@@ -351,31 +342,27 @@ if(loggedin()){
 									if($type=="0"){
 										$users_in_group = array_diff(get_users_in_group($starter_id), array($_SESSION['user_id']));
 										foreach($users_in_group as $user_id){
-											add_note($user_id, "Your group leader has started a new private competition. Please wait while other groups accept or decline to take part.", "");
+											add_note($user_id, "Your group leader has started a new competition. Please wait while other groups accept or decline to take part.", "");
 										}
-									}else{
-										add_com_feed(get_user_community($_SESSION['user_id'], "com_id"), "Your community leader has started a new global competition. Please wait while other groups accept or decline to take part.");
-									}	
+									}
+
 									
-									$host_name = ($type=="0")? get_user_group($_SESSION['user_id'], "group_name"): get_user_community($_SESSION['user_id'], "com_name");
-									$host_id = ($type=="0")? get_user_group($_SESSION['user_id'], "group_id"): get_user_community($_SESSION['user_id'], "com_id");
-									$opts = array(0,1,0,1);
+									$host_name = get_user_group($_SESSION['user_id'], "group_name");
+									$opts = array(0,1,0,1,0,1,0);
 									
 									foreach($opps as $opp_){
 									
-										$leader_id = ($type=="0")? get_group_leader_id($opp_): get_com_leader_id($opp_);
-										add_note($leader_id, "The ".$gc_string." ".$host_name." has started a new ".$gp_string." competition, and has invited your ".$gc_string." to take part. Visit the ".$gp_string." competition page to accept or decline.", "index.php?page=comp_home&type=".$type);
+										$leader_id = get_group_leader_id($opp_);
+										add_note($leader_id, "The group ".$host_name." has started a new competition, and has invited your group to take part. Click here to accept or decline.", "index.php?page=comp_home&type=".$type);
 									
-										if($type=="0"){
-											$users_in_g = array_diff(get_users_in_group($opp_), array($leader_id));
-											foreach($users_in_g as $user_id){
-												add_note($user_id, "The group ".get_user_group($_SESSION['user_id'], "group_name")." has started a new private competition, and has invited your group to take part. Please wait for your group leader to accept or decline the invite.", "index.php?page=comp_home&type=0");
-											}
-										}else{
-											add_com_feed($opp_, "The community ".get_user_community($_SESSION['user_id'], "com_name")." has started a new global competition, and has invited your community to take part. Please wait for your community leader to accept or decline the invite.");
+									
+										$users_in_g = array_diff(get_users_in_group($opp_), array($leader_id));
+										foreach($users_in_g as $user_id){
+											add_note($user_id, "The group ".$host_name." has started a new competition, and has invited your group to take part. Please wait for your group leader to accept or decline the invite.", "index.php?page=comp_home&type=0");
 										}
+										
 									}
-									$opps[] = $db->query("SELECT `".$id_col."` FROM `".$table."` WHERE `".$col_name."`=".$db->quote($user_host_name[0]))->fetchColumn();	
+									$opps[] = $db->query("SELECT `".$id_col."` FROM `".$table."` WHERE `".$col_name."`=".$db->quote($user_group_name[0]))->fetchColumn();	
 									$c = 0;
 									shuffle($opps);
 									foreach($opps as $opp_){
@@ -405,9 +392,9 @@ if(loggedin()){
 				
 				<?php
 				$invitations = array(); // contains comp_ids that await response.
-				$host_id = ($type=="0")? get_user_group($_SESSION['user_id'], "group_id"): get_user_community($_SESSION['user_id'], "com_id");
-				$com_id_parse = ($type=="0")?get_user_field($_SESSION['user_id'], "user_com"): "0";
-				$get_relevant_comps= $db->prepare("SELECT * FROM competitions WHERE comp_type=:ctype AND comp_com_id = :com_id AND end != 'true' ORDER by created DESC");
+				$host_id = get_user_group($_SESSION['user_id'], "group_id");
+				$com_id_parse = get_user_field($_SESSION['user_id'], "user_com");
+				$get_relevant_comps= $db->prepare("SELECT * FROM competitions WHERE (comp_type = :ctype) AND((comp_type=0 AND comp_com_id = :com_id)OR(comp_type=1)) AND end != 'true' ORDER by created DESC");
 				$get_relevant_comps->execute(array("com_id"=>$com_id_parse, "ctype"=>$type));
 				if($get_relevant_comps->rowCount()>0){
 					while($row = $get_relevant_comps->fetch(PDO::FETCH_ASSOC)){
@@ -432,7 +419,7 @@ if(loggedin()){
 							$time_left_str = "*NOTE: This competition has ended";
 						}
 						$user_involved = "false";
-						$cand_names = get_comp_acceptance_info($row['comp_id'], $type);
+						$cand_names = get_comp_acceptance_info($row['comp_id']);
 						$get_starter = $db->query("SELECT starter_id FROM competitions WHERE comp_id = ".$db->quote($row['comp_id']))->fetchColumn();
 						$cand_names[$get_starter] = "1";	
 						$refined_names = array();
@@ -443,7 +430,7 @@ if(loggedin()){
 								$label_own_group="true";
 								$user_involved = "true";
 							}
-							$name = ($type=="0")? $db->query("SELECT group_name FROM private_groups WHERE group_id = ".$db->quote($id))->fetchColumn():$db->query("SELECT com_name FROM communities WHERE com_id = ".$db->quote($id))->fetchColumn();
+							$name = $db->query("SELECT group_name FROM private_groups WHERE group_id = ".$db->quote($id))->fetchColumn();
 							
 							if($label_own_group=="true"){
 								$name = "*".$name."*";
@@ -460,8 +447,8 @@ if(loggedin()){
 							$cand_ex_str = "";
 						}	
 						
-						if( (group_leader($_SESSION['user_id'])&&$type=="0")||($type=="1"&&user_rank($_SESSION['user_id'],3)) ){ 
-							if(waiting_for_comp_response($row['comp_id'], $type, $host_id)){
+						if( (group_leader($_SESSION['user_id'])) ){ 
+							if(waiting_for_comp_response($row['comp_id'], $host_id)){
 								$invitations[]  = $row['comp_id'];
 							}
 						}
