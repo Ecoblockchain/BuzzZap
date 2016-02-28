@@ -757,15 +757,16 @@ if(!loggedin()){
 				
 				<div class = "snc-error-container"></div>
 				<div class = "snc-form" style = "">
+
 					<form action = "index.php?page=home&go_to=4" method = "POST" id = "snc-form-in">
 						<div style = 'white-space:normal;line-height: 20px;letter-spacing: 1px;'><?php echo (get_feature_status("payments")=="0")? get_static_content("snc_header"): get_disabled_message("payments"); ?></div><br>
-						<input placeholder = "Community Name" type = "text" name = "snc_com_name" class = "loggedout-form-fields-snc" style = "width:500px;" id = "sf1"><div class = "snc-field-note" id = "sfn1">This is the name of your community.</div>
-						<input placeholder = "Community Pass Code" type = "password" name = "snc_com_pass" class = "loggedout-form-fields-snc" style = "width:400px;" id = "sf2"><div class = "snc-field-note" id = "sfn2">This is the passcode used to access the community by all members.</div>
-						<input placeholder = "Your Username" type = "text" name = "snc_leader_username" class = "loggedout-form-fields-snc" style = "width:500px;" id = "sf3"><div class = "snc-field-note" id = "sfn3">This is the community leaders username, you.</div>
+						<input placeholder = "Community Name" value = "<?php echo (isset($_POST['snc_com_name']))? $_POST['snc_com_name']: ''; ?>" type = "text" name = "snc_com_name" class = "loggedout-form-fields-snc" style = "width:500px;" id = "sf1"><div class = "snc-field-note" id = "sfn1">This is the name of your community.</div>
+						<input placeholder = "Community Pass Code" value = "<?php echo (isset($_POST['snc_com_pass']))? $_POST['snc_com_pass']: ''; ?>" type = "password" name = "snc_com_pass" class = "loggedout-form-fields-snc" style = "width:400px;" id = "sf2"><div class = "snc-field-note" id = "sfn2">This is the passcode used to access the community by all members.</div>
+						<input placeholder = "Your Username" value = "<?php echo (isset($_POST['snc_com_username']))? $_POST['snc_com_username']: ''; ?>" type = "text" name = "snc_leader_username" class = "loggedout-form-fields-snc" style = "width:500px;" id = "sf3"><div class = "snc-field-note" id = "sfn3">This is the community leaders username, you.</div>
 						<input placeholder = "Your Password" type = "password" name = "snc_leader_pass" class = "loggedout-form-fields-snc" style = "width:400px;" id = "sf4"><div class = "snc-field-note" id = "sfn4">Your personal password.</div>
 						<input placeholder = "Verify Your Password" type = "password" name = "snc_leader_vpass" class = "loggedout-form-fields-snc" style = "width:400px;" id = "sf5"><div class = "snc-field-note" id = "sfn5">Verify your personal password.</div>
-						<input placeholder = "Your Firstname" type = "text" name = "snc_leader_firstname" class = "loggedout-form-fields-snc" style = "width:250px;" id = "sf6"><input placeholder = "Your Lastname"  type = "text" name = "snc_leader_lastname" class = "loggedout-form-fields-snc" style = "width:250px;" id = "sf6"><div class = "snc-field-note" id = "sfn6">Enter your fullname.</div>
-						<input placeholder = "Your Email"  type = "text" name = "snc_leader_email" class = "loggedout-form-fields-snc" style = "width:500px;" id = "sf7"><div class = "snc-field-note" id = "sfn7">Enter your email.</div>
+						<input placeholder = "Your Firstname" value = "<?php echo (isset($_POST['snc_leader_firstname']))? $_POST['snc_leader_firstname']: ''; ?>" type = "text" name = "snc_leader_firstname" class = "loggedout-form-fields-snc" style = "width:250px;" id = "sf6"><input placeholder = "Your Lastname"  type = "text" name = "snc_leader_lastname" class = "loggedout-form-fields-snc" style = "width:250px;" id = "sf6"><div class = "snc-field-note" id = "sfn6">Enter your fullname.</div>
+						<input placeholder = "Your Email" value = "<?php echo (isset($_POST['snc_leader_email']))? $_POST['snc_leader_email']: ''; ?>"  type = "text" name = "snc_leader_email" class = "loggedout-form-fields-snc" style = "width:500px;" id = "sf7"><div class = "snc-field-note" id = "sfn7">Enter your email.</div>
 						<input type = "submit" value = "Submit" class = "loggedout-form-submit" style = "border:none;box-shadow:none;height:30px;">
 						<style>
 							@media only screen and (max-width: 1250px) {
