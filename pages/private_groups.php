@@ -163,7 +163,8 @@ if(loggedin()){
 							
 							
 							$(".a-user-opt").click(function(){
-								$("#a-user-form").slideDown();
+								var id = $(this).attr("id").substring(2);
+								$("#a-user-form-"+id).slideDown();
 							});
 						});
 					</script>
@@ -179,18 +180,18 @@ if(loggedin()){
 							echo "<div class = 'pg-container'>";
 
 							if((user_in_group($_SESSION['user_id'], $row['group_id'], "")==true)&&(user_in_group($_SESSION['user_id'], $row['group_id'], "true")==false)){
-								$join_link = "<br><a href = 'index.php?page=private_groups&join=".$row['group_id']."' id = 'group_link' style = 'color:#a0db8e;font-size:60%;'>Accept invitation to join</a><br>
-								<a href = 'index.php?page=private_groups&dec=".$row['group_id']."' id = 'group_link' style = 'color:#fb998e;font-size:60%;'>Decline invitation to join</a>";	
+								$join_link = "<br><a href = 'index.php?page=private_groups&join=".$row['group_id']."' class = 'group_link' style = 'color:#a0db8e;font-size:60%;'>Accept invitation to join</a><br>
+								<a href = 'index.php?page=private_groups&dec=".$row['group_id']."' class = 'group_link' style = 'color:#fb998e;font-size:60%;'>Decline invitation to join</a>";	
 							}else if(user_in_group($_SESSION['user_id'], $row['group_id'], "true")){
-								$join_link = "<br><a href = 'index.php?page=private_groups&leave=".$row['group_id']."' id = 'group_link'>Leave Group </a>";	
+								$join_link = "<br><a href = 'index.php?page=private_groups&leave=".$row['group_id']."' class = 'group_link'>Leave Group </a>";	
 								if(group_leader($_SESSION['user_id'])){
-									$join_link.="&middot;<span id = 'group_link' class = 'a-user-opt'>Add member</span>";
+									$join_link.="&middot;<span class = 'group_link a-user-opt' id = 'a-".$row['group_id']."'>Add member</span>";
 								}
 							}else{
 								$join_link = "";
 							}	
 							echo "<b class = 'group-title'>".$row['group_name']."</b>".$join_link."<br>
-							<form action = '' method = 'POST' id = 'a-user-form' style = 'display: none;'>
+							<form action = '' method = 'POST' id = 'a-user-form-".$row['group_id']."' style = 'display: none;'>
 								<input type = 'text' name = 'a_user' style = 'border: none;' placeholder=  'username...'>
 								<input type = 'hidden' name = 'group_id' value = '".$row['group_id']."'>
 								<input type = 'submit' value = 'Add' style = 'border:none;'>

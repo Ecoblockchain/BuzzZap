@@ -97,7 +97,7 @@ if(loggedin()){
 					</form>
 					<?php 
 						
-						$get_replies = $db->prepare("SELECT * FROM iwonder_replies WHERE thread_id = :thread_id ORDER BY time_created DESC");
+						$get_replies = $db->prepare("SELECT * FROM iwonder_replies WHERE thread_id = :thread_id ORDER BY time_created ASC");
 						$get_replies->execute(array("thread_id"=>$row['thread_id']));
 						if($get_replies->rowCount()>0){
 							while($row_ = $get_replies->fetch(PDO::FETCH_ASSOC)){

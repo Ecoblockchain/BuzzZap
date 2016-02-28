@@ -635,9 +635,22 @@ if(loggedin()){
 								<?php echo supports_webrtc()[1]; ?>
 							</span>
 						</div>
+						<?php
+						if(isset($_GET['keeptxt'])){
+							$keept = htmlentities($_GET['keeptxt']);
+							?>
+								<script>
+									$(function(){$("#argsubmit, #txt-ans-container").show(); $("#----ans-container").hide(); });
+								</script>
+							<?php
+						}else{
+							$keept = "";
+						}
+						
+						?>
 						<div id = "txt-ans-container" class = "ans-type-container" style = "display:none;">	
 							Text argument:<br>
-							<textarea placeholder = "Explanation/Argument..."class = "textarea-type1" id = 'new-arg-textarea' style = "width:84%;" name = "reply_text"></textarea><br>
+							<textarea placeholder = "Explanation/Argument..." class = "textarea-type1" id = 'new-arg-textarea' style = "width:84%;" name = "reply_text" value = ""><?php echo $keept; ?></textarea><br>
 							
 						</div>
 						<br><input type = "submit" class = "loggedout-form-submit" id = "argsubmit" style = "display:none;" value = "Post">
@@ -656,6 +669,7 @@ if(loggedin()){
 				$thread_id = $_GET['thread_id'];
 				$size="";
 				$report_header = "";
+				$keep_txt = "";
 				$vote_opts[] = "na";
 				$check_abuse = contains_blocked_word($reply_text);
 				if($check_abuse[0]==true){
@@ -684,12 +698,12 @@ if(loggedin()){
 						header("Location: index.php?page=view_private_thread&thread_id=".$_GET['thread_id'].$report_header);
 					}else{
 						setcookie("success", "0Your post must be longer. It is important to submit a detailed and in-depth answer.", time()+10);
-						
+						$keep_txt = "&keeptxt=".$reply_text;
 					}
 				}else{
 					setcookie("success", "0Invalid vote.", time()+10);
 				}	
-				header("Location: index.php?page=view_private_thread&thread_id=".$_GET['thread_id']."#thread-title-repeat");
+				header("Location: index.php?page=view_private_thread&thread_id=".$_GET['thread_id'].$keep_txt."#thread-title-repeat");
 			}
 			if(isset($_GET['vote'])){
 				
