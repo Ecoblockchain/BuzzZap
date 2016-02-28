@@ -1724,7 +1724,7 @@ a{
 
 .pg-container{
 	background-color: #62b1cf;
-	padding: 10px;
+	border: 10px solid #62b1cf;
 	height: 300px;
 	width: 30%;
 	margin-top: 10px;
