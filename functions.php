@@ -461,6 +461,8 @@ function re_for_p_count_on_post($username){
 function reply_debate($reply_text, $user_replied, $thread_id, $size, $reply_status){
 	global $db;
 	//$thread_id = parent content id
+	$len_reply_text = strlen($reply_text);
+	$added_rep  = round($len_reply_text / 70);
 	$reply_text = nl2br(htmlentities($reply_text));
 	$active = (user_moderation_status($_SESSION['user_id'])>1)? 0:1;
 	if(strlen($reply_text)<3){
@@ -516,7 +518,7 @@ function reply_debate($reply_text, $user_replied, $thread_id, $size, $reply_stat
 		
 	$rid = $db->lastInsertId();
 	if($size==""){
-		add_rep(3, $_SESSION['user_id']);
+		add_rep($added_rep, $_SESSION['user_id']);
 	}else{
 		add_rep(1, $_SESSION['user_id']);
 	}																	
