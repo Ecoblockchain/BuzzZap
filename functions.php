@@ -1429,9 +1429,9 @@ function get_judge_acceptance($comp_id){
 	}
 }
 
-function check_comp_ready($comp_id, $type){
+function check_comp_ready($comp_id){
 	global $db;
-	$acceptance = get_comp_acceptance_info($comp_id, $type);
+	$acceptance = get_comp_acceptance_info($comp_id);
 	if(comp_started($comp_id)==false){
 		
 		if(in_array("0", $acceptance)){
@@ -1466,35 +1466,17 @@ function check_comp_ready($comp_id, $type){
 			$update = $db->prepare("UPDATE competitions SET end = :end WHERE comp_id = :id");
 			$update->execute(array("id"=>$comp_id, "end"=>$end));
 			
-			if($type=="0"){
-				$all_users_to_note = get_all_users_in_p_comp($comp_id);
-				foreach($all_users_to_note as $user_id){
-					echo $user_id;
-					add_note($user_id, "A competition you are involved in has just started. Click here to start debating!", "index.php?page=view_comp&comp=".$type.$comp_id);
-				}
-				$jval = $db->query("SELECT judges FROM competitions WHERE comp_id = ".$db->quote($comp_id)." LIMIT 1")->fetchColumn();
-				$comp_c_id = $db->query("SELECT comp_com_id FROM competitions WHERE comp_id = ".$db->quote($comp_id)." LIMIT 1")->fetchColumn();
-				if($jval=="norm"){
-					add_com_feed($comp_c_id, "A new private competition has started and everyone not involved is welcome to judge it which will add to your reputation! <a href = 'index.php?page=view_comp&comp=0".$comp_id."' >Click here</a> to see!");
-				}
-			}else{
-				
-				$opp_id_as_key = get_comp_acceptance_info($comp_id, "1");
-				$opp_ids = array();
-				foreach($opp_id_as_key as $opp_id=>$element){
-					if($element=="1"){
-						$opp_ids[] = $opp_id;
-					}
-				}	
-				$gci = get_comp_info($comp_id);
-				$opp_ids[] = $gci["starter_id"];
-				foreach($opp_ids as $cid){
-					
-					add_com_feed($cid, "A global competition we are all involved in has just started! <a href = 'index.php?page=view_comp&comp=1".$comp_id."' >Click here</a> to get involved.");
-				
-				}
-				
+			$all_users_to_note = get_all_users_in_p_comp($comp_id);
+			foreach($all_users_to_note as $user_id){
+				echo $user_id;
+				add_note($user_id, "A competition you are involved in has just started. Click here to start debating!", "index.php?page=view_comp&comp=".$type.$comp_id);
 			}
+			$jval = $db->query("SELECT judges FROM competitions WHERE comp_id = ".$db->quote($comp_id)." LIMIT 1")->fetchColumn();
+			$comp_c_id = $db->query("SELECT comp_com_id FROM competitions WHERE comp_id = ".$db->quote($comp_id)." LIMIT 1")->fetchColumn();
+			if($jval=="norm"){
+				add_com_feed($comp_c_id, "A new private competition has started and everyone not involved is welcome to judge it which will add to your reputation! <a href = 'index.php?page=view_comp&comp=0".$comp_id."' >Click here</a> to see!");
+			}
+		
 			return true;
 		}
 	}
@@ -1922,17 +1904,25 @@ function update_com_profile($com_id,$col, $newval){
 	return true;
 }
 
-function add_profile_link($name, $type, $style=""){
+function add_profile_link($name, $type, $style="", $ex_link=""){
 	global $db;
 	//type 0 = user
 	//type 1 = com
-	if($type==0){
-		$link = "index.php?page=profile&user=".$db->query("SELECT user_id FROM users WHERE user_username = ".$db->quote($name))->fetchColumn();
-	}else{
-		$link = "index.php?page=private_groups&com=".$db->query("SELECT com_id FROM communities WHERE com_name = ".$db->quote($name))->fetchColumn();
+	//type 2 = group
+	switch($type){
+		case 0:
+			$link = "index.php?page=profile&user=".$db->query("SELECT user_id FROM users WHERE user_username = ".$db->quote($name))->fetchColumn();
+			break;
+		case 1:
+			$link = "index.php?page=private_groups&com=".$db->query("SELECT com_id FROM communities WHERE com_name = ".$db->quote($name))->fetchColumn();
+			break;
+
+		case 2:
+			$link = "index.php?page=private_groups&com=".$db->query("SELECT com_id FROM private_groups WHERE group_name = ".$db->quote($name))->fetchColumn()
+			."&highlight_g=".$db->query("SELECT group_id FROM private_groups WHERE group_name = ".$db->quote($name))->fetchColumn();
 	}
 
-	$html = "<a href = '".$link."' style = '".$style."'>".$name."</a>";
+	$html = "<a href = '".$link.$ex_link."' style = '".$style."'>".$name."</a>";
 	return $html;
 }
 

@@ -49,9 +49,9 @@ if(loggedin()){
 	</div>
 	<div class = "wof-container">
 		<div style = 'padding:10px;' class = 'wof-cont-title'><?php echo get_user_community($_SESSION['user_id'], "com_name"); ?> Group Leaderboard</div>
-		<div class = 'wof-info'>This board shows the best groups in your community based on reputation.</div><br>
+		<div class = 'wof-info'>This board shows the best groups/teams on BuzzZap.</div><br>
 		<?php
-			$get3 = $db->query("SELECT * FROM private_groups WHERE com_id = ".$db->quote(get_user_field($_SESSION['user_id'], "user_com")));
+			$get3 = $db->query("SELECT * FROM private_groups");
 			$count = 1;
 			$color = "#59c3d8";
 			//gid => rep
@@ -65,7 +65,7 @@ if(loggedin()){
 				}else if($count==2){
 					$color = "#59c3d8";
 				}
-				echo "<span style = 'color:".$color."'>".$count.".".$gname."</span><hr size = '1'>";
+				echo "<span style = 'color:".$color."'>".$count.".".add_profile_link($gname, 2, 'color: '.$color, "#start-group-list")."</span><hr size = '1'>";
 				$count++;
 			}
 		?>

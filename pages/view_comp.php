@@ -486,7 +486,6 @@ if(loggedin()||!empty($out_judge_key)){
 										$aid = $db->lastInsertId();
 										
 										if(isset($_COOKIE['temp_audio_ret_aid'])){
-											echo $aid . "fffffffff";
 											$f_code = $_COOKIE['temp_audio_ret_aid'];
 											$db->query("UPDATE audio SET owner_id = ".$db->quote($aid)." WHERE audio_flocation LIKE '%$f_code'");
 											setcookie("temp_audio_ret_aid", "", time()-1000000000);

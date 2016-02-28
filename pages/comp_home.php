@@ -64,8 +64,7 @@ if(loggedin()){
 			if($type=="0"){
 				$ctype = "Private";
 				$p_title = "Private Competitions";
-				
-			
+				$title_note = "(Competitions between only groups in your community)";
 				$gp_string = "private";
 				$table_search = "private_groups";
 				$col_name = "group_name";
@@ -73,13 +72,13 @@ if(loggedin()){
 			}else{
 				$ctype = "Global";
 				$p_title = "Global Competitions";
-
+				$title_note = "(Competitions between any groups, from any community)";
 				$gp_string = "global";
 				$table_search = "communities";
 				$col_name = "com_name";
 			}
 			echo "<div class = 'page-path'>Debating > ".$ctype." Competitions </div>";
-			echo "<div class = 'title-private-debate'>".$p_title."</div><br><br><br>";
+			echo "<div class = 'title-private-debate'>".$p_title."<br><span style = 'font-size:40%;'>".$title_note."</span></div><br>";
 			if($type == "0" || $type == "1"){
 				if( (group_leader($_SESSION['user_id'])&&$type=="0")||($type=="1"&&user_rank($_SESSION['user_id'],3)) ){
 				?>

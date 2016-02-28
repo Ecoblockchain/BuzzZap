@@ -90,132 +90,139 @@ if(loggedin()){
 		</div>
 		<?php
 
-		if($own==true){	
+		
 
-			?>
-			<hr size = "1"><br>
-			<div class = 'p-groups-title'>
-				<b>
-				<?php echo get_user_community($user_id, "com_name"); ?>
-					Private Groups
-				</b>
-				<br>
-			</div>
-				
-			<?php
+		?>
+		<hr size = "1" id = 'start-group-list'><br>
+		<div class = 'p-groups-title'>
+			<b>
+			<?php echo get_user_community($user_id, "com_name"); ?>
+				Private Groups
+			</b>
+			<br>
+		</div>
+			
+		<?php
 
-				if(isset($_GET['group_users'])){
-					$vgroup_id = htmlentities($_GET['group_users']);
-					
-					?>
-					
-					<script>
-					$(document).ready(function(){
-						$(this).click(function(){
-							$(".p-group-users").fadeOut();
-						});
-					});
-					</script>
-					
-					<?php
-				}
-				$groups = $db->prepare("SELECT * FROM private_groups WHERE com_id = :com_id");
-				$groups->execute(array("com_id"=>get_user_community($user_id, "com_id")));
+			if(isset($_GET['group_users'])){
+				$vgroup_id = htmlentities($_GET['group_users']);
 				
 				?>
 				
+				<script>
+				$(document).ready(function(){
+					$(this).click(function(){
+						$(".p-group-users").fadeOut();
+					});
+				});
+				</script>
 				
-					<?php
-						
-						if(!user_in_group($_SESSION['user_id'],"", "true")){
-					?>		
-						<div id = "c_group" class="create-group">
-							<span id = 'c_group_text'>
-								+ Create Group
-							</span>
-							<span id = 'c_group_form' style = 'display:none;float:right;position:absolute;'>
-								<form action = "" method = "POST">
-									<input type = "text" name = "group_name" placeholder = "Group Name" class = "group-fields">
-									<input id = 'desired_g_mems' type = "text" name = "group_members" placeholder = "e.g user1, user2, user2" class = "group-fields">
-									<input type = "submit" class = "group-fields" style = "width:70px;"><br>
-									<div style = 'margin-left: 200px'id = "pred_results">
-										(desired members)
-									</div>	
-								</form>
-							</span>	
-						</div>
-					<?php
-						}
-					?>
-					<script>
-						$(document).ready(function(){
-							clicked = 0;
-							$("#c_group").click(function(){	
-								$(this).css("text-align", "left").css("height", "70px");
-								setTimeout(function(){
-									if(clicked==0){
-										$("#c_group_text").html($("#c_group_text").html()+": &ensp;&ensp;");
-										$("#c_group_form").fadeIn(500);
-									}
-									clicked = 1;
-								}, 500);
-							});
-							
-							
-							$(".a-user-opt").click(function(){
-								var id = $(this).attr("id").substring(2);
-								$("#a-user-form-"+id).slideDown();
-							});
-						});
-					</script>
-					<br><br><br>
-					<div id = "group-plates-container">
+				<?php
+			}
+			$groups = $db->prepare("SELECT * FROM private_groups WHERE com_id = :com_id");
+			$groups->execute(array("com_id"=>$view_com_id));
+			
+			?>
+			
+			
+				<?php
 					
-					<?php
-					if($groups->rowCount()==0){
-						echo "<div id = 'no-threads-message'>There are no groups in this community yet.</div>"; 
-					}else{	
-						while($row = $groups->fetch(PDO::FETCH_ASSOC)){
-							
-							echo "<div class = 'pg-container'>";
-
+					if($own==true&&!user_in_group($_SESSION['user_id'],"", "true")){
+				?>		
+					<div id = "c_group" class="create-group">
+						<span id = 'c_group_text'>
+							+ Create Group
+						</span>
+						<span id = 'c_group_form' style = 'display:none;float:right;position:absolute;'>
+							<form action = "" method = "POST">
+								<input type = "text" name = "group_name" placeholder = "Group Name" class = "group-fields">
+								<input id = 'desired_g_mems' type = "text" name = "group_members" placeholder = "e.g user1, user2, user2" class = "group-fields">
+								<input type = "submit" class = "group-fields" style = "width:70px;"><br>
+								<div style = 'margin-left: 200px'id = "pred_results">
+									(desired members)
+								</div>	
+							</form>
+						</span>	
+					</div>
+				<?php
+					}
+				?>
+				<script>
+					$(document).ready(function(){
+						clicked = 0;
+						$("#c_group").click(function(){	
+							$(this).css("text-align", "left").css("height", "70px");
+							setTimeout(function(){
+								if(clicked==0){
+									$("#c_group_text").html($("#c_group_text").html()+": &ensp;&ensp;");
+									$("#c_group_form").fadeIn(500);
+								}
+								clicked = 1;
+							}, 500);
+						});
+						
+						
+						$(".a-user-opt").click(function(){
+							var id = $(this).attr("id").substring(2);
+							$("#a-user-form-"+id).slideDown();
+						});
+					});
+				</script>
+				<br><br><br>
+				<div id = "group-plates-container">
+				
+				<?php
+				if($groups->rowCount()==0){
+					echo "<div id = 'no-threads-message'>There are no groups in this community yet.</div>"; 
+				}else{	
+					while($row = $groups->fetch(PDO::FETCH_ASSOC)){
+						if(isset($_GET['highlight_g'])==true&&$_GET['highlight_g']==$row['group_id']){
+							$border= "border: 5px dashed salmon;";
+						}else{
+							$border = "";
+						}
+						echo "<div class = 'pg-container' style = '".$border."'>";
+						echo "<b class = 'group-title'>".$row['group_name']."</b><br>";
+						if($own==true){	
 							if((user_in_group($_SESSION['user_id'], $row['group_id'], "")==true)&&(user_in_group($_SESSION['user_id'], $row['group_id'], "true")==false)){
-								$join_link = "<br><a href = 'index.php?page=private_groups&join=".$row['group_id']."' class = 'group_link' style = 'color:#a0db8e;font-size:60%;'>Accept invitation to join</a><br>
+								$join_link = "<a href = 'index.php?page=private_groups&join=".$row['group_id']."' class = 'group_link' style = 'color:#a0db8e;font-size:60%;'>Accept invitation to join</a><br>
 								<a href = 'index.php?page=private_groups&dec=".$row['group_id']."' class = 'group_link' style = 'color:#fb998e;font-size:60%;'>Decline invitation to join</a>";	
 							}else if(user_in_group($_SESSION['user_id'], $row['group_id'], "true")){
-								$join_link = "<br><a href = 'index.php?page=private_groups&leave=".$row['group_id']."' class = 'group_link'>Leave Group </a>";	
+								$join_link = "<a href = 'index.php?page=private_groups&leave=".$row['group_id']."' class = 'group_link'>Leave Group </a>";	
 								if(group_leader($_SESSION['user_id'])){
 									$join_link.="&middot;<span class = 'group_link a-user-opt' id = 'a-".$row['group_id']."'>Add member</span>";
 								}
 							}else{
 								$join_link = "";
 							}	
-							echo "<b class = 'group-title'>".$row['group_name']."</b>".$join_link."<br>
+							echo $join_link."<br>
 							<form action = '' method = 'POST' id = 'a-user-form-".$row['group_id']."' style = 'display: none;'>
 								<input type = 'text' name = 'a_user' style = 'border: none;' placeholder=  'username...'>
 								<input type = 'hidden' name = 'group_id' value = '".$row['group_id']."'>
 								<input type = 'submit' value = 'Add' style = 'border:none;'>
 							</form>
 							";
-							$users = $db->prepare("SELECT * FROM group_members WHERE group_id = :group_id AND active = 1");
-							$users->execute(array("group_id"=>$row['group_id']));
-							echo "<b style ='font-size:80%;color:dimgrey;'><u>Members</u></b><span style = 'font-size: 70%;'><br>";
-							
-							while($row = $users->fetch(PDO::FETCH_ASSOC)){
-								if($row['leader']=="1"){
-									$leader = "(leader)";	
-								}else{
-									$leader = "";	
-								}
-								echo add_profile_link(get_user_field($row['user_id'], "user_username"), 0, "color: grey").$leader."<br>";	
-							}	
-							echo "</span></div>";
 						}
+						$users = $db->prepare("SELECT * FROM group_members WHERE group_id = :group_id AND active = 1");
+						$users->execute(array("group_id"=>$row['group_id']));
+						echo "<b style ='font-size:80%;color:dimgrey;'><u>Members</u></b><span style = 'font-size: 70%;'><br>";
+						
+						while($row = $users->fetch(PDO::FETCH_ASSOC)){
+							if($row['leader']=="1"){
+								$leader = "(leader)";	
+							}else{
+								$leader = "";	
+							}
+							echo add_profile_link(get_user_field($row['user_id'], "user_username"), 0, "color: grey").$leader."<br>";	
+						}	
+						echo "</span></div>";
 					}
-					?>
-					</div>
-				
-				<?php
+				}
+				?>
+				</div>
+			
+			<?php
+			if($own==true){	
 				if(isset($_POST['a_user'], $_POST['group_id'])){
 					$addu = htmlentities($_POST['a_user']);
 					$gid = htmlentities($_POST['group_id']);
@@ -309,7 +316,10 @@ if(loggedin()){
 					header("Location: index.php?page=private_groups&com=".$view_com_id);
 					
 				}
-			}else{
+			}
+			echo "<br><hr size = '1'>";
+
+			if($own == false){
 				$latest_global_debates = $db->query("SELECT thread_title,thread_id FROM debating_threads WHERE com_id = 0 AND user_com_id = ".$db->quote($view_com_id)." ORDER BY time_created DESC LIMIT 5");
 				echo "<div class = 'profile-info-container' style = 'float: left;white-space:normal;margin-top: 5px;width:46%;min-height: 300px;text-align:center;' >
 				Latest Global Debates By ".$com_profile['com_name']."<br>";
