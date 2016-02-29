@@ -96,7 +96,7 @@ if(loggedin()){
 		<hr size = "1" id = 'start-group-list'><br>
 		<div class = 'p-groups-title'>
 			<b>
-			<?php echo get_user_community($user_id, "com_name"); ?>
+			<?php echo $com_profile['com_name']; ?>
 				Private Groups
 			</b>
 			<br>

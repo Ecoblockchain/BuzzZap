@@ -966,7 +966,7 @@ function add_friend($requester, $accepter){
 
 function accept_f_req($accepter, $requester){
 	global $db;
-	if(get_friend_status($accepter, $requester)=="pendingv"){
+	if(get_friend_status($requester,$accepter)=="pending"){
 		$accept = $db->prepare("UPDATE friends SET accepted = 1 WHERE accepter = :accepter AND requester = :requester");
 		$accept->execute(array("accepter"=>$accepter, "requester"=>$requester));
 		$note_m = $accepter." has accepted your friend request.";

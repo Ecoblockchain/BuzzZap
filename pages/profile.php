@@ -85,7 +85,7 @@ if(loggedin()){
 					}else if($f_st=="pending"){
 						$friend_opt = "<span class = 'action-uprofile-link'>Friend request sent </span>";
 					}else if($f_st=="friends"){
-						$friend_opt = "<span class = 'action-uprofile-link'>Friends </span>";
+						$friend_opt = "<span class = 'action-uprofile-link'>Friends</span>";
 					}else{
 						$friend_opt = "<a class = 'action-uprofile-link' href = 'index.php?page=profile&user=".$view_user_id."&acc_friend=true'>Accept friend request </a>";
 					}
@@ -299,14 +299,7 @@ if(loggedin()){
 						header("Location: index.php?page=profile&user=".$view_user_id);
 					}
 					
-					if(isset($_GET['acc_friend'])&&($_GET['acc_friend']=="true")){
-						if(!accept_f_req(get_user_field($_SESSION['user_id'], "user_username"), get_user_field($view_user_id, "user_username"))){
-							setcookie("success", "0Uknown error.", time()+10);
-						}
-						header("Location: index.php?page=profile&user=".$view_user_id);
-						
-					}
-					
+
 				?>
 			</div>
 			<?php
@@ -349,8 +342,7 @@ if(loggedin()){
 			
 					if(isset($_GET["acc_friend"])){
 						$friend_id = htmlentities($_GET['acc_friend']);
-						if(get_friend_status($friend_id, $username)=="pending"){
-							accept_f_req($username, $friend_id);
+						if(accept_f_req($username, $friend_id)){
 							setcookie("success", "1Accepted friend request.", time()+10);
 						}else{
 							setcookie("success", "0Uknown error.", time()+10);
