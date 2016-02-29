@@ -202,7 +202,7 @@ if(loggedin()){
 					</div>
 					<div class = "hib-content" id = "hibc-t2-2" style = "display: none;">
 					<?php
-						$get = $db->prepare("SELECT * FROM competitions HERE comp_type =1 AND end != 'true' AND SUBSTRING(end, 0,1) != '.' ORDER BY created DESC LIMIT 5");
+						$get = $db->prepare("SELECT * FROM competitions WHERE comp_type =1 AND end != 'true' AND SUBSTRING(end, 0,1) != '.' ORDER BY created DESC LIMIT 5");
 						$get->execute();
 						if($get->rowCount()>0){
 							while($row = $get->fetch(PDO::FETCH_ASSOC)){
