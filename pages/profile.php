@@ -348,7 +348,7 @@ if(loggedin()){
 							setcookie("success", "0Uknown error.", time()+10);
 						}
 				
-						header("Location: index.php?page=profile&user=".$_GET['user']);
+						//header("Location: index.php?page=profile&user=".$_GET['user']);
 					}
 				}	
 			?>
