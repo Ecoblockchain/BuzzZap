@@ -307,7 +307,7 @@ if(loggedin()){
 				if(count(get_pending_friends($username))>0&&$view_user_id==$user_id){
 				
 				?>
-					<div id = 'quick-msg' class = 'frb' style = "">
+					<div id = 'quick-msg' class = 'frb' style = "z-index: 10000;">
 							<script>
 							$(document).ready(function(){
 								$("#p_f_close").click(function(){
