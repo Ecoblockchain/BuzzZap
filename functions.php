@@ -943,11 +943,11 @@ function get_friend_status($requester, $accepter){
 					OR(accepter = :requester AND requester = :accepter)");
 	$check_friends->execute(array("accepter"=>$accepter, "requester"=>$requester));
 	$row = $check_friends->fetch(PDO::FETCH_ASSOC);		
-
-	print_r($row);		
+	echo "1WHAT: ".$requester.$row['requester']."---".$accepter.$row['accepted'];
 	if(!empty($row)&&$row['accepted']==1){
 		return $status[0];
 	}else if(($row['requester']==$requester)&&($row['accepted']==0)){
+		echo "1WHAT: ".$requester.$row['requester']."---".$accepter.$row['accepted'];
 		return $status[1];		
 	}else if(($row['accepter']==$requester)&&($row['accepted']==0)){
 		return $status[1]."v";		
