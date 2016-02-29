@@ -281,6 +281,7 @@ a{
 
 .loggedin-body{
 	width:80%;
+	min-width: 785px;
 	min-height:100%;
 	margin:0 auto;
 }
@@ -1320,13 +1321,29 @@ a{
 	z-index:2000;
 }
 
-.admin-body{
-	width:95%;
-	height:90%;
-	font-family:menlo;
+#admin-body{
+	background-color: red;
+	height: 550px;
+	white-space:nowrap;
+	min-width: 1000px;
+}
+#side-bar-menu-admin{
+	position: absolute;
+	background-color: grey;
+	width: 80%;
+	float: left;
+	min-width: 130px;
+	height: 550px;
+}
+#admin-page-container{
+	position: relative;
+	height:100%;
+	width:calc(80%);
+	display: inline;
 	overflow: auto;
-	background-color:dimgrey;
-	padding:30px;
+	background-color: grey;
+	float:right;
+	margin-left: 10px;
 }
 #admin-title{
 	color:darkblue;
@@ -1336,27 +1353,11 @@ a{
 	text-align: center;
 }	
 
-#side-bar-menu-admin{
-	float:left;
-	height:500px;
-	width:15%;
-	border: 10px solid grey;
-	background-color: grey;
-}
-
 #choose-p-com-viewbox{
 	padding:10px;
 	background-color: lightgreen;
 }
 
-#admin-page-container{
-	height:500px;
-	border: 10px solid grey;
-	width:80%;
-	overflow: auto;
-	background-color: grey;
-	float:left;
-}
 .admin-sub-page{
 	display:none;
 }
@@ -1607,12 +1608,12 @@ a{
 	color: grey;
 	font-weight: bold;
 }
-
 #hib1{
 	background-color: #fbd7f4;
 	width: 66.6%;
 	margin-top: -300px;
 	margin-left: 0px;
+	position: relative;
 }
 
 #hib2{
@@ -1620,12 +1621,14 @@ a{
 	margin-top: 0px;
 	margin-left: 66.6%;
 	width: 33.3%;
+	position: relative;
 }
 
 #hib3{
 	background-color: #d3f9d7;
 	width: 33.3%;
 	margin-left: 33.3%;
+	position: relative;
 	margin-top: -300px;
 }
 
@@ -1633,6 +1636,7 @@ a{
 	background-color: #96cfd4;
 	width: 33.3%;
 	margin-top: 0px;
+	position: relative;
 	margin-left: 0px;
 }
 #hib5{
@@ -1641,14 +1645,25 @@ a{
 	margin-left: 66.6%;
 	height: 600px;
 	margin-top: -300px;
+	position: relative;
 }
 #hib6{
+	position: relative;
 	background-color: #ffd29a;
 	width: 66.6%;
 	height: 300px;
 	margin-left: 0px;
 	margin-top: -300px;
 }
+
+#hib-container{
+
+	height: 100%;
+	width: 100%;
+	min-width: 785px;
+
+}
+
 
 .hib-content{
 	padding: 10px;

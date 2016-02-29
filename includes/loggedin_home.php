@@ -107,167 +107,168 @@ if(loggedin()){
 			});
 		});
 		</script>
-		
-		<div class = "home-in-box" id = 'hib2'>
-			<span class = "hib-c-content">
-				<div class = "hib-title">
-					<?php echo strtoupper(get_user_community($_SESSION['user_id'], "com_name")); ?> LEADER BOARD
-				</div>
-				<div class = "hib-content" style = "margin-top:-20px;">
-				<?php
-					$get = $db->prepare("SELECT user_username, user_rep,user_id FROM users WHERE user_com = :com_id ORDER BY user_rep DESC LIMIT 10");
-					$get->execute(array("com_id"=>get_user_community($_SESSION['user_id'], "com_id")));
-					$count = 1;
-					echo "<span style = 'font-size: 80%;color: #0e6eb8;float: right;'>(user rep)</span>";
-					echo "<br>";
-					while($row = $get->fetch(PDO::FETCH_ASSOC)){
-						echo "<div class = 'hib-c-row'>".$count.".".add_profile_link($row['user_username'], 0, 'color:white')."<span style = 'float: right;font-size: 80%;color: #9ec5e2;'>".$row['user_rep']."</span></div>";
-						$count++;
-					}
-				?>
-				</div>
-			</span>
-		</div>
-		<div class = "home-in-box" id = 'hib1'>
-			<span class = "hib-c-content">
-				<div class = "hib-title">
-					COMMUNITY NEWS
-				</div>
-				<div class = "hib-content" style = "overflow: scroll;">
+		<div id = "hib-container">
+			<div class = "home-in-box" id = 'hib2'>
+				<span class = "hib-c-content">
+					<div class = "hib-title">
+						<?php echo strtoupper(get_user_community($_SESSION['user_id'], "com_name")); ?> LEADER BOARD
+					</div>
+					<div class = "hib-content" style = "margin-top:-20px;">
 					<?php
-						$get = $db->prepare("SELECT * FROM com_news WHERE com_id = :com_id ORDER BY time DESC");
+						$get = $db->prepare("SELECT user_username, user_rep,user_id FROM users WHERE user_com = :com_id ORDER BY user_rep DESC LIMIT 10");
+						$get->execute(array("com_id"=>get_user_community($_SESSION['user_id'], "com_id")));
+						$count = 1;
+						echo "<span style = 'font-size: 80%;color: #0e6eb8;float: right;'>(user rep)</span>";
+						echo "<br>";
+						while($row = $get->fetch(PDO::FETCH_ASSOC)){
+							echo "<div class = 'hib-c-row'>".$count.".".add_profile_link($row['user_username'], 0, 'color:white')."<span style = 'float: right;font-size: 80%;color: #9ec5e2;'>".$row['user_rep']."</span></div>";
+							$count++;
+						}
+					?>
+					</div>
+				</span>
+			</div>
+			<div class = "home-in-box" id = 'hib1' style = "min-width:520px;">
+				<span class = "hib-c-content">
+					<div class = "hib-title">
+						COMMUNITY NEWS
+					</div>
+					<div class = "hib-content" style = "overflow: scroll;">
+						<?php
+							$get = $db->prepare("SELECT * FROM com_news WHERE com_id = :com_id ORDER BY time DESC");
+							$get->execute(array("com_id"=>get_user_community($_SESSION['user_id'], "com_id")));
+							if($get->rowCount()>0){
+								while($row = $get->fetch(PDO::FETCH_ASSOC)){
+									echo "<div class = 'hib-c-row'>".$row['feed_text']."<br><br><span style = 'font-size: 80%;color: #9ec5e2;'>-".date("d/M/Y H:i", $row['time'])."</span></div>";
+								}
+							}else{
+								echo "No results found.";
+							}
+						?>
+					</div>
+				</span>	
+			</div>
+			
+			<div class = "home-in-box" id = 'hib4'>
+				<span class = "hib-c-content">
+					<div class = "hib-title">
+						LATEST <span id = 'p-g-toggle1' class = "p-g-toggle">GLOBAL</span> DEBATES
+					</div>
+					<div class = "hib-content" id = "hibc-t1-2">
+					<?php
+						$get = $db->prepare("SELECT * FROM debating_threads WHERE com_id = 0 AND visible = 1 ORDER BY time_created DESC LIMIT 5");
+						$get->execute();
+						if($get->rowCount()>0){
+							while($row = $get->fetch(PDO::FETCH_ASSOC)){
+								echo "<a href = 'index.php?page=view_private_thread&thread_id=".$row['thread_id']."'><div class = 'hib-c-row'>".$row['thread_title']."<br><br><span style = 'font-size: 80%;color: lightgrey;'>-".date("d/M/Y H:i", $row['time_created'])."</span></div></a>";
+							}
+						}else{
+							echo "No Results found.";
+						}	
+					?>
+					</div>
+					<div class = "hib-content" id = "hibc-t1-1" style = "display: none;">
+					<?php
+						$get = $db->prepare("SELECT * FROM debating_threads WHERE com_id = :com_id AND visible = 1 ORDER BY time_created DESC LIMIT 5");
 						$get->execute(array("com_id"=>get_user_community($_SESSION['user_id'], "com_id")));
 						if($get->rowCount()>0){
 							while($row = $get->fetch(PDO::FETCH_ASSOC)){
-								echo "<div class = 'hib-c-row'>".$row['feed_text']."<br><br><span style = 'font-size: 80%;color: #9ec5e2;'>-".date("d/M/Y H:i", $row['time'])."</span></div>";
+								echo "<a href = 'index.php?page=view_private_thread&thread_id=".$row['thread_id']."'><div class = 'hib-c-row'>".$row['thread_title']."<br><br><span style = 'font-size: 80%;color: lightgrey;'>-".date("d/M/Y H:i", $row['time_created'])."</span></div></a>";
 							}
 						}else{
-							echo "No results found.";
+							echo "No Results found.";
 						}
 					?>
-				</div>
-			</span>	
-		</div>
-		
-		<div class = "home-in-box" id = 'hib4'>
-			<span class = "hib-c-content">
-				<div class = "hib-title">
-					LATEST <span id = 'p-g-toggle1' class = "p-g-toggle">GLOBAL</span> DEBATES
-				</div>
-				<div class = "hib-content" id = "hibc-t1-2">
-				<?php
-					$get = $db->prepare("SELECT * FROM debating_threads WHERE com_id = 0 AND visible = 1 ORDER BY time_created DESC LIMIT 5");
-					$get->execute();
-					if($get->rowCount()>0){
-						while($row = $get->fetch(PDO::FETCH_ASSOC)){
-							echo "<a href = 'index.php?page=view_private_thread&thread_id=".$row['thread_id']."'><div class = 'hib-c-row'>".$row['thread_title']."<br><br><span style = 'font-size: 80%;color: lightgrey;'>-".date("d/M/Y H:i", $row['time_created'])."</span></div></a>";
+					</div>
+				</span>	
+			</div>
+			<div class = "home-in-box" id = 'hib3'>
+				<span class = "hib-c-content">
+					<div class = "hib-title">
+						LATEST <span id = 'p-g-toggle2' class = "p-g-toggle">PRIVATE</span> COMPETITIONS
+					</div>
+					<div class = "hib-content" id = "hibc-t2-1">
+					<?php
+						$get = $db->prepare("SELECT * FROM competitions WHERE comp_type = 0 AND comp_com_id = :com_id AND end != 'true' AND SUBSTRING(end, 0,1) != '.' ORDER BY created DESC LIMIT 5");
+						$get->execute(array("com_id"=>get_user_community($_SESSION['user_id'], "com_id")));
+						if($get->rowCount()>0){
+							while($row = $get->fetch(PDO::FETCH_ASSOC)){
+								echo "<a href = 'index.php?page=view_comp&comp=0".$row['comp_id']."'><div class = 'hib-c-row'>".$row['comp_title']."<br><br><span style = 'font-size: 80%;color: lightgrey;'>-".date("d/M/Y H:i", $row['created'])."</span></div></a>";
+							}
+						}else{
+							echo "No Results found.";
 						}
-					}else{
-						echo "No Results found.";
-					}	
-				?>
-				</div>
-				<div class = "hib-content" id = "hibc-t1-1" style = "display: none;">
-				<?php
-					$get = $db->prepare("SELECT * FROM debating_threads WHERE com_id = :com_id AND visible = 1 ORDER BY time_created DESC LIMIT 5");
-					$get->execute(array("com_id"=>get_user_community($_SESSION['user_id'], "com_id")));
-					if($get->rowCount()>0){
-						while($row = $get->fetch(PDO::FETCH_ASSOC)){
-							echo "<a href = 'index.php?page=view_private_thread&thread_id=".$row['thread_id']."'><div class = 'hib-c-row'>".$row['thread_title']."<br><br><span style = 'font-size: 80%;color: lightgrey;'>-".date("d/M/Y H:i", $row['time_created'])."</span></div></a>";
+					?>
+					</div>
+					<div class = "hib-content" id = "hibc-t2-2" style = "display: none;">
+					<?php
+						$get = $db->prepare("SELECT * FROM competitions WHERE comp_type =1 AND end != 'true' AND SUBSTRING(end, 0,1) != '.' ORDER BY created DESC LIMIT 5");
+						$get->execute();
+						if($get->rowCount()>0){
+							while($row = $get->fetch(PDO::FETCH_ASSOC)){
+								echo "<a href = 'index.php?page=view_comp&comp=1".$row['comp_id']."'><div class = 'hib-c-row'>".$row['comp_title']."<br><br><span style = 'font-size: 80%;color: lightgrey;'>-".date("d/M/Y H:i", $row['created'])."</span></div></a>";
+							}
+						}else{
+							echo "No Results found.";
 						}
-					}else{
-						echo "No Results found.";
-					}
-				?>
-				</div>
-			</span>	
-		</div>
-		<div class = "home-in-box" id = 'hib3'>
-			<span class = "hib-c-content">
-				<div class = "hib-title">
-					LATEST <span id = 'p-g-toggle2' class = "p-g-toggle">PRIVATE</span> COMPETITIONS
-				</div>
-				<div class = "hib-content" id = "hibc-t2-1">
-				<?php
-					$get = $db->prepare("SELECT * FROM competitions WHERE comp_type = 0 AND comp_com_id = :com_id AND end != 'true' AND SUBSTRING(end, 0,1) != '.' ORDER BY created DESC LIMIT 5");
-					$get->execute(array("com_id"=>get_user_community($_SESSION['user_id'], "com_id")));
-					if($get->rowCount()>0){
-						while($row = $get->fetch(PDO::FETCH_ASSOC)){
-							echo "<a href = 'index.php?page=view_comp&comp=0".$row['comp_id']."'><div class = 'hib-c-row'>".$row['comp_title']."<br><br><span style = 'font-size: 80%;color: lightgrey;'>-".date("d/M/Y H:i", $row['created'])."</span></div></a>";
+					?>
+					</div>
+				</span>	
+			</div>
+			<div class = "home-in-box" id = 'hib5'>
+				<span class = "hib-c-content">
+					<div class = "hib-title">
+						POPULAR <span id = 'p-g-toggle3' class = "p-g-toggle">GLOBAL</span> DEBATES
+					</div>
+					<div class = "hib-content" id = "hibc-t3-2" style = "display: none;height: 510px;">
+					<?php
+						$get = $db->prepare("SELECT * FROM debating_threads WHERE com_id = :com_id AND visible = 1 ORDER BY thread_likes DESC LIMIT 10");
+						$get->execute(array("com_id"=>get_user_community($_SESSION['user_id'], "com_id")));
+						if($get->rowCount()>0){
+							while($row = $get->fetch(PDO::FETCH_ASSOC)){
+								echo "<a href = 'index.php?page=view_private_thread&thread_id=".$row['thread_id']."'><div class = 'hib-c-row'>".$row['thread_title']."<br><br><span style = 'font-size: 80%;color: lightgrey;'>-".date("d/M/Y H:i", $row['time_created'])."</span></div></a>";
+							}
+						}else{
+							echo "No Results found.";
 						}
-					}else{
-						echo "No Results found.";
-					}
-				?>
-				</div>
-				<div class = "hib-content" id = "hibc-t2-2" style = "display: none;">
-				<?php
-					$get = $db->prepare("SELECT * FROM competitions WHERE comp_type =1 AND end != 'true' AND SUBSTRING(end, 0,1) != '.' ORDER BY created DESC LIMIT 5");
-					$get->execute();
-					if($get->rowCount()>0){
-						while($row = $get->fetch(PDO::FETCH_ASSOC)){
-							echo "<a href = 'index.php?page=view_comp&comp=1".$row['comp_id']."'><div class = 'hib-c-row'>".$row['comp_title']."<br><br><span style = 'font-size: 80%;color: lightgrey;'>-".date("d/M/Y H:i", $row['created'])."</span></div></a>";
+					?>
+					</div>
+					<div class = "hib-content" id = "hibc-t3-1" style = "height: 510px;">
+					<?php
+						$get = $db->prepare("SELECT * FROM debating_threads WHERE com_id = 0 AND visible = 1 ORDER BY thread_likes DESC LIMIT 10");
+						$get->execute();
+						if($get->rowCount()>0){
+							while($row = $get->fetch(PDO::FETCH_ASSOC)){
+								echo "<a href = 'index.php?page=view_private_thread&thread_id=".$row['thread_id']."'><div class = 'hib-c-row'>".$row['thread_title']."<br><br><span style = 'font-size: 80%;color: lightgrey;'>-".date("d/M/Y H:i", $row['time_created'])."</span></div></a>";
+							}
+						}else{
+							echo "No Results found.";
 						}
-					}else{
-						echo "No Results found.";
-					}
-				?>
-				</div>
-			</span>	
-		</div>
-		<div class = "home-in-box" id = 'hib5'>
-			<span class = "hib-c-content">
-				<div class = "hib-title">
-					POPULAR <span id = 'p-g-toggle3' class = "p-g-toggle">GLOBAL</span> DEBATES
-				</div>
-				<div class = "hib-content" id = "hibc-t3-2" style = "display: none;height: 510px;">
-				<?php
-					$get = $db->prepare("SELECT * FROM debating_threads WHERE com_id = :com_id AND visible = 1 ORDER BY thread_likes DESC LIMIT 10");
-					$get->execute(array("com_id"=>get_user_community($_SESSION['user_id'], "com_id")));
-					if($get->rowCount()>0){
-						while($row = $get->fetch(PDO::FETCH_ASSOC)){
-							echo "<a href = 'index.php?page=view_private_thread&thread_id=".$row['thread_id']."'><div class = 'hib-c-row'>".$row['thread_title']."<br><br><span style = 'font-size: 80%;color: lightgrey;'>-".date("d/M/Y H:i", $row['time_created'])."</span></div></a>";
+					?>
+					</div>
+				</span>	
+			</div>
+			<div class = "home-in-box" id = 'hib6'>
+				<span class = "hib-c-content">
+					<div class = "hib-title">
+						BUZZZAP NEWS
+					</div>
+					<div class = "hib-content">
+					<?php
+						$get = $db->prepare("SELECT * FROM site_news ORDER BY time DESC LIMIT 10");
+						$get->execute();
+						if($get->rowCount()>0){
+							while($row = $get->fetch(PDO::FETCH_ASSOC)){
+								echo "<div class = 'hib-c-row'>".$row['feed_text']."<br><br><span style = 'font-size: 80%;color: lightgrey;'>-".date("d/M/Y H:i", $row['time'])."</span></div>";
+							}
+						}else{
+							echo "No Results found.";
 						}
-					}else{
-						echo "No Results found.";
-					}
-				?>
-				</div>
-				<div class = "hib-content" id = "hibc-t3-1" style = "height: 510px;">
-				<?php
-					$get = $db->prepare("SELECT * FROM debating_threads WHERE com_id = 0 AND visible = 1 ORDER BY thread_likes DESC LIMIT 10");
-					$get->execute();
-					if($get->rowCount()>0){
-						while($row = $get->fetch(PDO::FETCH_ASSOC)){
-							echo "<a href = 'index.php?page=view_private_thread&thread_id=".$row['thread_id']."'><div class = 'hib-c-row'>".$row['thread_title']."<br><br><span style = 'font-size: 80%;color: lightgrey;'>-".date("d/M/Y H:i", $row['time_created'])."</span></div></a>";
-						}
-					}else{
-						echo "No Results found.";
-					}
-				?>
-				</div>
-			</span>	
-		</div>
-		<div class = "home-in-box" id = 'hib6'>
-			<span class = "hib-c-content">
-				<div class = "hib-title">
-					BUZZZAP NEWS
-				</div>
-				<div class = "hib-content">
-				<?php
-					$get = $db->prepare("SELECT * FROM site_news ORDER BY time DESC LIMIT 10");
-					$get->execute();
-					if($get->rowCount()>0){
-						while($row = $get->fetch(PDO::FETCH_ASSOC)){
-							echo "<div class = 'hib-c-row'>".$row['feed_text']."<br><br><span style = 'font-size: 80%;color: lightgrey;'>-".date("d/M/Y H:i", $row['time'])."</span></div>";
-						}
-					}else{
-						echo "No Results found.";
-					}
-				?>
-				</div>
-			</span>	
-		</div>
+					?>
+					</div>
+				</span>	
+			</div>
+		</div>	
 	<?php
 	}
 }
