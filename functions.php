@@ -946,10 +946,10 @@ function get_friend_status($requester, $accepter){
 	echo "WHAT: ".$requester.$row['requester']."---".$accepter.$row['accepted'];
 	if(!empty($row)&&$row['accepted']==1){
 		return $status[0];
-	}else if(($row['requester']==$requester)&&($row['accepted']==0)){
+	}else if((trim($row['requester'])==trim($requester))&&($row['accepted']==0)){
 		echo "1WHAT: ".$requester.$row['requester']."---".$accepter.$row['accepted'];
 		return $status[1];		
-	}else if(($row['accepter']==$requester)&&($row['accepted']==0)){
+	}else if((trim($row['accepter'])==trim($requester))&&($row['accepted']==0)){
 		return $status[1]."v";		
 	}else{
 		return $status[2];
