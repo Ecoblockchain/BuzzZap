@@ -10,7 +10,19 @@ if(loggedin()){
 	$(document).ready(function(){
 		var form_open = 0;
 		function open_form(){
-			$("#start-new-pm").animate({marginTop:"30px"}).animate({backgroundColor:"#62b1cf"}).animate({padding:"4px"}).css("text-align", "center")
+			$("#start-new-pm").animate({marginTop:"30px"});
+			<?php
+				if(in_array(user_browser(), array("Safari", "Chrome", "Opera"))){
+			?>
+					$("#start-new-pm").animate({backgroundColor:"#62b1cf"});
+			<?php
+				}else{
+					?>
+						$("#start-new-pm").css("background", "#62b1cf");
+					<?php
+				}
+			?>
+			$("#start-new-pm").animate({padding:"4px"}).css("text-align", "center")
 			.animate({marginLeft:"13%"}).animate({width:"45%"}).animate({height:"430px"});
 			setTimeout(function(){
 				//$("#start-new-pm").css("text-decoration","underline");
