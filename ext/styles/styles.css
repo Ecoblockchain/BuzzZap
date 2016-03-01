@@ -2038,3 +2038,15 @@ a{
 	display: none;
 	padding: 10px;
 }
+
+#tip-container{
+	width: 80%;
+	height: 100%;
+	margin: 0 auto;
+	text-align: center;
+	padding: 20px;
+	font-size: 150%;
+}
+.tip-row{
+	margin-top: 20px;
+}
