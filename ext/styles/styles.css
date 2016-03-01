@@ -1487,6 +1487,8 @@ a{
 	border: none;
 	width: 100px;
 	padding: 10px;
+	font-family: Quicksand;
+	letter-spacing: 2px;
 	font-size: 105%;
 	color: white;
 }	

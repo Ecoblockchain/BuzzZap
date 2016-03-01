@@ -33,6 +33,19 @@ if(loggedin()){
 					}
 			?>
 		</b></div>
+		<script>
+		$(document).ready(function(){
+			var click_view_mem = 0;
+			$("#view-member-opt").click(function(){
+				if(click_view_mem%2==0){
+					$("#lcp-userlist-container").slideDown();
+				}else{
+					$("#lcp-userlist-container").slideUp();
+				}	
+				click_view_mem++;
+			});
+		});
+		</script>
 		<div class = "profile-info-container" style = "width: 97%;padding-top:10px;white-space:normal;">
 			<div id = 'profile-fields' style = "text-align: left;margin-left: 20%">
 			<?php
@@ -70,7 +83,6 @@ if(loggedin()){
 							window.location="index.php?page=private_groups&com=<?php echo $view_com_id; ?>&edit_<?php echo $field; ?>=" + $(this).val();
 						}
 					});
-					
 				});
 				</script>
 				<?php
@@ -83,10 +95,22 @@ if(loggedin()){
 				}
 				
 			}
-			echo "Member Count: <span style = 'color:lightgreen;'>".$db->query("SELECT user_id FROM users WHERE user_com=".$db->quote($view_com_id))->rowCount()."</span><br>"; 
+			echo "Member Count: <span style = 'color:lightgreen;cursor: pointer;' id = 'view-member-opt'>".$db->query("SELECT user_id FROM users WHERE user_com=".$db->quote($view_com_id))->rowCount()." &ensp;&ensp;&ensp;<u>(View Members)</u></span><br>"; 
 			echo "Community Reputation: <span style = 'color:lightgreen;'>".get_com_rep($view_com_id)."</span><br>"; 
 			echo "</div>";
 		?>
+
+			<div id = "lcp-userlist-container" style = "font-size: 80%;margin: 0 auto;">
+
+			 	<br><br>
+			 	<?php
+			 		$users = $db->query("SELECT user_username, user_firstname, user_lastname FROM users WHERE user_id != ".$db->quote($user_id)." AND user_com = ".$db->quote($view_com_id));
+			 		foreach($users as $user){
+			 			echo "<span style = 'cursor:pointer;' id = 'eu-".$user['user_username']."'>".$user['user_username'].
+			 			"</span><span style = 'float:right'>".$user['user_firstname']." ".$user['user_lastname']. "</span><hr size = '1'>";
+			 		}
+			 	?>
+			</div>
 		</div>
 		<?php
 

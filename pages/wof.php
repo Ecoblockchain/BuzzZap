@@ -51,13 +51,15 @@ if(loggedin()){
 		<div style = 'padding:10px;' class = 'wof-cont-title'><?php echo get_user_community($_SESSION['user_id'], "com_name"); ?> Group Leaderboard</div>
 		<div class = 'wof-info'>This board shows the best groups/teams on BuzzZap.</div><br>
 		<?php
-			$get3 = $db->query("SELECT * FROM private_groups");
+			$get3 = $db->query("SELECT * FROM private_groups WHERE");
 			$count = 1;
 			$color = "#59c3d8";
 			//gid => rep
 			$reps = array();
 			foreach($get3 as $g){
-				$reps[$g["group_name"]] = get_group_rep($g['group_id']);
+				if(!in_array($g['com_id'], $hidden_coms)){
+					$reps[$g["group_name"]] = get_group_rep($g['group_id']);
+				}
 			}
 			foreach($reps as $gname=>$rep){
 				if($count==1){

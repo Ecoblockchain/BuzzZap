@@ -372,7 +372,9 @@ if(loggedin()||!empty($out_judge_key)){
 						<div class = "rec-audio" id = "rec-audio" style = "border:1px solid grey;margin-left: 155px;"></div><br>
 						<br><div id = "recording-status"></div><br>
 						<div id = "save-audio" style = "border:1px solid grey;margin-left:5px;float: left;margin-top:-28px;">Use</div><div id = "try-again-audio" style = "border:1px solid grey;margin-top:-32px;float: left;">Re-do</div><br><br>
-						<span style = 'font-size:70%'>Warning: the record feature may not<br> work properly in certain browsers. If so, use text instead.</span>
+						<span style = 'font-size:70%;color:red;'>
+							<?php echo supports_webrtc()[1]; ?>
+						</span>
 					</div>
 
 					<input type = "submit" value = "Post" id = "add-arg-comp-submit" style = "display: none">
