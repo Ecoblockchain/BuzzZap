@@ -100,7 +100,7 @@ if(loggedin()){
 			echo "</div>";
 		?>
 
-			<div id = "lcp-userlist-container" style = "font-size: 80%;margin: 0 auto;">
+			<div id = "lcp-userlist-container" style = "font-size: 80%;margin: 0 auto;width:500px;">
 
 			 	<br><br>
 			 	<?php
