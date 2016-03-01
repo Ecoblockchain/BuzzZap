@@ -51,7 +51,7 @@ if(loggedin()){
 		<div style = 'padding:10px;' class = 'wof-cont-title'><?php echo get_user_community($_SESSION['user_id'], "com_name"); ?> Group Leaderboard</div>
 		<div class = 'wof-info'>This board shows the best groups/teams on BuzzZap.</div><br>
 		<?php
-			$get3 = $db->query("SELECT * FROM private_groups WHERE");
+			$get3 = $db->query("SELECT * FROM private_groups");
 			$count = 1;
 			$color = "#59c3d8";
 			//gid => rep
