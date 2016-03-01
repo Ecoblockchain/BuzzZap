@@ -12,7 +12,7 @@ if(loggedin()){
 		$get_tips = $db->query("SELECT * FROM `notifications` WHERE `to` = '--all' AND `text` LIKE 'Tip:%'");
 
 		foreach($get_tips as $tip){
-			echo "<div class = 'tip-row'>".substr($tip['text'],4)."</div>";
+			echo "<div class = 'tip-row'>".substr($tip['text'],4)."</div><hr size = '1'>";
 		}
 		?>
 	</div>

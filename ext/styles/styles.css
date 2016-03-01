@@ -2045,7 +2045,9 @@ a{
 	margin: 0 auto;
 	text-align: center;
 	padding: 20px;
+	background-color: salmon;
 	font-size: 150%;
+	color: #0080ff;
 }
 .tip-row{
 	margin-top: 20px;
