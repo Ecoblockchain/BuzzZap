@@ -106,7 +106,7 @@ if(loggedin()){
 			 	<?php
 			 		$users = $db->query("SELECT user_username, user_firstname, user_lastname FROM users WHERE user_id != ".$db->quote($user_id)." AND user_com = ".$db->quote($view_com_id));
 			 		foreach($users as $user){
-			 			echo "<span style = 'cursor:pointer;' id = 'eu-".$user['user_username']."'>".add_profile_link($user['user_username'],1,'style:lightblue;').
+			 			echo "<span style = 'cursor:pointer;' id = 'eu-".$user['user_username']."'>".add_profile_link($user['user_username'],0,'color:lightblue;').
 			 			"</span><span style = 'float:right'>".$user['user_firstname']." ".$user['user_lastname']. "</span><hr size = '1'>";
 			 		}
 			 	?>
