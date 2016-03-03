@@ -84,12 +84,6 @@ if(loggedin()){
 					$sticky_footer_bg = "#71C671";
 					$attr_style_bg = "";
 				}
-				
-				//$note_pos[$row['thread_id']]=[$c,$c];
-				
-			?>
-			<?php
-
 				$randl = rand(0,100);
 				$randt = -100;
 
@@ -301,10 +295,12 @@ if(loggedin()){
 		
 		<?php
 			$nc = 1;
-			$get_thread_ids = $db->query("SELECT thread_id FROM iwonder_threads ORDER BY time_created DESC");
+			$get_thread_ids = $db->query("SELECT * FROM iwonder_threads ORDER BY time_created DESC");
 			$jsarray = array();
 			foreach($get_thread_ids as $i){
-				$jsarray[] = $i[0];
+				if($i['thread_starter']==$username||$i['active']=="1"){
+					$jsarray[] = $i[0];
+				}
 			}
 			$jsarray = json_encode($jsarray);	
 		?>
@@ -317,8 +313,11 @@ if(loggedin()){
 		}else{
 			nspeed = 0;
 		}
+
+
 		for(key in nids){
 			var note_id = nids[key];
+
 			if(nspeed>0){
 				nspeed = getRand(600,3000);
 			}
