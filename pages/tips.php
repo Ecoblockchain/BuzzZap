@@ -6,7 +6,7 @@ if($check_valid!="true"){
 if(loggedin()){
 	?>
 	<div class = 'page-path'> Debating > BuzzZap Tips</div>
-	<div class = "title-private-debate" style = 'font-size:330%'>BuzzZap Usage Tips</div>
+	<div class = "loggedin-headers" style = 'font-size:330%'>BuzzZap Usage Tips</div>
 	<div id = "tip-container">
 		<?php
 		$get_tips = $db->query("SELECT * FROM `notifications` WHERE `to` = '--all' AND `text` LIKE 'Tip:%' ORDER BY note_id DESC");

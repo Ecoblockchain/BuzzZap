@@ -78,7 +78,7 @@ if(loggedin()){
 				$col_name = "com_name";
 			}
 			echo "<div class = 'page-path'>Debating > ".$ctype." Competitions </div>";
-			echo "<div class = 'title-private-debate'>".$p_title."<br><span style = 'font-size:40%;'>".$title_note."</span></div><br>";
+			echo "<div class = 'loggedin-headers'>".$p_title."<br><span style = 'font-size:40%;'>".$title_note."</span></div><br>";
 			if($type == "0" || $type == "1"){
 				if(group_leader($_SESSION['user_id'])){
 				?>

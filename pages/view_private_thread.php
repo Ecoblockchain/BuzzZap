@@ -362,7 +362,7 @@ if(loggedin()){
 						
 						<div id = "mreply_form<?php echo $row['reply_id']; ?>" class = "mreply-form-container">
 							<form action = "" method = "POST">
-								<textarea placeholder= "Reply" name = "mreply_text<?php echo br2nl($row['reply_id']); ?>" class = "textarea-type2"></textarea>
+								<textarea placeholder= "Reply" name = "mreply_text<?php echo br2nl($row['reply_id']); ?>" class = "textarea-mreply" style='height:90px;'></textarea>
 								<input type = "submit" class = "mreply-submit" value = "Submit">
 							</form>
 						</div>

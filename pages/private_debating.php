@@ -35,7 +35,7 @@ if(loggedin()){
 		});
 		</script>
 		<div class = 'page-path'>Debating > <?php echo $dtype; ?> Debating</div>
-		<div class = "title-private-debate"><?php echo $title ;?></div><hr size = '1'><br><br>
+		<div class = "loggedin-headers"><?php echo $title ;?></div><hr size = '1'><br><br>
 		<div class = "topic-container">
 	
 	<a href = "index.php?page=private_debating_topic&amp;topic_id=0<?php echo $extra_get; ?>" style = "text-decoration:none;">

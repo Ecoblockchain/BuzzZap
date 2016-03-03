@@ -766,6 +766,21 @@ a{
 	margin-left:10px;
 	border-radius:4px 4px 4px 4px;
 }
+.textarea-mreply{
+	resize:none;
+	font-family: Quicksand;
+	color:grey;
+	outline-width:0px;
+	letter-spacing:2px;
+	width:100%;
+	height:100px;
+	position: relative;
+	padding:5px;
+	border: none;
+	margin-top:10px;
+	float: right;
+	margin-left:10px;
+}
 //--
 
 .editpost-submit{
@@ -784,15 +799,15 @@ a{
 .mreply-submit{
 	width:100px;
 	background-color:white;
-	height:25px;
+	padding:5px;
+	position: relative;
 	font-family: Quicksand;
 	color:grey;
 	font-size:12px;
 	letter-spacing:3px;
-	border:1px solid lightgrey;
-	border-top: 0px solid;
-	margin-left:5%;
-	
+	border: none;
+	border-top: 1px solid #EDEDED;
+	float: right;
 }
 
 .quick-success-msg{
@@ -812,10 +827,10 @@ a{
 .mreply-form-container{
 	display:none;	
 	width:50%;
-	height:90px;
+	height:130px;
 	margin-left:10%;
+	padding: 10px;
 	background-color:#EDEDED;
-	border-radius:4px 0px 4px 4px;
 	margin-top:5px;
 
 }
@@ -856,7 +871,7 @@ a{
 }
 
 .profile-title{
-	color:dimgrey;
+	text-align: center;
 	font-size:200%;
 	letter-spacing:3px;	
 }
@@ -866,7 +881,7 @@ a{
 	overflow: auto;
 	opacity:1;
 	letter-spacing:3px;
-	background-color: #62b1cf;
+	background-color: #4aa6ab;
 	z-index:100;
 	font-size:130%;
 	padding:20px;
@@ -876,7 +891,7 @@ a{
 	text-align:left;	
 }
 .profile-edit-textfield{
-	background-color:#62b1cf;
+	background-color:#4aa6ab;
 	font-size:20px;
 	color:dimgrey;
 	border:none;
@@ -893,7 +908,7 @@ a{
 	float: left;
 	font-size:130%;
 	color:dimgrey;
-	background-color: #62b1cf;
+	background-color: #4aa6ab;
 
 }
 #about-me-container{
@@ -918,9 +933,9 @@ a{
 	width: 100%;
 	resize:none;
 	font-size:100%;
-	background-color: #62b1cf;
-	border: 2px dotted #06e5b1;
+	background-color: #4aa6ab;
 	color:#06e5b1;
+	border: none;
 	outline-width: 0px;
 	line-height:30px;
 	padding:10px;
@@ -1027,8 +1042,13 @@ a{
 .note_title{
 	text-align: center;
 	letter-spacing:3px;
-	font-size:28px;
-	color:#7EC0EE;	
+	font-size:28px;	
+}
+
+.loggedin-headers{
+	color: #4aa6ab;
+	text-align: center;
+	font-size: 30px;
 }
 
 .group-fields{
@@ -1157,29 +1177,61 @@ a{
 
 #iwonder-board{
 	margin:0 auto;
-	margin-top:50px;
 	min-height: 500px;
-	height: auto 500px;
+	height: 100%;
+	border-top: 40px solid #C89661;
 	overflow: auto;
-	padding: 10px;
 	background-color:#C89661;
-	padding-top: 10px;
-	width: 1100px;
+	width: 100%;
 }
+
+.iwonder-s-submit{
+	background: #FD9085;
+	border-radius: 10px;
+	padding: 3px;
+	text-align: center;
+	width: 35px;
+	display: none;
+	font-size: 12px;
+	color: #fff;
+	z-index: 1000;
+}
+
+.note-pins{
+	height: 25px;
+	float: right;
+	margin-top: -15px;
+}
+
 
 .iwonder-sticky{
 	cursor:pointer;
-	color:dimgrey;
+	color:#039cb2;
 	letter-spacing:1px;
-	background-color:gold;
-	height:200px;
-	font-size:150%;
+	background-color:#f6e53a;
+	height:21%;
+	font-size:130%;
 	padding:10px;
-	margin-top: 2%;
+	margin-top: -2%;
 	margin-left: 2%;
-	width:230px;
+	width:20%;
 	float:left;
 }
+
+#d-sticky{
+	margin-top: 10px;
+	height: 21%;
+	display: none;
+	padding: 0px;
+	border: 10px solid #f6e53a;
+	background-image: url('../images/add-note.png');
+	background-size: 50%;
+	background-position: center; 
+	background-repeat: no-repeat;
+	position: absolute;
+}
+
+
 #iwonder-menu{
 	color:grey;
 	letter-spacing:1px;
@@ -1188,20 +1240,25 @@ a{
 }
 
 #new-sticky-text{
-	background-color:gold;
+	background-color:#f6e53a;
 	resize:none;
-	border:none;
+	z-index: -1;
+	position: absolute;
+	border:1px;
+	margin: 0;
+	display: none;
+	font-family: Quicksand;
 	font-size:100%;
-	width:190px;
-	height:200px;
+	width:100%;
+	height:100%;
 	color:dimgrey;
 	outline-width:0px;
 }
 
 .sticky-content{
 	width:95%;
-	overflow: auto;
-	height:300px;
+	overflow-y: auto;
+	height:100%;
 	display:none;
 	margin:0 auto;
 	font-size:70%;
@@ -1255,8 +1312,8 @@ a{
 }
 
 #iwonder-t{
-	font-size:200%;
-	color:grey;
+	font-size:300%;
+	text-align: center;
 	letter-spacing:2px;
 }	
 
@@ -2047,8 +2104,16 @@ a{
 	padding: 20px;
 	background-color: salmon;
 	font-size: 150%;
-	color: #99ccff;
+	color: #fff;
 }
 .tip-row{
 	margin-top: 20px;
 }
+
+#note-pin {
+  height: 30px;
+  width: 30px;
+  float: right;
+  position: relative;
+  top: -120px;
+  left: 120px; }

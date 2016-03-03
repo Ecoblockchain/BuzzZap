@@ -19,7 +19,7 @@ if(loggedin()){
 		$can_edit = (get_user_field($_SESSION['user_id'], "user_rank")==3&&$own==true)? true:false;
 		?>
 		<div class = 'page-path'>Community Profile > <?php echo $com_profile['com_name'];?></div><br>
-		<div class = 'p-groups-title'><b>
+		<div class = 'loggedin-headers'><b>
 			<?php
 				echo $com_profile["com_name"]. "'s Profile";
 			
@@ -118,7 +118,7 @@ if(loggedin()){
 
 		?>
 		<hr size = "1" id = 'start-group-list'><br>
-		<div class = 'p-groups-title'>
+		<div class = 'loggedin-headers'>
 			<b>
 			<?php echo $com_profile['com_name']; ?>
 				Private Groups

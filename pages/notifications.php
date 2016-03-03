@@ -7,7 +7,7 @@ if(loggedin()){
 	
 	?>
 		<div class = 'page-path'><?php echo get_user_field($_SESSION['user_id'], "user_username"); ?> > My Notifications
-		<div class = "note_title">Your Notifications</div>
+		<div class = "loggedin-headers">Your Notifications</div>
 		<div id = "note-menu"><a class = "note-menu" href = "index.php?page=notifications&cleara=true">Clear All</a><span class ="note-menu" id = "ds-n">  &middot; Delete Selected</span></div>
 		<br><br>
 	<?php

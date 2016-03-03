@@ -6,6 +6,7 @@ if($check_valid!="true"){
 if(loggedin()){
 	?>
 	<div class = 'page-path'>Debating > Wall Of Fame</div><br>
+	<div class = "loggedin-headers">Wall Of Fame</div><br>
 	<div class = "wof-container">
 		<div style = 'padding:10px;' class = 'wof-cont-title'>BuzzZap Community Leaderboard</div>
 		<div class = 'wof-info'>This board shows the best 20 communities on the whole of BuzzZap based on reputation.</div><br>

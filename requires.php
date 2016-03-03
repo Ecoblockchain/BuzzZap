@@ -8,7 +8,9 @@
 <script type="text/javascript" src = "ext/jquery/typewriter.js"></script>
 <script type="text/javascript" src = "ext/jquery/typed.js"></script>
 <script type="text/javascript" src = "ext/jquery/jquery.window.js"></script>
+<script type="text/javascript" src = "ext/jquery/rotate.jquery.js"></script>
 <script src="https://cdn.webrtc-experiment.com/MediaStreamRecorder.js"></script>
+<script src="ext/jquery/jquery.blurr.js"></script>
 <script type="text/javascript" src = "https://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
 <script src="https://cdn.rawgit.com/webrtc/adapter/master/adapter.js"></script>
 <script src="ext/jquery/peer.min.js"></script>

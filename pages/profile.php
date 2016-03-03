@@ -41,7 +41,7 @@ if(loggedin()){
 		<div class = 'page-path'>User Profile > <?php echo $path_page_name; ?> </div><br>
 		<div id = 'all-boxes' style = "">
 			
-			<span class = "profile-title"><?php echo $title. "Profile"; ?></span>
+			<div class = "profile-title loggedin-headers"><?php echo $title. "Profile"; ?></div><br>
 			<?php
 			if((isset($_GET['rul']))&&($_GET['rul']=="true")){
 			?>
