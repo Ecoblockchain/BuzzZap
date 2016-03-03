@@ -200,9 +200,10 @@ if(loggedin()){
 			</div>
 			
 		<?php
+				$cl++;
+				$ct++;
 			}
-			$cl++;
-			$ct++;
+			
 		}
 		//$board_height = ($ct/4)*50;
 		$note_pos = json_encode($note_pos);
