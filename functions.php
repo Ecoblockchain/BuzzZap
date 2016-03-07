@@ -573,6 +573,7 @@ function valid_view_thread($thread_id, $user_id){
 }
 function action_user($user_id, $action){
 	global $db;
+	$username = get_user_field($user_id, "user_username");
 	if(user_rank($_SESSION['user_id'], 3, "up")){
 		
 		$info_array = array("user_id"=>$user_id);
@@ -588,7 +589,7 @@ function action_user($user_id, $action){
 			$unban->execute($info_array);
 		}else if($action=="reset_user"){
 			//0 = asks for username
-			$username = get_user_field($user_id, "user_username");
+			
 			//1 = asks for user_id
 			$clear_tables = array("debating_threads"=>"0thread_starter", "thread_likes"=>"1user_id", "thread_replies"=>"0user_replied", "thread_reply_votes"=>"1user_id");
 			foreach($clear_tables as $table=>$user_ident){
@@ -610,6 +611,22 @@ function action_user($user_id, $action){
 			$update = $db->prepare("UPDATE users SET close_mod = :close_mod WHERE user_id = :user_id");
 			$update->execute(array("close_mod"=>$close_mod, "user_id"=>$user_id));
 				
+		}else if($action == "viewc_user"){
+			$content = array(); //link=>content
+			$get1 = $db->query("SELECT * FROM thread_replies WHERE visible = 1 AND user_replied = ".$db->quote($username));
+			$get2 = $db->query("SELECT * FROM iwonder_replies WHERE visible = 1 AND user_replied = ".$db->quote($username));
+
+			foreach($get1 as $row){
+				$link = "index.php?page=view_private_thread&thread_id=".$row['thread_id'];
+				$content[$row['reply_text']]=$link;
+			}
+
+			foreach($get2 as $row){
+				$link = "index.php?page=iwonder&keep_o=".$row['thread_id'];
+				$content[$row['reply_text']]=$link;
+			}
+
+			return $content;
 		}
 		
 		return true;

@@ -180,7 +180,7 @@ if(loggedin()){
 				Use this system to alter a user in anyway.
 				<br><br>
 				 
-				 <form action = "" method = "POST">
+				 <form action = "index.php?page=leader_cp&go_to=1" method = "POST">
 				 	Enter the relevant user:<br>
 				 	<input type = "text" name = "username_action" placeholder = "Enter Username..." class = "leader-cp-fields" id ='act-on-user'>
 				 	<div id = "pred_results"></div>
@@ -194,6 +194,7 @@ if(loggedin()){
 				 		<option value = "reset_user">Reset User (deletes posts, reputation, votes, etc)</option>
 				 		<option value = "cm_user">Turn on close moderation (every post made by this user will have to be approved by a leader before it is visible)</option>
 				 		<option value = "tcm_user">Turn off close moderation (the user can post freely, without the need of a leader approving it)</option>
+				 		<option value = "viewc_user">View User Content (view all a users posts, etc)</option>
 				 	</select>
 				 	<input type = "submit" value = "Submit" class = "leader-cp-submit" id = 'submit-act'>	
 				 </form>
@@ -209,6 +210,86 @@ if(loggedin()){
 				 		}
 				 	?>
 				 </div>
+				 <?php
+				 if(isset($_POST['username_action'],$_POST['user_action'])){
+					if($_POST['user_action']!=="na"){
+						$user_com = get_user_field($_SESSION['user_id'], "user_com");
+						$username = htmlentities($_POST['username_action']);
+						$action = htmlentities($_POST['user_action']);
+						$valid_user_check = $db->query("SELECT user_username FROM users WHERE user_com = '$user_com' AND user_rank < 3 AND user_username = ".$db->quote($username))->fetchColumn();
+						if(!empty($valid_user_check)){
+							if($action=="edit_user"){
+								// real column => display name
+								$allowed_columns = array("user_username"=>"Username", "user_password"=>"Password", "user_firstname"=>"Firstname", "user_lastname"=>"Lastname", "user_email"=>"Email", "user_rank"=>"Rank");
+								$options = "<option val = ''>-----</option>";
+								foreach($allowed_columns as $column=>$display_name){
+									$options .= "<option value = '".$column."'>".$display_name."</option>";
+								}
+								$html = "
+									<span style = 'color:grey;'>
+										<span id = 'close_edit_form' style = 'float:right;'>x</span><br>
+										<center><b><u>Edit User</b></u></center><br><br>
+										<form action = '' method = 'POST'>
+											Change ".$username."'s...<br><br>
+											 <select name = 'edit_column' id ='edit_column' class = 'leader-cp-fields' style = 'background:white;'>
+												".$options."
+											</select><br><br>
+											<input type = 'text' name = 'new_val' placeholder = 'New Value...' class = 'leader-cp-fields' id = 'edit_new_value'>
+											<input type = 'hidden' value = '".$username."' name = 'username'><br><br>
+											<span id = 'ex_info_cuser' style = 'font-size: 70%'></span><br>
+											<input type = 'submit' class = 'leader-cp-sumbit'>
+										
+										</form>
+									</span>
+									<script>
+										$(document).ready(function(){
+											$('#close_edit_form').click(function(){
+												$('#quick-msg').fadeOut();	
+											});
+											$('#edit_column').change(function(){
+												if($(this).val()!='-----'){
+													var dis_name = $(this).val().substring(5);
+												}else{
+													var dis_name = '...';
+												}	
+												if($(this).val()=='user_password'){
+													$('#edit_new_value').attr('type', 'password');
+												}else{
+													$('#edit_new_value').attr('type', 'text');
+												}
+												if($(this).val()=='user_rank'){
+													$('#ex_info_cuser').html('Enter \'leader\' or \'member\'. Remember, giving a user the leader rank will give them full access to this community manager.<br>');
+												}else{
+													$('#ex_info_cuser').html('');
+												}
+												$('#edit_new_value').attr('placeholder', 'New '+dis_name);
+											});
+										});
+									</script>
+								";
+								setcookie("success", "2".$html, time()+10);
+								
+							}else{
+								$user_id = $db->query("SELECT user_id FROM users WHERE user_username = '$username'")->fetchColumn();
+								$result= action_user($user_id, $action);
+								if($action=="viewc_user"){
+									echo "<hr size = '1'><br><b>Results:</b><br>";
+									foreach($result as $txt=>$link){
+										echo "<a href = '".$link."'>".$txt."</a><hr size = '1'>";
+									}
+								}else{
+									setcookie("success", "1Successfully altered user!", time()+10);	
+								}
+							}
+						}else{
+							setcookie("success", "0The user entered is invalid", time()+10);
+						}
+					}
+					if($action!="viewc_user"){
+						header("Location: index.php?page=leader_cp&go_to=1");	
+					}	
+				}
+				?>
 				 <br><hr size = "1">
 				 <b><u>Add User</u></b>
 				 <br>Add a new user to your community.<br><br>
@@ -436,77 +517,11 @@ if(loggedin()){
 					
 					?>
 				</div>
+				<br><br>
+				<hr size = "1">
+
 			</div>
 		<?php
-		if(isset($_POST['username_action'],$_POST['user_action'])){
-			if($_POST['user_action']!=="na"){
-				$user_com = get_user_field($_SESSION['user_id'], "user_com");
-				$username = htmlentities($_POST['username_action']);
-				$action = htmlentities($_POST['user_action']);
-				$valid_user_check = $db->query("SELECT user_username FROM users WHERE user_com = '$user_com' AND user_rank < 3 AND user_username = ".$db->quote($username))->fetchColumn();
-				if(!empty($valid_user_check)){
-					if($action=="edit_user"){
-						// real column => display name
-						$allowed_columns = array("user_username"=>"Username", "user_password"=>"Password", "user_firstname"=>"Firstname", "user_lastname"=>"Lastname", "user_email"=>"Email", "user_rank"=>"Rank");
-						$options = "<option val = ''>-----</option>";
-						foreach($allowed_columns as $column=>$display_name){
-							$options .= "<option value = '".$column."'>".$display_name."</option>";
-						}
-						$html = "
-							<span style = 'color:grey;'>
-								<span id = 'close_edit_form' style = 'float:right;'>x</span><br>
-								<center><b><u>Edit User</b></u></center><br><br>
-								<form action = '' method = 'POST'>
-									Change ".$username."'s...<br><br>
-									 <select name = 'edit_column' id ='edit_column' class = 'leader-cp-fields' style = 'background:white;'>
-										".$options."
-									</select><br><br>
-									<input type = 'text' name = 'new_val' placeholder = 'New Value...' class = 'leader-cp-fields' id = 'edit_new_value'>
-									<input type = 'hidden' value = '".$username."' name = 'username'><br><br>
-									<span id = 'ex_info_cuser' style = 'font-size: 70%'></span><br>
-									<input type = 'submit' class = 'leader-cp-sumbit'>
-								
-								</form>
-							</span>
-							<script>
-								$(document).ready(function(){
-									$('#close_edit_form').click(function(){
-										$('#quick-msg').fadeOut();	
-									});
-									$('#edit_column').change(function(){
-										if($(this).val()!='-----'){
-											var dis_name = $(this).val().substring(5);
-										}else{
-											var dis_name = '...';
-										}	
-										if($(this).val()=='user_password'){
-											$('#edit_new_value').attr('type', 'password');
-										}else{
-											$('#edit_new_value').attr('type', 'text');
-										}
-										if($(this).val()=='user_rank'){
-											$('#ex_info_cuser').html('Enter \'leader\' or \'member\'. Remember, giving a user the leader rank will give them full access to this community manager.<br>');
-										}else{
-											$('#ex_info_cuser').html('');
-										}
-										$('#edit_new_value').attr('placeholder', 'New '+dis_name);
-									});
-								});
-							</script>
-						";
-						setcookie("success", "2".$html, time()+10);
-						
-					}else{
-						$user_id = $db->query("SELECT user_id FROM users WHERE user_username = '$username'")->fetchColumn();
-						action_user($user_id, $action);
-						setcookie("success", "1Successfully altered user!", time()+10);	
-					}
-				}else{
-					setcookie("success", "0The user entered is invalid", time()+10);
-				}
-			}
-			header("Location: index.php?page=leader_cp&go_to=1");		
-		}
 		
 		if(isset($_POST['edit_column'], $_POST['new_val'], $_POST['username'])){
 			$username = htmlentities($_POST['username']);

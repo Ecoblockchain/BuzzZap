@@ -56,6 +56,7 @@ if(loggedin_as_admin()){
 						<option value = "reset_user">Reset User (deletes posts, reputation, votes, etc)</option>
 						<option value = "cm_user">Turn on close moderation (every post made by this user will have to be approved by a leader before it is visible)</option>
 						<option value = "tcm_user">Turn off close moderation (the user can post freely, without the need of a leader approving it)</option>
+						<option value = "viewc_user">View User Content (view all a users posts, etc)</option>
 					</select>
 					<input type = "submit" value = "Submit" class = "leader-cp-submit">	
 				 </form>

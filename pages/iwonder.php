@@ -151,13 +151,13 @@ if(loggedin()){
 									}else if($_SESSION['user_id']==$muser_idp){
 										$mperm_to_delete = true;
 									}
-									if(($_SESSION['user_id']!=$muser_idp)&&(!check_c_reported($row_['reply_id'], "reply_id", "iwonder_replies"))){
+									if(($row_['visible']==1)&&($_SESSION['user_id']!=$muser_idp)&&(!check_c_reported($row_['reply_id'], "reply_id", "iwonder_replies"))){
 										?>
 											<a style = "color: salmon;font-size:50%;" href = "index.php?page=iwonder&keep_o=<?php echo $row['thread_id']; ?>&repo-c=<?php echo $row_['reply_id']; ?>">
 												-Report Abuse
 											</a>
 										<?php
-									}else if(check_c_reported($row_['reply_id'], "reply_id", "iwonder_replies")){
+									}else if(($row_['visible']==1)&&check_c_reported($row_['reply_id'], "reply_id", "iwonder_replies")){
 										?>
 										<span style = "color: salmon;font-size:50%;" href = "index.php?page=iwonder&keep_o=<?php echo $thread_id; ?>&repo-c=<?php echo $row_['reply_id']; ?>">
 												-This comment has been reported.
