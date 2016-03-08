@@ -303,25 +303,30 @@ if(loggedin()){
 						$members = htmlentities($_POST['group_members']);
 						$members = strlist_to_array($members);
 						if(end($members)!=="ERROR"){
-							$user_id = $_SESSION['user_id'];
-							if(create_p_group($user_id, $name, $members)){
-								foreach($members as $member){
+							$check_new = $db->query("SELECT group_name FROM private_groups WHERE group_name = ".$db->quote($name))->fetchColumn()
+							if(empty($check_new)){
+								$user_id = $_SESSION['user_id'];
+								if(create_p_group($user_id, $name, $members)){
+									foreach($members as $member){
+										
+										$text = "You have been invited to join the group '".$name."', to accept or decline please click here.";
+										$link = "index.php?page=private_groups";
+										
+										add_note($db->query("SELECT user_id FROM users WHERE user_username=".$db->quote($member))->fetchColumn(), $text, $link);
+									}
+									$text = "Your group '".$name."' has successfully been created. Your desired members will recieve their invitations to join shortly.";
+									$link = "";
+									add_note($_SESSION['user_id'], $text, $link);
 									
-									$text = "You have been invited to join the group '".$name."', to accept or decline please click here.";
-									$link = "index.php?page=private_groups";
 									
-									add_note($db->query("SELECT user_id FROM users WHERE user_username=".$db->quote($member))->fetchColumn(), $text, $link);
+									setcookie("success", "1Successfully created group.", time()+10);
+								}else{
+								
+									setcookie("success", "0There was an error.", time()+10);
 								}
-								$text = "Your group '".$name."' has successfully been created. Your desired members will recieve their invitations to join shortly.";
-								$link = "";
-								add_note($_SESSION['user_id'], $text, $link);
-								
-								
-								setcookie("success", "1Successfully created group.", time()+10);
 							}else{
-							
-								setcookie("success", "0There was an error.", time()+10);
-							}
+								setcookie("success", "0That group name already exists.", time()+10);
+							}	
 						}else{
 							$count = 0;
 							$text = "The following users don't exist:<br><b>";

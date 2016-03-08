@@ -2111,9 +2111,36 @@ a{
 }
 
 #note-pin {
-  height: 30px;
-  width: 30px;
-  float: right;
-  position: relative;
-  top: -120px;
-  left: 120px; }
+	height: 30px;
+ 	width: 30px;
+ 	float: right;
+ 	position: relative;
+ 	top: -120px;
+ 	left: 120px;
+}
+
+.live-deb-room-container{
+	width: 290px;
+	height: 290px;
+	text-align: center;
+	color: white;
+	cursor: pointer;
+	float: left;
+	border-radius:100%;
+}
+
+.room-title-container{
+	margin-top: 30%;
+	padding: 10px;
+}
+
+#room-container{
+	width: 900px;
+	margin: 10px auto;
+	height: 100%;
+}
+@media only screen and (max-width:1255px) {
+	#room-container{
+		width: 600px;
+	}
+}

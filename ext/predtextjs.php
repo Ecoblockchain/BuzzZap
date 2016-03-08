@@ -101,6 +101,9 @@ $(document).ready(function(){
 			}
 		}else if("<?php echo $page; ?>" === "leader_cp"){
 			pred_text("users", "user_username", "act-on-user", "c:AND user_com = '<?php echo $com_id; ?>' AND user_username != '<?php echo $username; ?>' ", 3);
+		
+		}else if("<?php echo $page; ?>" === "live_debating"){
+			pred_text("private_groups", "group_name", "des_opponents");
 		}
 	}else{
 		if("<?php echo $page; ?>" === "home"){

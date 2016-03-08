@@ -2013,5 +2013,26 @@ function following_thread($uid, $thread_id, $change){
 		}
 	}
 }
+
+function calc_ldeb_struct($dur, $rounds){
+	$min_round_time = 1; // mins
+	$round_time = $dur/$rounds;
+	if($round_time<1){
+		return false;
+	}else{
+		$cue_inc = $round_time/2;
+		//mins=>group
+		//array(0=>1, 2.5, );
+		$struct = array();
+		$inc = 0;
+		for($i = 0;$i<=$rounds*2;$i++){
+			$group = ($i%2==0)? 1 : 2;
+			$struct[strval($inc)] = $group;
+			$inc += $cue_inc;
+		}
+
+		return $struct;
+	}
+}
 ?>
 

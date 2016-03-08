@@ -31,8 +31,6 @@ if(loggedin()){
 							}, 2000);
 						}
 					});
-				
-				
 								
 					$("#close-comp-form").click(function(){
 						if(start_comp_opened==1){	
