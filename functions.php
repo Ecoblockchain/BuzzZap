@@ -2014,4 +2014,3 @@ function following_thread($uid, $thread_id, $change){
 	}
 }
 ?>
-
