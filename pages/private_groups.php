@@ -251,12 +251,16 @@ if(loggedin()){
 					$addu = htmlentities($_POST['a_user']);
 					$gid = htmlentities($_POST['group_id']);
 					if(user_in_group($_SESSION['user_id'], $gid, "true")&&group_leader($_SESSION['user_id'])){
-						$uid = $db->query("SELECT user_id FROM users WHERE user_username = ".$db->quote($addu))->fetchColumn();
-						if(!empty($uid)){
-							group_action($uid, $gid, "addu");
-							setcookie("success", "1Successfully sent an invite to ".$addu." to join your group!", time()+10);
+						if(get_group_member_count($gid)<5){
+							$uid = $db->query("SELECT user_id FROM users WHERE user_username = ".$db->quote($addu))->fetchColumn();
+							if(!empty($uid)){
+								group_action($uid, $gid, "addu");
+								setcookie("success", "1Successfully sent an invite to ".$addu." to join your group!", time()+10);
+							}else{
+								setcookie("success", "0That user does not exist.", time()+10);
+							}	
 						}else{
-							setcookie("success", "0That user does not exist.", time()+10);
+							setcookie("success", "0You cannot have more than five members in a group.", time()+10);
 						}	
 					}else{
 						setcookie("success", "0There was an error.", time()+10);
@@ -303,29 +307,33 @@ if(loggedin()){
 						$members = htmlentities($_POST['group_members']);
 						$members = strlist_to_array($members);
 						if(end($members)!=="ERROR"){
-							$check_new = $db->query("SELECT group_name FROM private_groups WHERE group_name = ".$db->quote($name))->fetchColumn()
-							if(empty($check_new)){
-								$user_id = $_SESSION['user_id'];
-								if(create_p_group($user_id, $name, $members)){
-									foreach($members as $member){
+							if(count($members)<=5){
+								$check_new = $db->query("SELECT group_name FROM private_groups WHERE group_name = ".$db->quote($name))->fetchColumn();
+								if(empty($check_new)){
+									$user_id = $_SESSION['user_id'];
+									if(create_p_group($user_id, $name, $members)){
+										foreach($members as $member){
+											
+											$text = "You have been invited to join the group '".$name."', to accept or decline please click here.";
+											$link = "index.php?page=private_groups";
+											
+											add_note($db->query("SELECT user_id FROM users WHERE user_username=".$db->quote($member))->fetchColumn(), $text, $link);
+										}
+										$text = "Your group '".$name."' has successfully been created. Your desired members will recieve their invitations to join shortly.";
+										$link = "";
+										add_note($_SESSION['user_id'], $text, $link);
 										
-										$text = "You have been invited to join the group '".$name."', to accept or decline please click here.";
-										$link = "index.php?page=private_groups";
 										
-										add_note($db->query("SELECT user_id FROM users WHERE user_username=".$db->quote($member))->fetchColumn(), $text, $link);
+										setcookie("success", "1Successfully created group.", time()+10);
+									}else{
+									
+										setcookie("success", "0There was an error.", time()+10);
 									}
-									$text = "Your group '".$name."' has successfully been created. Your desired members will recieve their invitations to join shortly.";
-									$link = "";
-									add_note($_SESSION['user_id'], $text, $link);
-									
-									
-									setcookie("success", "1Successfully created group.", time()+10);
 								}else{
-								
-									setcookie("success", "0There was an error.", time()+10);
-								}
+									setcookie("success", "0That group name already exists.", time()+10);
+								}	
 							}else{
-								setcookie("success", "0That group name already exists.", time()+10);
+								setcookie("success", "0You must have five or less members in your group.", time()+10);
 							}	
 						}else{
 							$count = 0;

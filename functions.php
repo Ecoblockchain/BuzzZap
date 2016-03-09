@@ -788,6 +788,11 @@ function group_leader($user_id){
 		return false;	
 	}
 }
+
+function get_group_member_count($gid){
+	global $db;
+	return $db->query("SELECT * FROM group_members WHERE group_id = ".$db->quote($gid))->rowCount();
+}
 function create_p_group($user_id, $name, $members){
 	global $db;
 	if(!user_in_group($user_id,"", "true")){
@@ -2014,7 +2019,7 @@ function following_thread($uid, $thread_id, $change){
 	}
 }
 
-function calc_ldeb_struct($dur, $rounds){
+function calc_ldeb_timeline($dur, $rounds){
 	$min_round_time = 1; // mins
 	$round_time = $dur/$rounds;
 	if($round_time<1){
@@ -2022,7 +2027,6 @@ function calc_ldeb_struct($dur, $rounds){
 	}else{
 		$cue_inc = $round_time/2;
 		//mins=>group
-		//array(0=>1, 2.5, );
 		$struct = array();
 		$inc = 0;
 		for($i = 0;$i<=$rounds*2;$i++){
@@ -2034,5 +2038,51 @@ function calc_ldeb_struct($dur, $rounds){
 		return $struct;
 	}
 }
-?>
 
+function get_ldeb_val($id, $col){
+	global $db;
+	return $db->query("SELECT `".$col."` FROM live_debates WHERE deb_id =".$db->quote($id)." LIMIT 1")->fetchColumn();
+}
+
+function get_ldeb_struct($did){
+	global $db;
+	$cand1_id = get_ldeb_val($did,"starter_id");
+	$cand2_id = get_ldeb_val($did,"opp_id");
+
+	$c1_mcount = get_group_member_count($cand1_id);
+	$c2_mcount = get_group_member_count($cand2_id);
+
+	return array($cand1_id=>$c1_mcount,$cand2_id=>$c2_mcount);
+
+}
+
+function start_ldeb($question,$note,$opp,$dur,$rounds,$judge,$starter_id){
+	global $db;
+
+	$insert = $db->prepare("INSERT INTO live_debates 
+							VALUES(
+								'',
+								:opp,
+								:sid,
+								:question,
+								:dur,
+								UNIX_TIMESTAMP(),
+								:judge,
+								:rounds,
+								:note
+								)");
+
+	$insert->execute(array("question"=>$question,
+						   "note"=>$note,
+						   "opp"=>$opp,
+						   "dur"=>$dur,
+						   "rounds"=>$rounds,
+						   "judge"=>$judge,
+						   "sid"=>$starter_id
+						   ));
+
+	$did = $db->lastInsertId();
+	return $did;
+
+}
+?>

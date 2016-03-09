@@ -2144,3 +2144,54 @@ a{
 		width: 600px;
 	}
 }
+
+#ldeb-opp-pod-container{
+	height: 40%;
+	margin: auto;
+	margin-top: 150px;
+}
+
+#ldeb-own-pod-container{
+	height: 20%;
+	margin: 1px auto;
+}
+
+.podium-container{
+	position: relative;
+	height: 100%;
+	width: 150px;
+	margin-left: 20px;
+	float: left;
+	background-size: 100%;
+	background-repeat: no-repeat;
+	background-image: url('../images/podium-inactive.png');
+}
+
+.pod-own-container{
+	width: 250px;
+	height: 150px;
+	float: left;
+	margin-left: 20px;
+}
+
+.own-mics-container{
+	width: 80%;
+	margin: 0 auto;
+	height: 100%;
+	z-index: 10;
+	position: relative;
+	background-size: 100%;
+	background-repeat: no-repeat;
+	background-image: url('../images/podium-mics.png');
+}
+
+.pod-own-top-container{
+	width: 100%;
+	height: 100%;
+	margin-top: -150px;
+	position: relative;
+	background-color: #D09458;
+	-webkit-transform: perspective(200px) rotateX(60deg);
+    -moz-transform: perspective(200px) rotateX(60deg);
+    transform: perspective(200px) rotateX(60deg);
+}

@@ -54,15 +54,6 @@ if(loggedin()){
 					
 				}
 			});
-
-			$(".ldeb-judge-sel").change(function(){
-				var val = $(this).val();
-				if(val=="jspec"){
-					$(".tjudge-info").html("This means you can choose any specific and trustworthy user to judge the debate, however they cannot be in any of the involved groups: <input type = 'text' placeholder = 'Username...' class = 'tjudge-spec-users-field' name = 'jspec_users'><br>");
-				}else if(val=="jout"){
-					$(".tjudge-info").html("This means you would like someone who is not on BuzzZap at all to judge the debate (a link will be sent to them). Please supply their email(s) here: <input type = 'text' placeholder = 'Email...' id = 'tjudge-out-email-field' name = 'jout_emails' class = 'tjudge-spec-users-field'><br>");
-				}
-			});	
 		});
 	</script>
 	<?php print_r(calc_ldeb_struct(3, 3)); ?>
@@ -98,14 +89,12 @@ if(loggedin()){
 				<span id = 'comp_field_labels'>
 					How many rounds you would like.
 				</span>	<br><br>
-				<span style = 'font-size:80%;'>How would you like this competition to be judged?</span><br>
-				<select name = "ldeb_judge" id = "contact-opt-sel" class = "ldeb-judge-sel" style = "margin-left:25px;width:305px;color:grey;">
-					<option value = "">---</option>
-					<option value = "jspec">Choose specific judge on BuzzZap</option>
-					<option value = "jout">Invite special judge (outside BuzzZap)</option>
-				</select>
-				<br><span style = "" id = "comp_field_labels" class = 'tjudge-info'></span>
-				<br>
+				<span style = 'font-size:80%;'>Judge</span><br>
+				<input type = "text" id = "" class = "loggedout-form-fields" placeholder = "Username or email..." style = "height:30px;outline-width:0px;font-size:60%;box-shadow:none;" name = "ldeb_judge"><br>
+				<span style = "" id = "comp_field_labels">
+					If your desired judge is a user on BuzzZap, enter their username. Otherwise, to invite a special judge from outside BuzzZap, enter their email.
+				</span>
+				<br><br>
 				<span style = 'font-size:80%;'>Display note:</span><br>
 				<textarea name = "ldeb_note" id = "sncomp-txtarea" placeholder= "e.g ...Good luck!"></textarea><br>
 				<span id = 'comp_field_labels'>
@@ -120,42 +109,83 @@ if(loggedin()){
 				<br><br>
 				<input type = "submit" class = "loggedout-form-submit" style = "font-size:80%;box-shadow:none;width:200px;padding:10px;" value = "Start Debate">
 			</form>	
-
-			<?php
-				if(isset($_POST['ldeb_question'],$_POST['ldeb_note'],$_POST['ldeb_opponent'],$_POST['ldeb_duration'],$_POST['ldeb_rounds'], $_POST['ldeb_judge'])){
-					$question  = htmlentities($_POST['ldeb_question']);
-					$note = htmlentities($_POST['ldeb_note']);
-					$opp = htmlentities($_POST['ldeb_opponent']);
-					$dur = htmlentities($_POST['ldeb_duration']);
-					$rounds = htmlentities($_POST['ldeb_rounds']);
-					$judge_type = htmlentities($_POST['ldeb_judge']);
-
-					
-					$errors = "";
-
-					if(strlen($question)<10){
-						$errors.="Your debate notion is too short.<br>";
-					}
-
-					$opp_id = $db->query("SELECT group_id FROM private_groups WHERE group_name = ".$db->quote($opp))->fetchColumn();
-					if(empty($opp_id)){
-						$errors.="The opponent you requested does not exist.<br>";
-					}
-					if(group_leader($_SESSION['user_id'])){
-						$starter_id= get_user_group($_SESSION['user_id'], "group_id");
-						if($starter_id==$opp_id){
-							$errors.= "You can not supply your own group as an opponent.<br>";
-						}
-					}else{
-						$errors.= "You must be in a group and the group leader to start a competition.<br>";
-					}
-
-					$struct = calc_ldeb_struct($dur, $rounds);
-				}
-
-			?>
 		</div>	
 	</div>	
+	<?php
+		if(isset($_POST['ldeb_question'],
+		$_POST['ldeb_note'],
+		$_POST['ldeb_opponent'],
+		$_POST['ldeb_duration'],
+		$_POST['ldeb_rounds'],
+		$_POST['ldeb_judge'])){
+			
+			$question  = htmlentities($_POST['ldeb_question']);
+			$note = htmlentities($_POST['ldeb_note']);
+			$opp = htmlentities($_POST['ldeb_opponent']);
+			$dur = htmlentities($_POST['ldeb_duration']);
+			$rounds = htmlentities($_POST['ldeb_rounds']);
+			$judge = htmlentities($_POST['ldeb_judge']);
+
+			echo "tes";
+			$errors = "";
+
+			if(strlen($question)<10){
+				$errors.="Your debate notion is too short.<br>";
+			}
+
+			$opp_id = $db->query("SELECT group_id FROM private_groups WHERE group_name = ".$db->quote($opp))->fetchColumn();
+			if(empty($opp_id)){
+				$errors.="The opponent you requested does not exist.<br>";
+			}
+			if(group_leader($_SESSION['user_id'])){
+				$starter_id= get_user_group($_SESSION['user_id'], "group_id");
+				if($starter_id==$opp_id){
+					$errors.= "You can not supply your own group as an opponent.<br>";
+				}
+			}else{
+				$errors.= "You must be in a group and the group leader to start a competition.<br>";
+			}
+
+			if(intval($dur)!=0){
+				if($dur>300){
+					$errors.="You cannot have a live debate for longer than 5 hours (300 minutes). <br>";
+				}else if($dur < 5){
+					$errors.="You cannot have a live debate that is less than 5 minutes long. <br>";
+				}
+			}else{
+				$errors.="You have entered an invalid debate duration. <br>";
+			}	
+
+			if(intval($rounds)==0){
+				$errors.="You have entered an invalid amount of rounds. <br>";
+			}
+
+			if(calc_ldeb_timeline($dur, $rounds)!=false){
+				$errors.= "You have entered too many rounds for the debate duration specified.<br>";
+			}
+
+			if(filter_var($judge, FILTER_VALIDATE_EMAIL)){ 
+				$judge = "out:".$judge;
+			}else{
+				$juid = $db->query("SELECT user_id FROM users WHERE user_username = ".$db->quote($judge))->fetchColumn();
+				if(!$juid){
+					$errors .= "The judge you entered is either an invalid email address, or a user that does not exist.<br>";
+				}
+			}
+
+
+			if(strlen($errors)>0){
+				setcookie("success", "0".$errors, time()+10);
+				header("Location: index.php?page=live_debating");
+			}else{
+				$did = start_ldeb($question,$note,$opp,$dur,$rounds,$judge,$starter_id);
+				header("Location: index.php?page=view_live_debate?id=".$did);
+			}
+
+			
+		}
+
+	?>
 	<div id = "room-container">
 		<?php
 			$get_rooms = $db->query("SELECT * FROM live_debates ORDER BY start_time DESC");
