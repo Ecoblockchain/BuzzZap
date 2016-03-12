@@ -2019,6 +2019,12 @@ function following_thread($uid, $thread_id, $change){
 	}
 }
 
+function get_ldeb_val($id, $col){
+	global $db;
+	return $db->query("SELECT `".$col."` FROM live_debates WHERE deb_id =".$db->quote($id)." LIMIT 1")->fetchColumn();
+}
+
+
 
 function calc_ldeb_timeline($dur, $rounds){
 	$min_round_time = 1; // mins
@@ -2040,11 +2046,26 @@ function calc_ldeb_timeline($dur, $rounds){
 	}
 }
 
-function get_ldeb_val($id, $col){
+function get_ldeb_involved($did){
 	global $db;
-	return $db->query("SELECT `".$col."` FROM live_debates WHERE deb_id =".$db->quote($id)." LIMIT 1")->fetchColumn();
-}
+	$sid = get_ldeb_val($did,"starter_id");
+	$oid = get_ldeb_val($did, "opp_id");
 
+	$susers = get_users_in_group($sid);
+	$ousers = get_users_in_group($oid);
+
+	$all_users = array();
+
+	foreach($susers as $uid){
+		$all_users[$uid] = $sid;
+	}
+
+	foreach($ousers as $uid){
+		$all_users[$uid] = $oid;
+	}
+
+	return $all_users;
+}
 
 function start_ldeb($question,$note,$opp,$dur,$rounds,$judge,$starter_id){
 	global $db;

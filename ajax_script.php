@@ -135,4 +135,9 @@ if(isset($_POST['start_iwonder'])){
 		echo "Your question must be longer.";
 	}
 }
+
+if(isset($_POST['ttt'])){
+	$testarr[] = "backed".$_POST['ttt'];
+	print_r($testarr);
+}
 ?>

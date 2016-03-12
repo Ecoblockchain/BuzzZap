@@ -8,6 +8,13 @@ if(loggedin()){
 	<script>
 		$(function(){
 
+		
+				$.post("<?php echo $ajax_script_loc; ?>", {ttt:"test"}, function(result){
+					console.log(result);
+				});
+
+			
+
 			$('.live-deb-room-container').jqFloat({
 				width: 40,
 				height: 40,
