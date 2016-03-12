@@ -21,13 +21,11 @@
 			}
 		}
 	}
-	send_mail("casparwylie@gmail.com", "Crons work,  script does not. unless count = 0...count: ".count($ebodys), "yay", "auto@buzzzap.com");
 	foreach($ebodys as $uid=>$body){
 		
 		$email = get_user_field($uid, "user_email");
 		$name = get_user_field($uid, "user_username");
 		$body = "Dear ".$name.", <br>You have new notification(s): <br>".$body;
-		send_mail("casparwylie@gmail.com", "Crons work , and script.", "yay:<hr>".$body, "auto@buzzzap.com");
 		send_mail($email,"BuzzZap Activity",$body,"auto@buzzzap.com");
 	}
 

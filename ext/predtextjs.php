@@ -86,7 +86,7 @@ $(document).ready(function(){
 	//ex query = "SELECT `".$col."` FROM `".$table."` WHERE `".$col."` LIKE :v ".$ex_query." LIMIT 5"
 
 	//inbox
-	if("<?php echo loggedin(); ?>"){
+	if(<?php echo loggedin(); ?>){
 		if("<?php echo $page; ?>" === "inbox"){
 			pred_text("users", "user_username", "desto");
 
