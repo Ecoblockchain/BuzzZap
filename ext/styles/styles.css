@@ -2146,40 +2146,39 @@ a{
 }
 
 #ldeb-opp-pod-container{
-	height: 40%;
-	margin: auto;
-	margin-top: 150px;
+	left: 50%;
+	margin-left: -125px;
+	margin-top: 250px;
+	position: fixed;
+	width: 250px;
+	height: 500px;
 }
 
 #ldeb-own-pod-container{
-	height: 20%;
-	margin: 1px auto;
+	position: fixed;
+	width: 400px;
+	height: 300px;
+	left: 50%;
+	margin-left: -200px;
+	bottom: -30px;
 }
 
 .podium-container{
-	position: relative;
+	width: 100%;
 	height: 100%;
-	width: 150px;
-	margin-left: 20px;
-	float: left;
+	margin: 0 auto;
 	background-size: 100%;
 	background-repeat: no-repeat;
 	background-image: url('../images/podium-inactive.png');
 }
 
-.pod-own-container{
-	width: 250px;
-	height: 150px;
-	float: left;
-	margin-left: 20px;
-}
-
 .own-mics-container{
-	width: 80%;
-	margin: 0 auto;
-	height: 100%;
+	width: 300px;
 	z-index: 10;
-	position: relative;
+	margin-left: 50px;
+	margin-top: 30px;
+	position: absolute;
+	height: 100px;
 	background-size: 100%;
 	background-repeat: no-repeat;
 	background-image: url('../images/podium-mics.png');
@@ -2187,11 +2186,43 @@ a{
 
 .pod-own-top-container{
 	width: 100%;
-	height: 100%;
-	margin-top: -150px;
+	height: 300px;
+	border-top: 10px solid grey;
 	position: relative;
+	margin: 0 auto;
 	background-color: #D09458;
-	-webkit-transform: perspective(200px) rotateX(60deg);
-    -moz-transform: perspective(200px) rotateX(60deg);
-    transform: perspective(200px) rotateX(60deg);
+	-webkit-transform: perspective(400px) rotateX(70deg);
+    -moz-transform: perspective(400px) rotateX(70deg);
+    transform: perspective(400px) rotateX(70deg);
+}
+
+#ldeb-timeline{
+	width: 600px;
+	height: 20px;
+	background-color: pink;
+	border-radius: 100px;
+	margin: 20px auto;
+}
+
+#ldeb-timeline-mrk{
+	border-radius: 100px;
+	height: 30px;
+	position: absolute;
+	z-index: 100;
+	width: 3px;
+	margin-top: -5px;
+	background-color: grey;
+}
+
+#ldeb-time-left{
+	font-size:50%;
+	color:grey;
+	margin-top: 30px;
+	margin-left:-12px;
+}
+
+.ldeb-timeline-rnd-mrk{
+	height: 20px;
+	position: absolute;
+	background: lightgreen;
 }

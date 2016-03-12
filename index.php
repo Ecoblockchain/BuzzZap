@@ -156,9 +156,7 @@ if(substr($_SERVER['PHP_SELF'], 0,3)=="/bu"){
 									<a href="index.php?page=comp_home&type=1">
 										<div id "mitem2sub5" class = "subitem usubitem">Global Competitions</div>
 									</a>
-									<a href="index.php?page=live_debating">
-										<div id "mitem2sub6" class = "subitem usubitem">Live Debating</div>
-									</a>
+									
 									<a href="index.php?page=wof">
 										<div id "mitem2sub7" class = "subitem usubitem">Wall Of Fame</div>
 									</a>
@@ -224,7 +222,7 @@ if(substr($_SERVER['PHP_SELF'], 0,3)=="/bu"){
 								$(this).animate({height:"58px"}, 200);
 							});
 							$("#mitem2").mouseover(function(){
-								$(this).animate({height:"500px"}, 200);
+								$(this).animate({height:"440px"}, 200);
 
 							}).mouseleave(function(){
 								$(this).animate({height:"58px"}, 200);

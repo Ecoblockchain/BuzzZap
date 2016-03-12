@@ -56,7 +56,6 @@ if(loggedin()){
 			});
 		});
 	</script>
-	<?php print_r(calc_ldeb_struct(3, 3)); ?>
 	<div class = 'page-path'>Debating > Live Debating</div><br>
 	<div class = 'loggedin-headers'>
 		Live Debating<br>

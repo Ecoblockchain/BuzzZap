@@ -2044,17 +2044,6 @@ function get_ldeb_val($id, $col){
 	return $db->query("SELECT `".$col."` FROM live_debates WHERE deb_id =".$db->quote($id)." LIMIT 1")->fetchColumn();
 }
 
-function get_ldeb_struct($did){
-	global $db;
-	$cand1_id = get_ldeb_val($did,"starter_id");
-	$cand2_id = get_ldeb_val($did,"opp_id");
-
-	$c1_mcount = get_group_member_count($cand1_id);
-	$c2_mcount = get_group_member_count($cand2_id);
-
-	return array($cand1_id=>$c1_mcount,$cand2_id=>$c2_mcount);
-
-}
 
 function start_ldeb($question,$note,$opp,$dur,$rounds,$judge,$starter_id){
 	global $db;
