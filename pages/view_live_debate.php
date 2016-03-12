@@ -63,7 +63,7 @@ if(loggedin()){
 							//involved user, streaming setup
 							?>
 							var pid = "<?php echo $involved_users[$_SESSION['user_id']]."-".$_SESSION['user_id']; ?>";
-							$.post('http://www.buzzzap.com:9001/test', {pid:pid}, function(result){
+							$.post('https://www.buzzzap.com:9001/test', {pid:pid}, function(result){
 								console.log(result);
 							});
 
