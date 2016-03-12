@@ -2019,6 +2019,7 @@ function following_thread($uid, $thread_id, $change){
 	}
 }
 
+
 function calc_ldeb_timeline($dur, $rounds){
 	$min_round_time = 1; // mins
 	$round_time = $dur/$rounds;
@@ -2075,3 +2076,4 @@ function start_ldeb($question,$note,$opp,$dur,$rounds,$judge,$starter_id){
 
 }
 ?>
+
