@@ -2148,7 +2148,7 @@ a{
 #ldeb-opp-pod-container{
 	left: 50%;
 	margin-left: -125px;
-	margin-top: 250px;
+	bottom: -200px;
 	position: fixed;
 	width: 250px;
 	height: 500px;
@@ -2156,10 +2156,10 @@ a{
 
 #ldeb-own-pod-container{
 	position: fixed;
-	width: 400px;
-	height: 300px;
+	width: 550px;
+	height: 200px;
 	left: 50%;
-	margin-left: -200px;
+	margin-left: -275px;
 	bottom: -30px;
 }
 
@@ -2173,12 +2173,11 @@ a{
 }
 
 .own-mics-container{
-	width: 300px;
+	width: 350px;
 	z-index: 10;
-	margin-left: 50px;
-	margin-top: 30px;
+	margin-left: 100px;
 	position: absolute;
-	height: 100px;
+	height: 150px;
 	background-size: 100%;
 	background-repeat: no-repeat;
 	background-image: url('../images/podium-mics.png');
@@ -2186,14 +2185,14 @@ a{
 
 .pod-own-top-container{
 	width: 100%;
-	height: 300px;
+	height: 200px;
 	border-top: 10px solid grey;
 	position: relative;
 	margin: 0 auto;
-	background-color: #D09458;
-	-webkit-transform: perspective(400px) rotateX(70deg);
-    -moz-transform: perspective(400px) rotateX(70deg);
-    transform: perspective(400px) rotateX(70deg);
+	background-color: lightblue;
+	-webkit-transform: perspective(600px) rotateX(70deg);
+    -moz-transform: perspective(600px) rotateX(70deg);
+    transform: perspective(600px) rotateX(70deg);
 }
 
 #ldeb-timeline{
@@ -2224,5 +2223,20 @@ a{
 .ldeb-timeline-rnd-mrk{
 	height: 20px;
 	position: absolute;
-	background: lightgreen;
+	background: #D09458;
+}
+
+#ldeb-online-container{
+	float: right;
+	height: 320px;
+	overflow: auto;
+	width: 170px;
+}
+
+.ldeb-online-sec{
+	text-align: center;
+	position: relative;
+	width: 100%;
+	padding: 5px;
+	height: 50%;
 }

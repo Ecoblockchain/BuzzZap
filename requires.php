@@ -8,6 +8,7 @@
 <script type="text/javascript" src = "ext/jquery/typewriter.js"></script>
 <script type="text/javascript" src = "ext/jquery/typed.js"></script>
 <script type="text/javascript" src = "ext/jquery/jquery.window.js"></script>
+<script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
 <script type="text/javascript" src = "ext/jquery/rotate.jquery.js"></script>
 <script src="https://cdn.webrtc-experiment.com/MediaStreamRecorder.js"></script>
 <script src="ext/jquery/jquery.blurr.js"></script>
