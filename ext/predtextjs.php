@@ -3,11 +3,13 @@
 	$comp_start_col_search = "";
 	$page = "";
 	$username = "";
+
 	$ex_comp_q= "";
 	$com_id = "";
 	if(loggedin()){
-		$username = get_user_field($_SESSION['user_id'], "user_username");
-		$com_id = get_user_field($_SESSION['user_id'], "user_com");
+		$uid = $_SESSION['user_id'];
+		$username = get_user_field($uid , "user_username");
+		$com_id = get_user_field($uid , "user_com");
 	}
 	if(isset($_GET['page'])){
 		$page = htmlentities($_GET['page']);
@@ -103,7 +105,7 @@ $(document).ready(function(){
 			pred_text("users", "user_username", "act-on-user", "c:AND user_com = '<?php echo $com_id; ?>' AND user_username != '<?php echo $username; ?>' ", 3);
 		
 		}else if("<?php echo $page; ?>" === "live_debating"){
-			pred_text("private_groups", "group_name", "des_opponents", "c:AND group_id != <?php echo get_user_group($_SESSION['user_id'], 'group_id'); ?>");
+			pred_text("private_groups", "group_name", "des_opponents", "c:AND group_id != <?php echo get_user_group($uid , 'group_id'); ?>");
 		}
 	}else{
 		if("<?php echo $page; ?>" === "home"){
