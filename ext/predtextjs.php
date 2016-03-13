@@ -6,6 +6,7 @@
 
 	$ex_comp_q= "";
 	$com_id = "";
+	$uid = "";
 	if(loggedin()){
 		$uid = $_SESSION['user_id'];
 		$username = get_user_field($uid , "user_username");
