@@ -67,7 +67,7 @@ if(loggedin()){
 						if($involvement==1){
 							//involved user, streaming setup
 							?>
-							//var socket = io.connect("https://buzzzap.com:9001");
+							var socket = io.connect("https://buzzzap.com:9001");
 							var getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
 							var upid = "<?php echo $involved_users[$_SESSION['user_id']].','.get_user_field($_SESSION['user_id'], 'user_username').','.$did; ?>";
 							var peer = new Peer({host: 'www.buzzzap.com', port:9000, path:''});
@@ -127,21 +127,23 @@ if(loggedin()){
 								}
 
 							
-
-								$.post('https://www.buzzzap.com:9001/addPeer', {did:"<?php echo $did; ?>",pid:own_id, uident:upid}, function(result, err){
-									var peer_ids = result[0];
-									var cur_pids = peer_ids;
-									var uidents = result[1];
-									
-									for(var i = 0;i<=peer_ids.length;i++){
-										
-										if(peer_ids[i]!=own_id){
-											peer.connect(peer_ids[i]);
-											call_and_recieve(peer_ids[i]);
+								socket.emit('addPeer',  {did:"<?php echo $did; ?>",pid:own_id, uident:upid});
+								socket.on('new_peer_data', function(data){
+									peer_data = data.rel_peers; //pid[data], pid[data], ...
+									pid_call = data.pid_call;
+									if(pid_call!=false){ // call peers
+										for(var i in peer_data){
+											if(i!=own_id){
+												peer.connect(i);
+												call_and_recieve(i);
+											}
 										}
 									}
+									render_online_peers(peer_data);
+								});
+								
 
-									setInterval(function(){
+									/*setInterval(function(){
 										$.post('https://www.buzzzap.com:9001/getPeers', {did:"<?php echo $did; ?>"}, function(result, err){
 											form_pids = [];
 											for(var i in result){
@@ -152,25 +154,12 @@ if(loggedin()){
 												cur_pids = form_pids;
 											}
 										});
-									}, 2000);
+									}, 2000);*/
 									
-								});
-
-								//check for peer changes
-								
-								//socket.on('new_peer', function(data){
-								//	change_online_peers("conn", data);
-								//});
-								//socket.on('peer_disconnect', function(data){
-								//	change_online_peers("dis", data);
-								//});
 							});
 							<?php
-							
 						}
 					?>	
-
-
 				});
 			</script>
 		<div class = 'page-path'>Debating > <a style = 'color: #40e0d0;' href = 'index.php?page=live_debating'>Live Debating</a> > <?php echo $question; ?></div>
