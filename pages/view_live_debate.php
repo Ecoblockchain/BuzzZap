@@ -13,13 +13,22 @@ if(loggedin()){
 		$oid = get_ldeb_val($did, "opp_id");
 		$phase = get_ldeb_val($did, "phase"); //0 = waiting to start, 1= start, 2=end
 		$question = get_ldeb_val($did, "question");
+		$gid = get_user_group($_SESSION['user_id'], "group_id");
 		$rounds = 5;
 		$rnd_timeline_width = 600/$rounds;
 		$dur_min = 0.5;
+
+		$scolor = "#D09458"; //light
+		$ocolor = "#9E643F"; //dark
+
+		$color_dis = ($gid==$sid)? "light" : "dark";
+		$oppcolor_dis = ($gid==$sid)? "dark" : "light";
+		$opp_pod_img = "url('../ext/images/podium-".$oppcolor_dis.".png')";
+		$own_pod_color  = ($oid==$gid)? $ocolor : $scolor;
+		
 		$dur_sec = $dur_min*60;
 		$involvement = 0; //0 not involved, 1 involved, 2 creator
 		$involved_users = get_ldeb_involved($did);
-		print_r($involved_users);
 		if(in_array($_SESSION['user_id'], array_keys($involved_users))){
 			if(get_group_leader_id($sid)==$_SESSION['user_id']){
 				$involvement = 2;
@@ -42,25 +51,26 @@ if(loggedin()){
 					var mins = parseFloat(secs/60);
 					var csecs = 60;
 					$("#ldeb-time-left").html(mins+":00");
-					setInterval(function(){
+					function start_timer(){
+						setInterval(function(){
 
-						if(csecs==0){
-							csecs = 60;
-							mins--;
-						}
+							if(csecs==0){
+								csecs = 60;
+								mins--;
+							}
 
-						csecs--;
+							csecs--;
 
-						if(csecs<=9){
-							zero = "0";
-						}else{
-							zero = "";
-						}
-						$("#ldeb-time-left").html(mins+":"+zero+(csecs).toString());
-					}, 1000);
+							if(csecs<=9){
+								zero = "0";
+							}else{
+								zero = "";
+							}
+							$("#ldeb-time-left").html(mins+":"+zero+(csecs).toString());
+						}, 1000);
 
-					$("#ldeb-timeline-mrk").animate({marginLeft:"598px"}, milisecs, "linear");
-
+						$("#ldeb-timeline-mrk").animate({marginLeft:"598px"}, milisecs, "linear");
+					}
 
 					<?php
 						
@@ -163,10 +173,10 @@ if(loggedin()){
 				});
 			</script>
 		<div class = 'page-path'>Debating > <a style = 'color: #40e0d0;' href = 'index.php?page=live_debating'>Live Debating</a> > <?php echo $question; ?></div>
-		<div class = "loggedin-headers" style = 'color: grey'>
-			<?php echo "<span style = 'color: lightblue;'>".$db->query("SELECT group_name FROM private_groups WHERE group_id = ".$db->quote($sid))->fetchColumn(); ?></span>
+		<div class = "loggedin-headers" style = 'color: grey;'>
+			<?php echo "<span style = 'color: ".$scolor.";'>".$db->query("SELECT group_name FROM private_groups WHERE group_id = ".$db->quote($sid))->fetchColumn(); ?></span>
 			 Vs
-			 <?php echo "<span style = 'color: #D09458;'>".$db->query("SELECT group_name FROM private_groups WHERE group_id = ".$db->quote($oid))->fetchColumn(); ?></span>
+			 <?php echo "<span style = 'color: ".$ocolor.";'>".$db->query("SELECT group_name FROM private_groups WHERE group_id = ".$db->quote($oid))->fetchColumn(); ?></span>
 		</div>
 		<div id = "ldeb-timeline">
 			<div id = "ldeb-timeline-mrk"><div id = 'ldeb-time-left'>00:00</div></div>
@@ -177,23 +187,37 @@ if(loggedin()){
 					if($i>1){
 						$mleft =  $mleft + $rnd_timeline_width;
 					}
-					echo "<div class = 'ldeb-timeline-rnd-mrk' style = 'border-left: 2px solid grey;margin-left:".$mleft."px;width:".$rnd_timeline_width."px;'>
-						<div class = 'ldeb-timeline-rnd-mrk' style = 'background: lightblue;margin-left:0px;width:".strval($rnd_timeline_width/2)."px;'>
+					echo "<div class = 'ldeb-timeline-rnd-mrk' style = 'background: ".$ocolor.";border-left: 2px solid grey;margin-left:".$mleft."px;width:".$rnd_timeline_width."px;'>
+						<div class = 'ldeb-timeline-rnd-mrk' style = 'background: ".$scolor.";margin-left:0px;width:".strval($rnd_timeline_width/2)."px;'>
 					</div></div>";
 				}
 			?>
 		</div>
-		<div id = "ldeb-online-container">
-			<div class = "ldeb-online-sec" id = "online-sec-<?php echo $sid; ?>" style = "background-color: lightblue;"></div>
-			<div class = "ldeb-online-sec" id = "online-sec-<?php echo $oid; ?>" style = "background-color: #D09458;"></div>
+		<div id = "ldeb-general-container"  style = "background: <?php echo $own_pod_color; ?>;">
+			<div class = "ldeb-general-header">General Details</div>
+			<div class = "ldeb-general-inner" style = "font-size: 75%;letter-spacing: -1px;padding: 5px;">
+				<span class  = "ldeb-gen-detail-row"><b>Your Group's Colour: </b><?php echo $color_dis." brown"; ?></span>
+			</div>
 		</div>
+		<div id = "ldeb-online-container">
+			<div class = "ldeb-general-header">User's Online</div>
+			<div class = "ldeb-general-inner">
+				<div class = "ldeb-online-sec" id = "online-sec-<?php echo $sid; ?>" style = "background-color: <?php echo $scolor; ?>;"></div>
+				<div class = "ldeb-online-sec" id = "online-sec-<?php echo $oid; ?>" style = "background-color: <?php echo $ocolor; ?>;"></div>
+			</div>
+		</div>
+		<div id = "ldeb-central-container">
+			<div id = "ldeb-question-header"><?php echo $question; ?></div>
+		</div>
+		
+		
 		<div id = 'ldeb-opp-pod-container'>
-			<div class = 'podium-container'></div>
+			<div class = 'podium-container' style = "background-image: <?php echo $opp_pod_img; ?>"></div>
 		</div>
 
 		<div id = 'ldeb-own-pod-container'>
 			<div class = 'own-mics-container'></div>
-			<div class = 'pod-own-top-container'></div>
+			<div class = 'pod-own-top-container' style = "background: <?php echo $own_pod_color; ?>;"></div>
 		</div>
 
 		<?php

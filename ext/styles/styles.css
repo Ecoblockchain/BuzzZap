@@ -2169,7 +2169,6 @@ a{
 	margin: 0 auto;
 	background-size: 100%;
 	background-repeat: no-repeat;
-	background-image: url('../images/podium-inactive.png');
 }
 
 .own-mics-container{
@@ -2189,7 +2188,7 @@ a{
 	border-top: 10px solid grey;
 	position: relative;
 	margin: 0 auto;
-	background-color: lightblue;
+	background-color: grey;
 	-webkit-transform: perspective(600px) rotateX(70deg);
     -moz-transform: perspective(600px) rotateX(70deg);
     transform: perspective(600px) rotateX(70deg);
@@ -2223,20 +2222,56 @@ a{
 .ldeb-timeline-rnd-mrk{
 	height: 20px;
 	position: absolute;
-	background: #D09458;
 }
 
 #ldeb-online-container{
 	float: right;
-	height: 320px;
-	overflow: auto;
-	width: 170px;
+	text-align: center;
+	height: 43%;
+	display: inline-block;
+	width: 18%;
 }
 
 .ldeb-online-sec{
-	text-align: center;
 	position: relative;
+	height: 50%;
 	width: 100%;
 	padding: 5px;
-	height: 50%;
 }
+
+.ldeb-general-header{
+	height: 7%;
+	background-color: lightgreen;
+	color:white;
+	text-align: center;
+	position: relative;
+}
+
+.ldeb-general-inner{
+	height: 93%;
+	position: relative;
+	overflow: auto;
+	width: 100%;
+}
+
+#ldeb-general-container{
+	float: left;
+	width: 18%;
+	height: 43%;
+}
+
+#ldeb-central-container{
+	text-align: center;
+	height: 320px;
+	margin: 0 auto;
+	width: calc(100% - 450px);
+}
+
+#ldeb-question-header{
+	width: 100%;
+	margin: 50px auto;
+	text-align: center;
+	font-size: 300%;
+	color: #f297a7;
+}
+
