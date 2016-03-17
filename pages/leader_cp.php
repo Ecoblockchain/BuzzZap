@@ -312,6 +312,12 @@ if(loggedin()){
 
 				 		if($reg=="true"){
 				 			setcookie("success", "1Successfully added user!", time()+10);
+				 			$parse_vars = array("au_firstname"=>$_POST['au_firstname'], 
+				 				"lusername"=>get_user_field($_SESSION['user_id'], "user_username"),
+				 				"au_username"=>$_POST['au_username'], "au_password"=>$_POST['au_password'],
+				 				"lemail"=>get_user_field($_SESSION['user_id'], "user_email"));
+				 			$body = static_rec_vars(get_static_content("email_added_user"), $parse_vars);
+				 			send_mail($_POST['au_email'],"You are on BuzzZap!",$body,"auto@buzzzap.com");
 				 			header("Location: index.php?page=leader_cp&go_to=1");
 				 		}else{
 				 			header("Location: index.php?page=leader_cp&go_to=1&reg_ue=v62sd56".implode(",",$reg));

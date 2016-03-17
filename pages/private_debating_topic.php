@@ -67,7 +67,8 @@ if(loggedin()){
 				
 				if(q.length>0&&offer_own_vote_opts==true){
 					$.post("<?php echo $ajax_script_loc; ?>", {get_q_type:q}, function(result){
-						if(result=="open"){
+						//alert(result);
+						if(result.indexOf("open")!=-1){
 							$("#vote-opt-offer-box").fadeIn(50);
 						}
 					});
