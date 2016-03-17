@@ -316,7 +316,7 @@ if(loggedin()){
 				 				"lusername"=>get_user_field($_SESSION['user_id'], "user_username"),
 				 				"au_username"=>$_POST['au_username'], "au_password"=>$_POST['au_password'],
 				 				"lemail"=>get_user_field($_SESSION['user_id'], "user_email"));
-				 			$body = static_rec_vars(get_static_content("email_added_user"), $parse_vars);
+				 			$body = static_cont_rec_vars(get_static_content("email_added_user"), $parse_vars);
 				 			send_mail($_POST['au_email'],"You are on BuzzZap!",$body,"auto@buzzzap.com");
 				 			header("Location: index.php?page=leader_cp&go_to=1");
 				 		}else{
