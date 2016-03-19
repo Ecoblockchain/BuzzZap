@@ -1996,6 +1996,7 @@ a{
 .view-thread-opts-link{
 	padding: 10px;
 	letter-spacing: 2px;
+	cursor: pointer;
 	float: right;
 	background-color: salmon;
 	color: white;

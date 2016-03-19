@@ -10,14 +10,15 @@ if(loggedin()){
 		$rounds = get_ldeb_val($did, "rounds");
 		$dur_min = get_ldeb_val($did, "duration");
 		$sid = get_ldeb_val($did, "starter_id");
+		$rounds = 5;
+		$sname = $db->query("SELECT group_name FROM private_groups WHERE group_id = ".$db->quote($sid))->fetchColumn(); 
+		$start_time = get_ldeb_val($did, "start_time");
 		$oid = get_ldeb_val($did, "opp_id");
+		$oname = $db->query("SELECT group_name FROM private_groups WHERE group_id = ".$db->quote($oid))->fetchColumn(); 
 		$phase = get_ldeb_val($did, "phase"); //0 = waiting to start, 1= start, 2=end
 		$question = get_ldeb_val($did, "question");
 		$gid = get_user_group($_SESSION['user_id'], "group_id");
-		$rounds = 5;
 		$rnd_timeline_width = 600/$rounds;
-		$dur_min = 0.5;
-
 		$scolor = "#D09458"; //light
 		$ocolor = "#9E643F"; //dark
 
@@ -29,6 +30,10 @@ if(loggedin()){
 		$dur_sec = $dur_min*60;
 		$involvement = 0; //0 not involved, 1 involved, 2 creator
 		$involved_users = get_ldeb_involved($did);
+		$timeline_cues = calc_ldeb_timeline($dur_min, $rounds);
+
+		$json_timeline_cues = json_encode($timeline_cues);
+		print_r($json_timeline_cues);
 		if(in_array($_SESSION['user_id'], array_keys($involved_users))){
 			if(get_group_leader_id($sid)==$_SESSION['user_id']){
 				$involvement = 2;
@@ -38,45 +43,27 @@ if(loggedin()){
 		}else{
 			$involvement = 0;
 		}
+		echo $involvement;
 
 		?>
 
 			<script>
 				$(function(){
-					
-
+					var json_timeline_cues = <?php echo $json_timeline_cues; ?>;
 					// time control
-					var secs = <?php echo $dur_sec; ?>;
-					var milisecs = 1000*secs;
-					var mins = parseFloat(secs/60);
-					var csecs = 60;
-					$("#ldeb-time-left").html(mins+":00");
-					function start_timer(){
-						setInterval(function(){
 
-							if(csecs==0){
-								csecs = 60;
-								mins--;
-							}
-
-							csecs--;
-
-							if(csecs<=9){
-								zero = "0";
-							}else{
-								zero = "";
-							}
-							$("#ldeb-time-left").html(mins+":"+zero+(csecs).toString());
-						}, 1000);
-
-						$("#ldeb-timeline-mrk").animate({marginLeft:"598px"}, milisecs, "linear");
-					}
+					$("#dis-deb-phase").html("Waiting To Start");
 
 					<?php
 						
-						if($involvement==1){
+						if($involvement>0){
 							//involved user, streaming setup
 							?>
+							//js ldeb data
+							var phase = <?php echo $phase; ?>;
+							var duration = <?php echo $dur_sec; ?>;
+							var start_time = <?php echo $start_time; ?>;
+							//socket & peerjs init
 							var socket = io.connect("https://buzzzap.com:9001");
 							var getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
 							var upid = "<?php echo $involved_users[$_SESSION['user_id']].','.get_user_field($_SESSION['user_id'], 'user_username').','.$did; ?>";
@@ -84,6 +71,43 @@ if(loggedin()){
 							peer.on('open', function(id) {
 								var own_id = id;
 								
+								function timer(offset, stage){
+									var secs_in = offset;
+									var secs_left = <?php echo $dur_sec; ?> - secs_in;
+									var milisecs_left = secs_left*1000;
+									var milisecs_in = secs_in*1000;
+									var fstage = stage[0];
+									$("#ldeb-timeline-mrk").css("margin-left", secs_in+"px");
+									setInterval(function(){
+										secs_in++;
+										for(var i = 0;i<json_timeline_cues.length-1;i++){
+							                var lower_bound = json_timeline_cues[i][0];
+							                var upper_bound = json_timeline_cues[i+1][0];
+							                var nxt_cue = json_timeline_cues[fstage+1][0];
+							                console.log(nxt_cue);
+							                if(Math.floor(secs_in).toString() == nxt_cue){
+							                	fstage++;
+							                	console.log(lower_bound + "--" + upper_bound);
+							                    socket.emit("check_deb_stage", {did:"<?php echo $did; ?>", man:true});
+							                    break;
+							                }
+							            }
+							           
+										mins_in = Math.floor(secs_in/60).toString();
+										secs =Math.floor(secs_in%60).toString();
+
+										if(mins_in.length==1){
+											mins_in = "0"+mins_in;
+										}
+										if(secs.length==1){
+											secs = "0"+secs;
+										}
+										$("#ldeb-time-left").html(mins_in + ":" + secs);
+									}, 1000);
+
+									$("#ldeb-timeline-mrk").animate({marginLeft:"598px"}, milisecs_left, "linear");
+								}
+
 								function add_audio_stream(stream){
 									var audio = $('<audio autoplay />').appendTo('body');
 							   		audio[0].src = window.URL.createObjectURL(stream);
@@ -136,8 +160,21 @@ if(loggedin()){
 									}
 								}
 
-							
-								socket.emit('addPeer',  {did:"<?php echo $did; ?>",pid:own_id, uident:upid});
+
+								
+								//init peer
+								socket.emit('add_peer',  
+									{did:"<?php echo $did; ?>",
+									pid:own_id, 
+									uident:upid, 
+									deb_data: { phase:phase,
+												start_time: start_time,
+												timeline:json_timeline_cues
+									 	}
+									}
+								);
+
+								//update users
 								socket.on('new_peer_data', function(data){
 									peer_data = data.rel_peers; //pid[data], pid[data], ...
 									pid_call = data.pid_call;
@@ -151,21 +188,34 @@ if(loggedin()){
 									}
 									render_online_peers(peer_data);
 								});
-								
 
-									/*setInterval(function(){
-										$.post('https://www.buzzzap.com:9001/getPeers', {did:"<?php echo $did; ?>"}, function(result, err){
-											form_pids = [];
-											for(var i in result){
-												form_pids.push(i);
-											}
-											if(form_pids!=cur_pids){
-												render_online_peers(result);
-												cur_pids = form_pids;
-											}
-										});
-									}, 2000);*/
-									
+								
+								//start timer/debate
+								<?php if ($involvement == 2){ ?>
+									$("#start-ldeb-opt").click(function(){
+										socket.emit("start_deb", {did:"<?php echo $did; ?>"});
+									});
+								<?php } ?>
+
+								//recieve start request from server
+								socket.on('checked_deb_stage', function(data){
+									if(data.phase==1){
+										var stage = data.stage;
+										if(data.man==false){
+											timer(data.time_in, stage);
+										}
+										timer.stage = stage;
+										$("#dis-deb-phase").html("Started");
+										$("#dis-round").html(stage[0]);
+										var gturn_name;
+										if(stage[1]==1){
+											gturn_name = "<?php echo $sname; ?>";
+										}else{
+											gturn_name = "<?php echo $oname; ?>";
+										}
+										$("#dis-turn").html(gturn_name);
+									}
+								});
 							});
 							<?php
 						}
@@ -174,12 +224,12 @@ if(loggedin()){
 			</script>
 		<div class = 'page-path'>Debating > <a style = 'color: #40e0d0;' href = 'index.php?page=live_debating'>Live Debating</a> > <?php echo $question; ?></div>
 		<div class = "loggedin-headers" style = 'color: grey;'>
-			<?php echo "<span style = 'color: ".$scolor.";'>".$db->query("SELECT group_name FROM private_groups WHERE group_id = ".$db->quote($sid))->fetchColumn(); ?></span>
+			<?php echo "<span style = 'color: ".$scolor.";'>".$sname; ?></span>
 			 Vs
-			 <?php echo "<span style = 'color: ".$ocolor.";'>".$db->query("SELECT group_name FROM private_groups WHERE group_id = ".$db->quote($oid))->fetchColumn(); ?></span>
+			 <?php echo "<span style = 'color: ".$ocolor.";'>".$oname; ?></span>
 		</div>
 		<div id = "ldeb-timeline">
-			<div id = "ldeb-timeline-mrk"><div id = 'ldeb-time-left'>00:00</div></div>
+			<div id = "ldeb-timeline-mrk"><div id = 'ldeb-time-left'></div></div>
 			<?php
 				$mleft = 0;
 				$submleft = 0;
@@ -196,7 +246,10 @@ if(loggedin()){
 		<div id = "ldeb-general-container"  style = "background: <?php echo $own_pod_color; ?>;">
 			<div class = "ldeb-general-header">General Details</div>
 			<div class = "ldeb-general-inner" style = "font-size: 75%;letter-spacing: -1px;padding: 5px;">
-				<span class  = "ldeb-gen-detail-row"><b>Your Group's Colour: </b><?php echo $color_dis." brown"; ?></span>
+				<span class  = "ldeb-gen-detail-row"><b>Your Group's Colour: </b><?php echo $color_dis." brown"; ?></span><br>
+				<span class  = "ldeb-gen-detail-row"><b>Debate Phase: </b><span id = 'dis-deb-phase'></span></span><br>
+				<span class  = "ldeb-gen-detail-row"><b>Round: </b><span id = 'dis-round'></span></span><br>
+				<span class  = "ldeb-gen-detail-row"><b>Turn To Speak: </b><span id = 'dis-turn'></span></span><br>
 			</div>
 		</div>
 		<div id = "ldeb-online-container">
@@ -208,6 +261,9 @@ if(loggedin()){
 		</div>
 		<div id = "ldeb-central-container">
 			<div id = "ldeb-question-header"><?php echo $question; ?></div>
+			<?php if($involvement == 2){ ?>
+				<div id = "start-ldeb-opt" class= "view-thread-opts-link" style = "float: none;width: 200px;margin: 0 auto;">Start Live Debate</div>
+			<?php } ?>
 		</div>
 		
 		

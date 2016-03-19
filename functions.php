@@ -2027,9 +2027,10 @@ function get_ldeb_val($id, $col){
 
 
 function calc_ldeb_timeline($dur, $rounds){
-	$min_round_time = 1; // mins
+	$min_round_time = 60; // secs
+	$dur = $dur*60;
 	$round_time = $dur/$rounds;
-	if($round_time<1){
+	if($round_time<$min_round_time){
 		return false;
 	}else{
 		$cue_inc = $round_time/2;
@@ -2038,7 +2039,7 @@ function calc_ldeb_timeline($dur, $rounds){
 		$inc = 0;
 		for($i = 0;$i<=$rounds*2;$i++){
 			$group = ($i%2==0)? 1 : 2;
-			$struct[strval($inc)] = $group;
+			$struct[$i] = [strval($inc), $group];
 			$inc += $cue_inc;
 		}
 
