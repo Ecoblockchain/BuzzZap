@@ -2033,16 +2033,36 @@ function calc_ldeb_timeline($dur, $rounds){
 	if($round_time<$min_round_time){
 		return false;
 	}else{
-		$cue_inc = $round_time/2;
+		$cue_inc = $round_time/3;
 		//mins=>group
 		$struct = array();
 		$inc = 0;
-		for($i = 0;$i<=$rounds*2;$i++){
-			$group = ($i%2==0)? 1 : 2;
-			$struct[$i] = [strval($inc), $group];
-			$inc += $cue_inc;
-		}
+		$re_c  = 3; //round element counter
+		$r = 1;
+		for($i = 0;$i<=$rounds*3;$i++){
+			
+			$struct[$i] = [strval(round($inc)), $re_c, $r]; //time_in,turn,round
+			
 
+			switch($re_c){
+				case 3:
+					$re_c = 1;	
+					break;
+				case 2:
+					$r++;
+					$re_c = 3;
+					break;
+				case 1:
+					$re_c++;
+					break;
+			}
+			
+			
+			$inc += $cue_inc;
+		
+			
+		}
+		
 		return $struct;
 	}
 }

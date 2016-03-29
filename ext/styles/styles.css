@@ -2164,6 +2164,49 @@ a{
 	bottom: -30px;
 }
 
+#ldeb-chat-container{
+	position: fixed;
+	width: 18vw;
+	height: 20px;
+	background-color: lightgreen;
+	bottom: 30px;
+	z-index:1000;
+}
+
+#ldeb-chat-inner{
+	margin-top: 10px;
+	height: 330px;
+	font-size: 80%;
+	overflow-y: auto;
+	position: relative;
+	width: 100%;
+}
+
+#ldeb-chat-header{
+	color: white;
+	cursor: pointer;
+	text-align: center;
+}
+
+#pm-msg-txt{
+	position: relative;
+	width: 78%;
+	border: none;
+	outline-width: none;
+	font-family: Quicksand;
+	margin-top: 10px;
+	margin-left: 2%;
+	padding: 2px;
+}
+#pm-msg-submit{
+	position: relative;
+	width: 18%;
+	border: none;
+	font-family: Quicksand;
+	margin-top: 12px;
+	padding: 2px;
+}
+
 .podium-container{
 	width: 100%;
 	height: 100%;
@@ -2190,14 +2233,14 @@ a{
 	position: relative;
 	margin: 0 auto;
 	background-color: grey;
-	-webkit-transform: perspective(600px) rotateX(70deg);
-    -moz-transform: perspective(600px) rotateX(70deg);
-    transform: perspective(600px) rotateX(70deg);
+	-webkit-transform: perspective(600px) rotateX(60deg);
+    -moz-transform: perspective(600px) rotateX(60deg);
+    transform: perspective(600px) rotateX(60deg);
 }
 
 #ldeb-timeline{
 	width: 600px;
-	height: 20px;
+	height: 10px;
 	background-color: pink;
 	border-radius: 100px;
 	margin: 20px auto;
@@ -2205,23 +2248,22 @@ a{
 
 #ldeb-timeline-mrk{
 	border-radius: 100px;
-	height: 30px;
+	height: 10px;
 	position: absolute;
 	z-index: 100;
-	width: 3px;
-	margin-top: -5px;
-	background-color: grey;
+	width: 10px;
+	background-color: white;
 }
 
 #ldeb-time-left{
 	font-size:50%;
 	color:grey;
-	margin-top: 30px;
-	margin-left:-12px;
+	margin-top: 10px;
+	margin-left:-5px;
 }
 
 .ldeb-timeline-rnd-mrk{
-	height: 20px;
+	height: 10px;
 	position: absolute;
 }
 
@@ -2230,7 +2272,7 @@ a{
 	text-align: center;
 	height: 43%;
 	display: inline-block;
-	width: 18%;
+	width: 21%;
 }
 
 .ldeb-online-sec{
@@ -2257,7 +2299,7 @@ a{
 
 #ldeb-general-container{
 	float: left;
-	width: 18%;
+	width: 18vw;
 	height: 43%;
 }
 
@@ -2270,9 +2312,16 @@ a{
 
 #ldeb-question-header{
 	width: 100%;
-	margin: 50px auto;
+	margin: 10px auto;
 	text-align: center;
-	font-size: 300%;
+	font-size: 150%;
 	color: #f297a7;
 }
+#ldeb-note-container{
+	text-align: center;
+	margin: 30px auto;
+	width: 50%;
+	font-size: 160%;
+	color: #fff;
 
+}

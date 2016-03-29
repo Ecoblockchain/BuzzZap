@@ -10,7 +10,8 @@ if(loggedin()){
 		$rounds = get_ldeb_val($did, "rounds");
 		$dur_min = get_ldeb_val($did, "duration");
 		$sid = get_ldeb_val($did, "starter_id");
-		$rounds = 5;
+		$rounds = 4;
+		$dur_min = 4;
 		$sname = $db->query("SELECT group_name FROM private_groups WHERE group_id = ".$db->quote($sid))->fetchColumn(); 
 		$start_time = get_ldeb_val($did, "start_time");
 		$oid = get_ldeb_val($did, "opp_id");
@@ -18,6 +19,7 @@ if(loggedin()){
 		$phase = get_ldeb_val($did, "phase"); //0 = waiting to start, 1= start, 2=end
 		$question = get_ldeb_val($did, "question");
 		$gid = get_user_group($_SESSION['user_id'], "group_id");
+		$gname = get_user_group($_SESSION['user_id'], "group_name");
 		$rnd_timeline_width = 600/$rounds;
 		$scolor = "#D09458"; //light
 		$ocolor = "#9E643F"; //dark
@@ -33,7 +35,7 @@ if(loggedin()){
 		$timeline_cues = calc_ldeb_timeline($dur_min, $rounds);
 
 		$json_timeline_cues = json_encode($timeline_cues);
-		print_r($json_timeline_cues);
+	
 		if(in_array($_SESSION['user_id'], array_keys($involved_users))){
 			if(get_group_leader_id($sid)==$_SESSION['user_id']){
 				$involvement = 2;
@@ -50,6 +52,7 @@ if(loggedin()){
 			<script>
 				$(function(){
 					var json_timeline_cues = <?php echo $json_timeline_cues; ?>;
+				
 					// time control
 
 					$("#dis-deb-phase").html("Waiting To Start");
@@ -68,31 +71,63 @@ if(loggedin()){
 							var getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
 							var upid = "<?php echo $involved_users[$_SESSION['user_id']].','.get_user_field($_SESSION['user_id'], 'user_username').','.$did; ?>";
 							var peer = new Peer({host: 'www.buzzzap.com', port:9000, path:''});
+							
+							var timer_interval;
 							peer.on('open', function(id) {
+
+								var ownStream;
 								var own_id = id;
-								
+								var count_down= 15;
+
 								function timer(offset, stage){
+
+									var new_pos = offset *(600/duration);
 									var secs_in = offset;
 									var secs_left = <?php echo $dur_sec; ?> - secs_in;
 									var milisecs_left = secs_left*1000;
 									var milisecs_in = secs_in*1000;
 									var fstage = stage[0];
-									$("#ldeb-timeline-mrk").css("margin-left", secs_in+"px");
-									setInterval(function(){
+									
+								
+									$("#ldeb-timeline-mrk").css("margin-left", new_pos+"px");
+								
+									timer_interval = setInterval(function(){
+										
 										secs_in++;
-										for(var i = 0;i<json_timeline_cues.length-1;i++){
-							                var lower_bound = json_timeline_cues[i][0];
-							                var upper_bound = json_timeline_cues[i+1][0];
-							                var nxt_cue = json_timeline_cues[fstage+1][0];
-							                console.log(nxt_cue);
-							                if(Math.floor(secs_in).toString() == nxt_cue){
-							                	fstage++;
-							                	console.log(lower_bound + "--" + upper_bound);
-							                    socket.emit("check_deb_stage", {did:"<?php echo $did; ?>", man:true});
-							                    break;
-							                }
-							            }
-							           
+										var round_secs_in = Math.floor(secs_in).toString();
+						                var nxt_cue = json_timeline_cues[fstage+1][0];
+						               	var nxt_turn = json_timeline_cues[fstage+1][1];
+
+						               	var turn_name = (nxt_turn==3)? "break" : (nxt_turn==1)?"<?php echo ($involved_users[$_SESSION['user_id']] == $sid)? 'your group': $oname; ?>" : "<?php echo ($involved_users[$_SESSION['user_id']] == $oid)? 'Your group': $oname; ?>";
+						                if (round_secs_in > (nxt_cue-15)){
+						                	var count_text;
+						                	var result_text;
+						                	if(turn_name == "break"){
+						                		count_text = " seconds until break time";
+						                		result_text = "BREAK TIME";
+
+						                	}else{
+						                		count_text = " seconds until "+turn_name+"'s turn to speak...";
+						                		result_text = turn_name + "'s turn to speak...";
+						                	}	
+
+						                	count_down = nxt_cue - round_secs_in;		
+
+						                	if(count_down==0){
+						                		$("#ldeb-note-container").html(result_text);
+						                	}else{
+						                		$("#ldeb-note-container").html(count_down + count_text);
+						                	}
+
+						                	
+						                }
+
+						                if(round_secs_in == nxt_cue){
+						                	fstage++;
+						                    socket.emit("check_deb_stage", {did:"<?php echo $did; ?>", man:true});
+						                  
+						                }
+
 										mins_in = Math.floor(secs_in/60).toString();
 										secs =Math.floor(secs_in%60).toString();
 
@@ -104,39 +139,64 @@ if(loggedin()){
 										}
 										$("#ldeb-time-left").html(mins_in + ":" + secs);
 									}, 1000);
-
-									$("#ldeb-timeline-mrk").animate({marginLeft:"598px"}, milisecs_left, "linear");
+								
+										$("#ldeb-timeline-mrk").animate({marginLeft:"590px"}, milisecs_left, "linear");
+			
 								}
-
-								function add_audio_stream(stream){
-									var audio = $('<audio autoplay />').appendTo('body');
+								var audio_id_c = 0;
+								function add_audio_stream(stream, gnum){
+									var audio = $("<audio class = 'a-g"+gnum+"' id = 'a-"+Math.random(audio_id_c)+gnum+"' autoplay />").appendTo('body');
 							   		audio[0].src = window.URL.createObjectURL(stream);
 							    	audio.onloadedmetadata = function(e){
 							        	console.log('now playing the audio');
 							        	audio.play();
 							   		}
+							   		audio_id_c++;
 								}
 
-								function call_and_recieve(dest_pid){
+								function call_and_recieve(dest_pid, dest_gid){
 									getUserMedia({video: false, audio: true}, function(stream) {
 										var call = peer.call(dest_pid, stream);
 										call.on('stream', function(stream) {
-											 add_audio_stream(stream);
+
+											add_audio_stream(stream,dest_gid);
+											
 										});
+
 									}, function(err) {
 									  console.log('Failed to get local stream' ,err);
 									});
 								}
 
+								function mute_stream(gnum){
+									if(gnum==0){
+										$("audio").each(function(){
+											var id = $(this).attr("id");
+											document.getElementById(id).muted = true;
+										});
+									}else{
+										$(".a-g"+gnum).each(function(){
+											var id = $(this).attr("id");
+											document.getElementById(id).muted = true;
+										});
+										var gnum_ = (gnum==1)? 2: 1;
+										$(".a-g"+gnum_).each(function(){
+											var id = $(this).attr("id");
+											document.getElementById(id).muted = false;
+										});
+									}
+								}
+
 								//answer and recieve
 								peer.on('connection', function(conn){
-									conn.send('Hello!');
-									console.log("rec: "+conn);
+									
 									peer.on('call', function(call) {
 										getUserMedia({video: false, audio: true}, function(stream) {
 									   		call.answer(stream);
 									    	call.on('stream', function(stream) {
-									     		add_audio_stream(stream);
+									    		
+												add_audio_stream(stream, -1);
+									     	
 									    	});
 									  	}, function(err) {
 									    	console.log('Failed to get local stream' ,err);
@@ -167,6 +227,7 @@ if(loggedin()){
 									{did:"<?php echo $did; ?>",
 									pid:own_id, 
 									uident:upid, 
+									ugid: "<?php echo $gid; ?>",
 									deb_data: { phase:phase,
 												start_time: start_time,
 												timeline:json_timeline_cues
@@ -182,10 +243,16 @@ if(loggedin()){
 										for(var i in peer_data){
 											if(i!=own_id){
 												peer.connect(i);
-												call_and_recieve(i);
+												if(peer_data[i][0]=="<?php echo $sid; ?>"){
+													g_num = 1;
+												}else{
+													g_num = 2;
+												}
+												call_and_recieve(i, g_num);
 											}
 										}
 									}
+									
 									render_online_peers(peer_data);
 								});
 
@@ -193,10 +260,13 @@ if(loggedin()){
 								//start timer/debate
 								<?php if ($involvement == 2){ ?>
 									$("#start-ldeb-opt").click(function(){
+
 										socket.emit("start_deb", {did:"<?php echo $did; ?>"});
+						
 									});
 								<?php } ?>
 
+			
 								//recieve start request from server
 								socket.on('checked_deb_stage', function(data){
 									if(data.phase==1){
@@ -204,17 +274,77 @@ if(loggedin()){
 										if(data.man==false){
 											timer(data.time_in, stage);
 										}
-										timer.stage = stage;
 										$("#dis-deb-phase").html("Started");
-										$("#dis-round").html(stage[0]);
+										$("#dis-round").html(stage[2]);
 										var gturn_name;
+
+
+
 										if(stage[1]==1){
+											
+											mute_stream(2);
+							
 											gturn_name = "<?php echo $sname; ?>";
-										}else{
+										}else if(stage[1]==2){
+											
+											mute_stream(1);
+											
 											gturn_name = "<?php echo $oname; ?>";
+										}else{
+											gturn_name = " No one (break time)";
+											mute_stream(0);
+					
 										}
 										$("#dis-turn").html(gturn_name);
 									}
+								});
+
+								var open_count = 0;
+								var cur_header_html = "Private <?php echo $gname; ?> Chat";
+								var new_msg_flash;
+
+								$("#ldeb-chat-inner").css("background-color", "<?php echo $own_pod_color; ?>");
+								$("#ldeb-chat-header").click(function(){
+									if(open_count%2==0){
+										$("#ldeb-chat-header").html("<span style = 'float:left;'>&darr;</span>"+cur_header_html + "<span style = 'color:salmon;float:right;'>X</span>");
+										$("#ldeb-chat-container").animate({height:"400px"}, 500);
+									}else{
+										$("#ldeb-chat-header").html("<span style = 'float:left;'>&uarr;</span>"+cur_header_html);
+										$("#ldeb-chat-container").animate({height:"20px"}, 500);
+									}	
+									open_count++;
+								});
+
+							
+								$("#pm-msg-submit").click(function(){
+									var msg_txt = $("#pm-msg-txt").val();
+									var name = "<?php echo get_user_field($_SESSION['user_id'], 'user_username'); ?>";
+									if(msg_txt.length > 1){
+										var data = {text:msg_txt, name:name, gid: "<?php echo $gid; ?>"};
+										socket.emit('send-pm', data);
+										$("#pm-msg-txt").val("");
+									}
+								});
+
+								$("#ldeb-chat-container").click(function(){
+									clearInterval(new_msg_flash);
+									$("#ldeb-chat-header").css('color', '#fff');
+								});
+
+								function dis_msg(message){
+									if(message.name!="<?php echo get_user_field($_SESSION['user_id'], 'user_username'); ?>"){
+										new_msg_flash = setInterval(function(){
+											$("#ldeb-chat-header").css('color', 'salmon');
+											setTimeout(function(){
+												$("#ldeb-chat-header").css('color', '#fff');
+											}, 500);
+										}, 1000);
+									}
+									$("#ldeb-chat-inner").append("<hr size = '1'><b>"+message.name+"</b>: &ensp;"+message.text);
+								}
+								
+								socket.on('new-pm', function(message){
+									dis_msg(message);
 								});
 							});
 							<?php
@@ -237,9 +367,11 @@ if(loggedin()){
 					if($i>1){
 						$mleft =  $mleft + $rnd_timeline_width;
 					}
-					echo "<div class = 'ldeb-timeline-rnd-mrk' style = 'background: ".$ocolor.";border-left: 2px solid grey;margin-left:".$mleft."px;width:".$rnd_timeline_width."px;'>
-						<div class = 'ldeb-timeline-rnd-mrk' style = 'background: ".$scolor.";margin-left:0px;width:".strval($rnd_timeline_width/2)."px;'>
-					</div></div>";
+					echo "<div class = 'ldeb-timeline-rnd-mrk' style = 'margin-left:".$mleft."px;width:".$rnd_timeline_width."px;'>
+						<div class = 'ldeb-timeline-rnd-mrk' style = 'position:relative;float:left;background: grey;width:".strval($rnd_timeline_width/3)."px;'></div>
+						<div class = 'ldeb-timeline-rnd-mrk' style = 'position:relative;float:left;background: ".$scolor.";width:".strval($rnd_timeline_width/3)."px;'></div>
+						<div class = 'ldeb-timeline-rnd-mrk' style = 'position:relative;float:left;background: ".$ocolor.";width:".strval($rnd_timeline_width/3)."px;'></div>
+					</div>";
 				}
 			?>
 		</div>
@@ -266,6 +398,15 @@ if(loggedin()){
 			<?php } ?>
 		</div>
 		
+		<div id = "ldeb-chat-container">
+			<div id = "ldeb-chat-header"><span style = 'float:left;'>&uarr;</span>Private <?php echo $gname; ?> Chat</div>
+			<div id = "ldeb-chat-inner">
+
+			</div>
+			<div id = "ldeb-chat-form">
+				<input type = "text" id = "pm-msg-txt" placeholder = "Message..."><input type = "button" id = 'pm-msg-submit' value = "Send">
+			</div>
+		</div>
 		
 		<div id = 'ldeb-opp-pod-container'>
 			<div class = 'podium-container' style = "background-image: <?php echo $opp_pod_img; ?>"></div>
@@ -273,7 +414,9 @@ if(loggedin()){
 
 		<div id = 'ldeb-own-pod-container'>
 			<div class = 'own-mics-container'></div>
-			<div class = 'pod-own-top-container' style = "background: <?php echo $own_pod_color; ?>;"></div>
+			<div class = 'pod-own-top-container' style = "background: <?php echo $own_pod_color; ?>;">
+				<div id = "ldeb-note-container"></div>
+			</div>
 		</div>
 
 		<?php
