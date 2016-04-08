@@ -29,7 +29,7 @@ if(loggedin()){
 		$(".iwonder-s-submit").click(function(){
 			var text = $("#new-sticky-text").val();
 			$.post('<?php echo $ajax_script_loc; ?>', {start_iwonder:text}, function(result){
-				if(result.search("success")==true||result.search("-success")==true){
+				if(result.indexOf("success")>-1||result.indexOf("-success")>-1){
 					$("#d-sticky").css("background-image", "none");
 					$("#new-sticky-text").remove();
 					$(".iwonder-s-submit").html("");
@@ -37,7 +37,7 @@ if(loggedin()){
 						$(".iwonder-s-submit").html("<img src = 'ext/images/note-pin.png' class = 'note-pins' style = 'height: 25px;margin-top: -3px;margin-right: -3px;'>");
 					});
 					var warning = "";
-					if(result.search("-")==true){
+					if(result.indexOf("-")>-1){
 						warning = "<br><span style = 'color: white;font-size:40%;'>Your question has been saved, however will be invisible to public (appear to you as red) untill approved by a leader.</span>";
 						$("#d-sticky").css("background-color", "salmon");
 					}

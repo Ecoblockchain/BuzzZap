@@ -2027,11 +2027,11 @@ function get_ldeb_val($id, $col){
 
 
 function calc_ldeb_timeline($dur, $rounds){
-	$min_round_time = 60; // secs
+	$min_round_time = 0; // secs 180
 	$dur = $dur*60;
 	$round_time = $dur/$rounds;
 	if($round_time<$min_round_time){
-		return false;
+		return "false";
 	}else{
 		$cue_inc = $round_time/3;
 		//mins=>group
@@ -2071,6 +2071,7 @@ function get_ldeb_involved($did){
 	global $db;
 	$sid = get_ldeb_val($did,"starter_id");
 	$oid = get_ldeb_val($did, "opp_id");
+	$judge = get_ldeb_val($did, "judge");
 
 	$susers = get_users_in_group($sid);
 	$ousers = get_users_in_group($oid);
@@ -2091,6 +2092,7 @@ function get_ldeb_involved($did){
 function start_ldeb($question,$note,$opp,$dur,$rounds,$judge,$starter_id){
 	global $db;
 
+	$for = array($starter_id, $opp)[rand(0,1)];
 	$insert = $db->prepare("INSERT INTO live_debates 
 							VALUES(
 								'',
@@ -2101,7 +2103,8 @@ function start_ldeb($question,$note,$opp,$dur,$rounds,$judge,$starter_id){
 								UNIX_TIMESTAMP(),
 								:judge,
 								:rounds,
-								:note
+								:note,
+								:for
 								)");
 
 	$insert->execute(array("question"=>$question,
@@ -2110,7 +2113,8 @@ function start_ldeb($question,$note,$opp,$dur,$rounds,$judge,$starter_id){
 						   "dur"=>$dur,
 						   "rounds"=>$rounds,
 						   "judge"=>$judge,
-						   "sid"=>$starter_id
+						   "sid"=>$starter_id,
+						   "for"=>$for
 						   ));
 
 	$did = $db->lastInsertId();

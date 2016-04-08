@@ -2290,6 +2290,34 @@ a{
 	position: relative;
 }
 
+#judge-vote-container{
+	display: none;
+	color: dimblue;
+}
+
+#judge-vote-sel{
+	border: none;
+	font-size: 110%;
+}
+
+.ldeb-side-podium{
+	height: 55%;
+	width: 20%;
+	bottom: 1px;
+	background-size: 100%;
+	background-repeat: no-repeat;
+}
+
+#ldeb-side-podium-right{
+	float: right;
+	background-image: url('../images/side-podium-dark.png');
+}
+
+#ldeb-side-podium-left{
+	float: left;
+	background-image: url('../images/side-podium-light.png');
+}
+
 .ldeb-general-inner{
 	height: 93%;
 	position: relative;
@@ -2324,4 +2352,38 @@ a{
 	font-size: 160%;
 	color: #fff;
 
+}
+
+#interrupt-opt{
+	position: relative;
+	width: 225px;
+	display: none;
+	float: none;
+	text-align: center;
+	margin-top: -20px;
+}
+
+.judge-podiums-score{
+	position: relative;
+	font-size: 120%;
+	text-align: center;
+	margin-top: 60%;
+}
+
+.judge-pods-audio-icon{
+	background-size: 100%;
+	background-repeat: no-repeat;
+	height: 50px;
+	display: none;
+	margin-left: 80px;
+	margin-top: 30px;
+	width: 50px;
+}
+
+#jpod-speaking-icon2{
+	background-image: url('../images/g2_speaking.png');
+}
+
+#jpod-speaking-icon1{
+	background-image: url('../images/g1_speaking.png');
 }
