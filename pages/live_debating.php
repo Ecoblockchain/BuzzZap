@@ -20,7 +20,7 @@ if(loggedin()){
 				if(start_ldeb_opened==0){
 					start_ldeb_opened=1;
 					
-					$(this).animate({height:"700px"}, 500).animate({marginLeft:"28%"})
+					$(this).animate({height:"800px"}, 500).animate({marginLeft:"28%"})
 					.animate({width:"42%", marginTop:"-=100px"}, 500).css("color", "#ffffff").css("z-index", "100000000")
 					.css("box-shadow", "0px 0px 40px dimgrey");
 			
@@ -69,7 +69,7 @@ if(loggedin()){
 						case 1:
 							phase_txt = "Has Started!";
 							break;
-						case 2:
+						default:
 							phase_txt = "Has Ended";	
 					}
 
@@ -139,7 +139,16 @@ if(loggedin()){
 					<textarea name = "ldeb_note" id = "sncomp-txtarea" placeholder= "e.g ...Good luck!"></textarea><br>
 					<span id = 'comp_field_labels'>
 						A note that will be displayed to everyone involved (optional)
-					</span>	
+					</span>	<br><br>
+					<span style = "font-size:80%">Debate Method</span>
+					<select name = "ldeb_type" class = "loggedout-form-fields">
+						<option value = "---">---</option>
+						<option value = "voice">Voice</option>
+						<option value = "text">Text</option>
+					</select>
+					<span id = 'comp_field_labels'>
+						In order to have a voice debate all users must use a supported browser (Opera or Chrome).
+					</span>	<br><br>
 					<hr size = '1'>
 					<span id = 'comp_field_labels'>
 						-browser warnings
@@ -167,12 +176,21 @@ if(loggedin()){
 			$dur = htmlentities($_POST['ldeb_duration']);
 			$rounds = htmlentities($_POST['ldeb_rounds']);
 			$judge = htmlentities($_POST['ldeb_judge']);
+			$type = htmlentities($_POST['ldeb_type']);
 
-		
 			$errors = "";
 
 			if(strlen($question)<10){
 				$errors.="Your debate notion is too short.<br>";
+			}
+
+			if(!in_array($type, array("voice", "text"))){
+				$errors.="Your debate method is invalid.<br>";
+			}
+
+			$supp_webrtc = supports_webrtc();
+			if($type == "voice" && $supp_webrtc[0]==false){
+				$errors.= substr($supp_webrtc[1], 0,7)."<br>";
 			}
 
 			echo $opp_id = $db->query("SELECT group_id FROM private_groups WHERE group_name = ".$db->quote($opp))->fetchColumn();
@@ -191,9 +209,9 @@ if(loggedin()){
 			if(intval($dur)!=0){
 				if($dur>300){
 					$errors.="You cannot have a live debate for longer than 5 hours (300 minutes). <br>";
-				}else if($dur < 5){
-					$errors.="You cannot have a live debate that is less than 5 minutes long. <br>";
-				}
+				}//else if($dur < 5){
+					//$errors.="You cannot have a live debate that is less than 5 minutes long. <br>";
+				//}
 			}else{
 				$errors.="You have entered an invalid debate duration. <br>";
 			}	
@@ -224,7 +242,7 @@ if(loggedin()){
 				setcookie("success", "0".$errors, time()+10);
 				header("Location: index.php?page=live_debating");
 			}else{
-				$did = start_ldeb($question,$note,$opp_id,$dur,$rounds,$judge,$starter_id);
+				$did = start_ldeb($question,$note,$opp_id,$dur,$rounds,$judge,$starter_id,$type);
 				
 				if(!empty($email)){
 					$link = "https://buzzzap.com/index.php?page=view_live_debate&did=".$did."&judge_key=".$email.$jcode;

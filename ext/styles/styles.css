@@ -2188,6 +2188,51 @@ a{
 	text-align: center;
 }
 
+
+#ldeb-textc-container{
+	position: relative;
+	width: 90%;
+	height: 100%;
+	text-align: left;
+	margin: 0 auto;
+	background-color: lightgreen;
+}
+
+#textc-msg{
+	position: relative;
+	height: 100%;
+	border: none;
+	font-family: Quicksand;
+	width: 80%;
+	outline-width: 0px;
+	resize: none;
+	float: left;
+}
+
+#textc-msg-submit{
+	width: 20%;
+	height: 100%;
+	float: right;
+	font-size: 120%;
+	border: none;
+	font-family: Quicksand;
+}
+
+#ldeb-textc-inner{
+	position: relative;
+	height: 80%;
+	font-size: 80%;
+	width: 100%;
+	background-color: lightblue;
+}
+
+#ldeb-textc-form{
+	position: relative;
+	height: 20%;
+	text-align: left;
+	width: 100%;
+}
+
 #pm-msg-txt{
 	position: relative;
 	width: 78%;
@@ -2335,7 +2380,7 @@ a{
 	text-align: center;
 	height: 320px;
 	margin: 0 auto;
-	width: calc(100% - 450px);
+	width: calc(98% - 450px);
 }
 
 #ldeb-question-header{

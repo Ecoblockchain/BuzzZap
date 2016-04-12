@@ -1916,7 +1916,7 @@ function user_browser(){
 
 function supports_webrtc($error=true){
 	$webrtc_valid = array("Opera", "Chrome");
-	$error = "Error: Your web browser does not support audio recording.<br>
+	$error = "Error: Your web browser does not support audio technologies.<br>
 		Please use one of the following: "
 		.trim_commas(implode(", ",$webrtc_valid)).".";
 
@@ -2089,7 +2089,7 @@ function get_ldeb_involved($did){
 	return $all_users;
 }
 
-function start_ldeb($question,$note,$opp,$dur,$rounds,$judge,$starter_id){
+function start_ldeb($question,$note,$opp,$dur,$rounds,$judge,$starter_id,$type){
 	global $db;
 
 	$for = array($starter_id, $opp)[rand(0,1)];
@@ -2104,7 +2104,8 @@ function start_ldeb($question,$note,$opp,$dur,$rounds,$judge,$starter_id){
 								:judge,
 								:rounds,
 								:note,
-								:for
+								:for,
+								:type
 								)");
 
 	$insert->execute(array("question"=>$question,
@@ -2114,7 +2115,8 @@ function start_ldeb($question,$note,$opp,$dur,$rounds,$judge,$starter_id){
 						   "rounds"=>$rounds,
 						   "judge"=>$judge,
 						   "sid"=>$starter_id,
-						   "for"=>$for
+						   "for"=>$for,
+						   "type"=>$type
 						   ));
 
 	$did = $db->lastInsertId();
