@@ -505,7 +505,7 @@ if(loggedin()){
 				$(function(){
 					var rec_enabled = true;
 					var fileName = "<?php echo $_SESSION['user_id'].',0,'.substr(encrypt(time()),0,8); ?>.wav";
-					var mediaTypes = {audio:true};
+					var mediaTypes = {audio:true, video: false};
 					function recAudio(mediaTypes, mediaSuccess, mediaError){
 						navigator.mediaDevices.getUserMedia(mediaTypes).then(mediaSuccess).catch(mediaError);
 					}

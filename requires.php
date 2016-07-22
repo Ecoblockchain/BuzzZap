@@ -13,7 +13,7 @@
 <script src="ext/jquery/jquery.blurr.js"></script>
 <script src="ext/jquery/socket.io.js"></script>
 <script type="text/javascript" src = "https://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
-<script src="https://cdn.rawgit.com/webrtc/adapter/master/adapter.js"></script>
+<script src="https://cdn.temasys.com.sg/adapterjs/0.13.x/adapter.min.js"></script>
 <script src="ext/jquery/peer.min.js"></script>
 <link href='ext/styles/styles.css' rel='stylesheet' type='text/css'>
 <link href='https://fonts.googleapis.com/css?family=Dosis|Poiret+One' rel='stylesheet' type='text/css'>
