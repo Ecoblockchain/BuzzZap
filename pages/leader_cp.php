@@ -385,6 +385,7 @@ if(loggedin()){
 				
 				<br><br><hr size = "1">
 				 <b><u>Users On Close Moderation</u></b><br>
+				 <a href = "index.php?page=leader_cp&go_to=1&all_ucm=true" style = "color: salmon;">Put All Users on Close Moderation</a><br>
 				 Users who cannot post any content without it being approved by you.<br>
 				 To take a user off close moderation use the user actions section above.
 				 <br><br>
@@ -400,6 +401,11 @@ if(loggedin()){
 				}else{
 					echo "No users are on close moderation";
 				}	
+
+				if(isset($_GET['all_ucm'])){
+					$db->query("UPDATE users SET close_mod = 1 WHERE user_com = ".$db->quote($com_id)."AND user_rank = 1");
+					header("Location: index.php?page=leader_cp&go_to=1");
+				}
 
 		
 				?>

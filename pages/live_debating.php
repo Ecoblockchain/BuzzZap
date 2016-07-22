@@ -57,41 +57,54 @@ if(loggedin()){
 				var colors = ["#ff9fad", "#72df92", "#8fc8f0","#f4a05a"];
 				for(var i in data){
 					var did = i;
-					var randc = colors[Math.floor(Math.random()*colors.length)];
-					var question = data[did].question;
-					var phase = data[did].phase;
-					var phase_txt;
 
-					switch(phase){
-						case 0:
-							phase_txt = "Waiting To Start...";
+					var users_involved = data[did].involved;
+					var involved = false;
+					for(var i in users_involved){
+						if(users_involved[i]==<?php echo $user_id; ?>){
+							involved = true;
 							break;
-						case 1:
-							phase_txt = "Has Started!";
-							break;
-						default:
-							phase_txt = "Has Ended";	
+						}
 					}
 
-					var div_inner_title = document.createElement('div');
-					div_inner_title.className = 'room-title-container';
-					div_inner_title.innerHTML = question + "<br><span style = 'color: dimgrey;'> Phase: " + phase_txt + "</span>";
- 
-					var div_ldrc = document.createElement('div');
-					div_ldrc.className = 'live-deb-room-container';
-					div_ldrc.setAttribute("style", "background-color: "+randc+";width: 290px;height: 290px;text-align: center;color: white;cursor: pointer;float: left;border-radius:100%;");
-					div_ldrc.appendChild(div_inner_title);
+					if(involved){
 
-					var deb_link = document.createElement('a');
-					deb_link.setAttribute('href', 'index.php?page=view_live_debate&did='+did);
-					deb_link.appendChild(div_ldrc);
+						var randc = colors[Math.floor(Math.random()*colors.length)];
+						var question = data[did].question;
+						var phase = data[did].phase;
+						var phase_txt;
 
-					$("#room-container").append($(deb_link));
-					$(div_ldrc).jqFloat({
-						width: 40,
-						height: 40,
-						speed: 2000
-					});
+						switch(phase){
+							case 0:
+								phase_txt = "Waiting To Start...";
+								break;
+							case 1:
+								phase_txt = "Has Started!";
+								break;
+							default:
+								phase_txt = "Has Ended";	
+						}
+
+						var div_inner_title = document.createElement('div');
+						div_inner_title.className = 'room-title-container';
+						div_inner_title.innerHTML = question + "<br><span style = 'color: dimgrey;'> Phase: " + phase_txt + "</span>";
+	 
+						var div_ldrc = document.createElement('div');
+						div_ldrc.className = 'live-deb-room-container';
+						div_ldrc.setAttribute("style", "background-color: "+randc+";width: 290px;height: 290px;text-align: center;color: white;cursor: pointer;float: left;border-radius:100%;");
+						div_ldrc.appendChild(div_inner_title);
+
+						var deb_link = document.createElement('a');
+						deb_link.setAttribute('href', 'index.php?page=view_live_debate&did='+did);
+						deb_link.appendChild(div_ldrc);
+
+						$("#room-container").append($(deb_link));
+						$(div_ldrc).jqFloat({
+							width: 40,
+							height: 40,
+							speed: 2000
+						});
+					}	
 				}
 			});
 		});
@@ -99,7 +112,11 @@ if(loggedin()){
 	<div class = 'page-path'>Debating > Live Debating</div><br>
 	<div class = 'loggedin-headers'>
 		Live Debating<br>
-		<span style = 'font-size:40%'>(Showing all current live debating rooms)</span>
+		<span style = 'font-size:40%'>(Showing all current live debating rooms you are involved in)</span>
+	</div>
+	<div id = "live-deb-info-box">
+		<?php echo get_static_content("live_deb_intro"); ?>
+		<br><br>
 	</div>
 	<?php if(group_leader($_SESSION['user_id'])){ ?>
 		<div class = "start_comp_link no-hyphens" id = "start_ldeb" style = "margin-top: -50px;height: 30px;">
@@ -209,9 +226,9 @@ if(loggedin()){
 			if(intval($dur)!=0){
 				if($dur>300){
 					$errors.="You cannot have a live debate for longer than 5 hours (300 minutes). <br>";
-				}//else if($dur < 5){
-					//$errors.="You cannot have a live debate that is less than 5 minutes long. <br>";
-				//}
+				}else if($dur < 5){
+					$errors.="You cannot have a live debate that is less than 5 minutes long. <br>";
+				}
 			}else{
 				$errors.="You have entered an invalid debate duration. <br>";
 			}	

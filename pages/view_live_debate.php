@@ -48,9 +48,9 @@ if(loggedin()||isset($_GET['judge_key'])){
 		if(empty($rounds)){
 			header("Location: index.php?page=home");
 		}
-		$dur_min = 1;//get_ldeb_val($did, "duration");
+		$dur_min = get_ldeb_val($did, "duration");
 		$d_method = get_ldeb_val($did, "type");
-		$interrupt_start = 5;
+	
 		$sname = $db->query("SELECT group_name FROM private_groups WHERE group_id = ".$db->quote($sid))->fetchColumn(); 
 		$start_time = get_ldeb_val($did, "start_time");
 		$oid = get_ldeb_val($did, "opp_id");
@@ -168,10 +168,12 @@ if(loggedin()||isset($_GET['judge_key'])){
 							var lost;
 							var lost_span_id;
 							var won_span_id;
+							var gid_won = 0;
 							if(data.won!=0){
 								lost = (data.won==1)? 2 : 1;
 								lost_span_id = "#title-g"+lost.toString();
 								won_span_id = "#title-g"+data.won.toString();
+								gid_won = (data.won==1)? "<?php echo $sid; ?>" : "<?php echo $oid; ?>";
 							}else{
 								lost = 0;
 							}
@@ -180,13 +182,32 @@ if(loggedin()||isset($_GET['judge_key'])){
 							setTimeout(function(){
 								$('#title-vs, '+lost_span_id).fadeOut();
 								$(won_span_id).animate({fontSize: "300%"}, 2000);
+								setTimeout(function(){
+									$(won_span_id).fadeOut();
+								}, 2000);
 							}, 4000);
+
+							if("<?php echo $gid; ?>"==gid_won){
+								$.post('<?php echo $ajax_script_loc; ?>', {'ldeb_won':gid_won}, function(){
+
+								});
+							}	
+							setTimeout(function(){
+								if("<?php echo $involvement; ?>" == -1){
+									$("#ldeb-end-header").html("<br><br>Thank you for judging.");
+								}else if("<?php echo $gid; ?>"==gid_won){
+									$("#ldeb-end-header").html("<br><br>Well done, your group has won. Each member will recieve 7 reputation points.");
+								}else{
+									$("#ldeb-end-header").html("<br><br>Your group has lost and has not earned any reputation points.");
+								}
+							}, 6000);
 						}
+
 					});
 
 					if (d_method == "voice") { 
 						
-						var getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
+						navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
 						var peer = new Peer({host: 'www.buzzzap.com', port:9000, path:''});
 						var peer_data;
 						var timer_interval;
@@ -226,17 +247,6 @@ if(loggedin()||isset($_GET['judge_key'])){
 
 					              	if(json_timeline_cues[fstage][1]==1){
 					                	$("#judge-vote-container").fadeOut();
-					                	if("<?php echo ($gid == $oid)? 'true' : 'false'; ?>" == 'true'){
-					                		$("#interrupt-opt").fadeIn();
-					                	}else{
-					                		$("#interrupt-opt").fadeOut();
-					                	}
-					                }else if(json_timeline_cues[fstage][1]==2){
-					                	if("<?php echo ($gid == $sid)? 'true' : 'false'; ?>" == 'true'){
-					                		$("#interrupt-opt").fadeIn();
-					                	}else{
-					                		$("#interrupt-opt").fadeOut();
-					                	}
 					                }
 
 
@@ -290,7 +300,7 @@ if(loggedin()||isset($_GET['judge_key'])){
 							}
 							var audio_id_c = 0;
 							function add_audio_stream(stream, gnum){
-								var audio = $("<audio class = 'a-g"+gnum+"' id = 'a-"+Math.random(audio_id_c)+gnum+"' autoplay />").appendTo('body');
+								var audio = $("<audio class = 'a-g-"+gnum+"' id = 'a-"+Math.random(audio_id_c)+gnum+"' autoplay />").appendTo($('#audio-container'));
 						   		audio[0].src = window.URL.createObjectURL(stream);
 						    	audio.onloadedmetadata = function(e){
 						        	console.log('now playing the audio');
@@ -300,7 +310,7 @@ if(loggedin()||isset($_GET['judge_key'])){
 							}
 
 							function call_and_recieve(dest_pid, dest_gid){
-								getUserMedia({video: false, audio: true}, function(stream) {
+								navigator.getUserMedia({video: false, audio: true}, function(stream) {
 									var call = peer.call(dest_pid, stream);
 									call.on('stream', function(stream) {
 
@@ -313,36 +323,15 @@ if(loggedin()||isset($_GET['judge_key'])){
 								});
 							}
 
-							function mute_stream(gnum){
-								if(gnum==0){
-									$("#jpod-speaking-icon1, #jpod-speaking-icon2").fadeOut();
-									$("audio").each(function(){
-										var id = $(this).attr("id");
-										document.getElementById(id).muted = true;
-									});
-								}else{
-									$(".a-g"+gnum).each(function(){
-										var id = $(this).attr("id");
-										document.getElementById(id).muted = true;
-									});
-									var gnum_ = (gnum==1)? 2: 1;
-									$("#jpod-speaking-icon"+gnum_).fadeIn();
-									$("#jpod-speaking-icon"+gnum).fadeOut();
-									$(".a-g"+gnum_).each(function(){
-										var id = $(this).attr("id");
-										document.getElementById(id).muted = false;
-									});
-								}
-							}
 
 							//answer and recieve
 							peer.on('connection', function(conn){
 								
 								peer.on('call', function(call) {
-									getUserMedia({video: false, audio: true}, function(stream) {
+									navigator.getUserMedia({video: false, audio: true}, function(stream) {
 								   		call.answer(stream);
 								    	call.on('stream', function(stream) {
-								    		
+								    		//$("#audio-container").html("");
 											add_audio_stream(stream, -1);
 								     	
 								    	});
@@ -365,10 +354,10 @@ if(loggedin()||isset($_GET['judge_key'])){
 											start_time: start_time,
 											timeline:json_timeline_cues,
 											deb_dur: duration,
+											involved: <?php echo json_encode(array_keys(get_ldeb_involved($did, true))); ?>,
 											g1_points:0,
-											g2_points:0,
-											g1_interrupts: {i_left:"<?php echo $interrupt_start; ?>", t_end:0},
-											g2_interrupts: {i_left:"<?php echo $interrupt_start; ?>", t_end:0},
+											g2_points:0
+					
 								 	}
 								}
 							);
@@ -401,6 +390,7 @@ if(loggedin()||isset($_GET['judge_key'])){
 											jcount++;
 
 										}
+										//$("#audio-container").html("");
 										if(i!=own_id){
 											call_and_recieve(i, g_num);
 										}
@@ -409,8 +399,13 @@ if(loggedin()||isset($_GET['judge_key'])){
 								}
 								
 								if(gcount1>0&&gcount2>0&&jcount>0){
-									$("#start-ldeb-pretext").fadeOut();
-									$("#start-ldeb-opt").fadeIn();
+									if($("#start-ldeb-pretext").is(":visible")){
+										$("#start-ldeb-pretext").fadeOut();
+										$("#start-ldeb-opt").fadeIn();
+									}else if(!$("#start-ldeb-opt").is(":visible")){
+										$("#start-ldeb-pretext").fadeOut();
+										$("#start-ldeb-opt").fadeOut();
+									}
 								}
 								
 								render_online_peers(peer_data);
@@ -426,64 +421,6 @@ if(loggedin()||isset($_GET['judge_key'])){
 								});
 							<?php } ?>
 
-							//interruption
-
-							function init_interruption(data){
-								<?php if ($sid ==$gid) { ?>
-									var g_num = 1;
-								<?php } else if($oid==$gid){ ?>
-									var g_num = 2;
-								<?php }else { ?>
-									var g_num = 3;
-								<?php } ?>	
-								if(g_num != data.target && g_num != 3){
-									$("#i-left-dis").html(data.ints_left);
-								}
-								
-								var tname = (data.target == 1)? "<?php echo $sname; ?>" : "<?php echo $oname; ?>";
-								var iname = (data.target == 2)? "<?php echo $sname; ?>" : "<?php echo $oname; ?>";
-								var c = Math.floor(data.time_left);
-								
-								$("#note-white").hide();
-								$("#note-red").show();
-								var cdown_int = setInterval(function(){
-									var text = (g_num == data.target)? "Your group is being interrupted for " + c + " seconds..." : "<span id = 'note-red' style = 'color:red;'>Your group has " + c + " seconds left of interruption...";
-									if(g_num==3){
-										text = iname +  " is interrupting " + tname + " for " + c + " seconds..."; 
-									}
-									$("#note-red").html(text);
-									c--;
-								}, 1000);
-
-								mute_stream(data.target);
-								
-								setTimeout(function(){
-									$("#note-white").show();
-									$("#note-red").hide();
-									var gnum = (data.target==1)? 2: 1;
-									mute_stream(gnum);
-									clearInterval(cdown_int);
-									socket.emit('end-interrupt', {interrupter: gnum, did:"<?php echo $did; ?>"});
-								}, parseInt(data.time_left * 1000));
-							}
-
-							$("#interrupt-opt").click(function(){
-								<?php if ($sid ==$gid) { ?>
-									var g_num = 2;
-								<?php } else { ?>
-									var g_num = 1;
-								<?php } ?>	
-
-								var data = {target_g:g_num, did:"<?php echo $did; ?>"};
-								socket.emit("interrupt", data);
-							});
-
-							socket.on('interrupting', function(data){
-								if(data.success==true){
-									init_interruption(data);
-								}
-							});
-
 							//recieve stages from server
 							socket.on('checked_deb_stage', function(data){
 								if(data.phase==1){
@@ -494,31 +431,23 @@ if(loggedin()||isset($_GET['judge_key'])){
 									$("#dis-deb-phase").html("Started");
 									$("#dis-round").html(stage[2]);
 									var gturn_name;
-									var stream_to_mute;
+									
 									if(stage[1]==1){
-										stream_to_mute = 2;
+										
 										gturn_name = "<?php echo $sname; ?>";
 									}else if(stage[1]==2){
-										stream_to_mute = 1;
+									
 										gturn_name = "<?php echo $oname; ?>";
 									}else{
-										stream_to_mute = 0;
+								
 										gturn_name = " No one (break time)";
 									}
 
-									
-									mute_stream(stream_to_mute);
-
-									<?php if ($sid ==$gid) { ?>
-										$("#i-left-dis").html(data.interrupt_l1);
-									<?php } else { ?>
-										$("#i-left-dis").html(data.interrupt_l2);
-									<?php } ?>	
 
 									$("#dis-turn").html(gturn_name);
 								}else if(data.phase == 2){
 									clearInterval(timer_interval);
-									mute_stream(0);
+								
 									$('#ldeb-end-container').not("#judge-vote-container").fadeOut(function(){
 										<?php if($involvement == -1){ ?>
 											$("#ldeb-end-header").html("<br>The debate has ended. Please make your vote for the final round:<br> ");
@@ -530,11 +459,11 @@ if(loggedin()||isset($_GET['judge_key'])){
 												var grp;
 												$("#title-g1").click(function(){
 													grp = 1;
-													make_tdeb_vote(grp)
+													make_tdeb_vote(grp);
 												});
 												$("#title-g2").click(function(){
 													grp = 2;
-													make_tdeb_vote(grp)
+													make_tdeb_vote(grp);
 												});
 										
 										<?php }else{ ?>
@@ -612,6 +541,7 @@ if(loggedin()||isset($_GET['judge_key'])){
 							$("#ldeb-end-header").fadeIn();
 							
 							clearInterval(textc_interval);
+
 							$('#ldeb-end-container').not("#judge-vote-container").fadeOut(function(){
 
 								<?php if($involvement==-1){ ?>
@@ -631,11 +561,11 @@ if(loggedin()||isset($_GET['judge_key'])){
 								var grp;
 								$("#title-g1").click(function(){
 									grp = 1;
-									make_tdeb_vote(grp)
+									make_tdeb_vote(grp);
 								});
 								$("#title-g2").click(function(){
 									grp = 2;
-									make_tdeb_vote(grp)
+									make_tdeb_vote(grp);
 								});
 							<?php } ?>
 						}
@@ -736,7 +666,7 @@ if(loggedin()||isset($_GET['judge_key'])){
 			<span id = "title-vs">Vs</span>
 			<?php echo "<span id = 'title-g2' style = 'color: ".$ocolor.";'>".$oname; ?></span>
 		</div>
-
+		<div id = "audio-container"></div>
 		<div id = 'ldeb-end-container'>
 			<?php if($d_method=="voice"){ ?>
 				<div id = "ldeb-timeline">
@@ -776,9 +706,7 @@ if(loggedin()||isset($_GET['judge_key'])){
 						<?php if($d_method=="voice") { ?>
 						<span class  = "ldeb-gen-detail-row"><b>Round: </b><span id = 'dis-round'></span></span><br>
 						<span class  = "ldeb-gen-detail-row"><b>Turn To Speak: </b><span id = 'dis-turn'></span></span><br>
-						<?php if ($involvement>0){ ?>
-						<span class  = "ldeb-gen-detail-row"><b>Interruptions left: </b><span id = 'i-left-dis'></span></span><br>
-						<?php } }else{ ?>
+						<?php }else{ ?>
 							<span class  = "ldeb-gen-detail-row"><b>Time Left: </b><span id = 'textc-time-left-dis'></span></span><br>
 						<?php } ?>
 					<span class  = "ldeb-gen-detail-row"><b>Arguing <u>FOR</u> Notion: </b><?php echo ($for==$sid)? $sname : $oname; ?></span><br>
@@ -862,7 +790,7 @@ if(loggedin()||isset($_GET['judge_key'])){
 				
 				<div id = 'ldeb-opp-pod-container'>
 					<div class = 'podium-container' style = "background-image: <?php echo $opp_pod_img; ?>">
-						<div id = "interrupt-opt" class = "view-thread-opts-link">Interrupt <?php echo $ooname; ?></div>
+					
 					</div>
 				</div>
 			

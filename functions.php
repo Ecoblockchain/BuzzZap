@@ -2067,11 +2067,12 @@ function calc_ldeb_timeline($dur, $rounds){
 	}
 }
 
-function get_ldeb_involved($did){
+function get_ldeb_involved($did, $j=false){
 	global $db;
 	$sid = get_ldeb_val($did,"starter_id");
 	$oid = get_ldeb_val($did, "opp_id");
 	$judge = get_ldeb_val($did, "judge");
+	$jid = $db->query("SELECT user_id FROM users WHERE user_username = ".$db->quote($judge))->fetchColumn();
 
 	$susers = get_users_in_group($sid);
 	$ousers = get_users_in_group($oid);
@@ -2084,6 +2085,10 @@ function get_ldeb_involved($did){
 
 	foreach($ousers as $uid){
 		$all_users[$uid] = $oid;
+	}
+
+	if($j==true){
+		$all_users[$jid] = 0;
 	}
 
 	return $all_users;
@@ -2123,5 +2128,5 @@ function start_ldeb($question,$note,$opp,$dur,$rounds,$judge,$starter_id,$type){
 	return $did;
 
 }
-?>
 
+?>

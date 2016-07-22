@@ -2432,3 +2432,12 @@ a{
 #jpod-speaking-icon1{
 	background-image: url('../images/g1_speaking.png');
 }
+
+#live-deb-info-box{
+	text-align: center;
+	background-color: lightblue;
+	color: salmon;
+	margin: 10 auto;
+	padding: 20px;
+	width: 70%;
+}

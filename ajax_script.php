@@ -140,4 +140,8 @@ if(isset($_POST['ttt'])){
 	$testarr[] = "backed".$_POST['ttt'];
 	print_r($testarr);
 }
+
+if(isset($_POST['ldeb_won'])){
+		add_rep(7, $_SESSION['user_id']);
+}
 ?>
